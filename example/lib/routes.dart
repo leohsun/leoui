@@ -1,0 +1,30 @@
+import 'package:flutter/material.dart';
+import 'package:leoui_example/pages/button.dart';
+import 'package:leoui_example/pages/dialog.dart';
+import 'package:leoui_example/pages/field.dart';
+import 'package:leoui_example/pages/inputItem.dart';
+import 'package:leoui_example/pages/loading.dart';
+import 'package:leoui_example/pages/message.dart';
+import 'package:leoui_example/pages/noticeBar.dart';
+import 'package:leoui_example/pages/popover.dart';
+import 'package:leoui_example/pages/selector.dart';
+import 'package:leoui_example/pages/skeleton.dart';
+import 'package:leoui_example/pages/slider.dart';
+import 'package:leoui_example/pages/toast.dart';
+import './pages/home.dart';
+
+Map<String, WidgetBuilder> routes = {
+  'home': (BuildContext context) => MyHomePage(),
+  'button': (BuildContext context) => ButtonPage(),
+  'selector': (BuildContext context) => SelectorPage(),
+  'message': (BuildContext context) => MessagePage(),
+  'toast': (BuildContext context) => ToastPage(),
+  'slider': (BuildContext context) => SliderPage(),
+  'loading': (BuildContext context) => LoadingPage(),
+  'dialog': (BuildContext context) => DialogPage(),
+  'popover': (BuildContext context) => PopoverPage(),
+  'skeleton': (BuildContext context) => SkeletonPage(),
+  'field': (BuildContext context) => FieldPage(),
+  'noticeBar': (BuildContext context) => NoticeBarPage(),
+  'inputItem': (BuildContext context) => InputItemPage(),
+};

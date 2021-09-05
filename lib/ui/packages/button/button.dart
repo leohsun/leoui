@@ -1,0 +1,159 @@
+library leo_ui.button;
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:leoui/config/index.dart';
+import 'package:leoui/ui/packages/button/configs.dart';
+import 'package:leoui/utils/size.dart';
+
+class Button extends StatefulWidget {
+  final ButtonType type;
+  final ButtonSize size;
+  final bool full;
+  final bool circle;
+  final bool loading;
+  final bool disabled;
+  final bool square;
+  final LeoMaterialColor? color;
+  final Border? border;
+  final BorderRadius? borderRadius;
+  final String data;
+  final VoidCallback? onTap;
+  final bool inGroup;
+  final double? maxWidth;
+
+  const Button(this.data,
+      {Key? key,
+      this.type = ButtonType.primary,
+      this.size = ButtonSize.nomarl,
+      this.full = false,
+      this.disabled = false,
+      this.square = false,
+      this.circle = false,
+      this.inGroup = false,
+      this.border,
+      this.maxWidth,
+      this.borderRadius,
+      this.color,
+      this.loading = false,
+      this.onTap})
+      : assert(
+          !(circle == true && borderRadius != null),
+          'Cannot provide both a circle and a borderRadius',
+        ),
+        assert(
+          !(square == true && borderRadius != null),
+          'Cannot provide both a square and a borderRadius',
+        ),
+        super(key: key);
+
+  ButtonProperties getProperties() {
+    return ButtonProperties(
+        loading: this.loading,
+        disabled: this.disabled,
+        color: this.color,
+        data: this.data,
+        onTap: this.onTap);
+  }
+
+  @override
+  _ButtonState createState() => _ButtonState();
+}
+
+class _ButtonState extends State<Button> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    BorderRadius? borderRadius = widget.circle
+        ? BorderRadius.circular(100)
+        : widget.square
+            ? null
+            : widget.borderRadius ?? BorderRadius.circular(sz(8));
+
+    Map size = sizeList[widget.size.index];
+
+    MainAxisSize mainAxisSize =
+        widget.full ? MainAxisSize.max : MainAxisSize.min;
+    double padding = sz(20);
+
+    LeoMaterialColor _widgetColor = widget.color ?? LeoColors.primary;
+
+    Color backgroundColor =
+        widget.type == ButtonType.primary ? _widgetColor : Colors.white;
+
+    Color fontColor =
+        widget.type == ButtonType.primary ? Colors.white : _widgetColor;
+
+    Border? _border = widget.border != null
+        ? widget.border
+        : widget.type == ButtonType.secondary && widget.inGroup == false
+            ? Border.all(width: 1, color: fontColor)
+            : null;
+
+    List<Widget> children = [
+      Flexible(
+        child: Text(
+          widget.data,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: fontColor,
+            fontSize: size['fontSize'],
+          ),
+        ),
+      ),
+    ];
+
+    if (widget.loading) {
+      children.insertAll(0, [
+        SizedBox(
+          height: size['fontSize'],
+          width: size['fontSize'],
+          child: CircularProgressIndicator(
+            color: fontColor,
+            strokeWidth: 1,
+          ),
+        ),
+        SizedBox(
+          width: size['fontSize'] / 2,
+        ),
+      ]);
+    }
+
+    double _maxWidth = widget.maxWidth ?? SizeTool.deviceWidth;
+
+    return Opacity(
+      opacity: widget.disabled ? 0.3 : 1,
+      child: Material(
+        color: backgroundColor,
+        elevation: widget.inGroup ? 0 : 4,
+        borderRadius: borderRadius,
+        child: InkWell(
+            highlightColor: Colors.transparent,
+            borderRadius: borderRadius,
+            onTap: widget.disabled ? null : widget.onTap,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+                border: _border,
+              ),
+              constraints: BoxConstraints(
+                  minHeight: size['height'], maxWidth: _maxWidth - padding),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding),
+                child: Row(
+                  mainAxisSize: mainAxisSize,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: children,
+                ),
+              ),
+            )),
+      ),
+    );
+  }
+}

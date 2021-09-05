@@ -1,0 +1,246 @@
+import 'package:flutter/material.dart';
+import 'package:leoui/config/index.dart';
+import 'package:leoui/utils/index.dart';
+
+enum dialogLayout { row, column }
+
+enum dialogType { alert, confirm, successed, fialed }
+
+class Dialog extends StatefulWidget {
+  final LeouiBrightness? brightness;
+  final String? title; //窗口标题
+  final String content; //正文内容
+  final IconData? icon; //Icon组件图标名称
+  final dialogLayout layout; //底部按钮组布局方式, row, column
+  final List<DialogButton>? buttons; //底部操作按钮组
+  final Widget? slot; // 插槽内容
+  const Dialog(
+      {Key? key,
+      this.brightness,
+      this.title,
+      this.icon,
+      this.slot,
+      this.layout = dialogLayout.row,
+      this.buttons,
+      required this.content})
+      : super(key: key);
+
+  @override
+  _DialogState createState() => _DialogState();
+}
+
+class _DialogState extends State<Dialog> {
+  double _width = sz(300);
+
+  double _buttonHeight = sz(50);
+
+  late Color labelPrimaryColor;
+  late LeoThemeData theme;
+
+  Widget _buildBody() {
+    List<Widget> _children = [];
+
+    if (widget.title != null) {
+      _children.add(Padding(
+        padding: EdgeInsets.only(bottom: sz(14)),
+        child: Text(
+          widget.title!,
+          style: TextStyle(
+              height: 1.2,
+              fontSize: sz(LeoSize.fontSize.title),
+              color: theme.labelPrimaryColor),
+        ),
+      ));
+    }
+
+    if (widget.icon != null) {
+      _children.add(
+        Padding(
+          padding: EdgeInsets.only(
+              top: widget.title != null ? 0 : sz(10), bottom: sz(14)),
+          child: Icon(
+            widget.icon,
+            size: sz(50),
+            color: theme.labelSecondaryColor,
+          ),
+        ),
+      );
+    }
+
+    _children.add(Text(
+      widget.content,
+      style: TextStyle(
+          height: 1.2,
+          fontSize: sz(LeoSize.fontSize.tertiary),
+          color: theme.labelPrimaryColor),
+    ));
+
+    return Padding(
+      padding: EdgeInsets.all(sz(26)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: _children,
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    List<Widget> _children = widget.buttons!.map((DialogButton config) {
+      return _buildButton(config);
+    }).toList();
+
+    List<Widget> _chilrenWithDividerIn = [];
+    int count = _children.length - 1;
+    bool isRow = widget.layout == dialogLayout.row;
+    for (int i = 0; i <= count; i++) {
+      _chilrenWithDividerIn.add(_children[i]);
+      if (i < count) {
+        _chilrenWithDividerIn.add(Container(
+          height: isRow ? _buttonHeight : 1,
+          width: isRow ? 1 : null,
+          color: theme.nonOpaqueSeparatorColor,
+        ));
+      }
+    }
+
+    if (widget.layout == dialogLayout.row) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+            border: Border(
+                top: BorderSide(
+                    width: 1, color: theme.nonOpaqueSeparatorColor))),
+        child: Row(
+          children: _chilrenWithDividerIn,
+        ),
+      );
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+            border: Border(
+                top: BorderSide(
+                    width: 1, color: theme.nonOpaqueSeparatorColor))),
+        height: _children.length * _buttonHeight,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _chilrenWithDividerIn,
+        ),
+      );
+    }
+  }
+
+  Widget _buildButton(DialogButton button) {
+    Color color = button.color ?? LeoTheme.of(context).userAccentColor;
+    List<Widget> _children = [
+      Flexible(
+        child: Text(
+          button.text,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+              fontSize: sz(LeoSize.fontSize.title),
+              color: color,
+              fontWeight:
+                  button.bold == true ? FontWeight.bold : FontWeight.normal),
+        ),
+      )
+    ];
+
+    if (button.icon != null) {
+      _children.insert(
+          0,
+          Padding(
+            padding: EdgeInsets.only(right: sz(LeoSize.fontSize.title) / 3),
+            child: Icon(
+              button.icon,
+              size: sz(LeoSize.fontSize.title),
+              color: color,
+            ),
+          ));
+    }
+
+    if (button.loading == true) {
+      _children.insert(
+        0,
+        Padding(
+          padding: EdgeInsets.only(right: sz(LeoSize.fontSize.title) / 3),
+          child: SizedBox(
+              width: sz(LeoSize.fontSize.title),
+              height: sz(LeoSize.fontSize.title),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: color,
+              )),
+        ),
+      );
+    }
+
+    return Expanded(
+      child: buildButtonWidget(
+        onPress: button.handler,
+        splashColor: theme.nonOpaqueSeparatorColor,
+        child: Container(
+          height: _buttonHeight,
+          padding:
+              EdgeInsets.symmetric(horizontal: sz(LeoSize.fontSize.title / 2)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: widget.layout == dialogLayout.row
+                ? MainAxisSize.min
+                : MainAxisSize.max,
+            children: _children,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    theme = widget.brightness == null
+        ? LeoTheme.of(context)
+        : LeoThemeData(brightness: widget.brightness);
+
+    List<Widget> _children = [];
+    if (widget.slot != null) _children.add(widget.slot!);
+    _children.add(_buildBody());
+    if (widget.buttons != null) {
+      _children.add(_buildButtons());
+    }
+    return DecoratedBox(
+      decoration: BoxDecoration(
+          color: theme.dialogBackgroundColor,
+          boxShadow: theme.boxShadow,
+          borderRadius: BorderRadius.circular(sz(6))),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(sz(6)),
+        child: Container(
+          width: _width,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _children,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DialogButton {
+  final String text; // 按钮文案
+  final VoidCallback handler; //点击回调
+  final Color? color; //字体颜色
+  final bool? disabled; //禁用按钮
+  final bool? loading; //加载中按钮
+  final IconData? icon; //按钮图标
+  final bool? bold; // 文字加粗
+
+  DialogButton(
+      {required this.text,
+      required this.handler,
+      this.color,
+      this.disabled,
+      this.bold,
+      this.loading,
+      this.icon})
+      : assert(loading != true || icon == null,
+            'can not provide both \'loading\' and \'icon\'');
+}

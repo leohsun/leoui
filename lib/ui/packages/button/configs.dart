@@ -1,0 +1,58 @@
+import 'dart:ui';
+
+import 'package:leoui/config/index.dart';
+import 'package:leoui/utils/size.dart';
+
+enum ButtonType { primary, secondary }
+enum ButtonSize { nomarl, small }
+
+List<Map<String, double>> sizeList = [
+  {
+    'fontSize': sz(LeoSize.fontSize.secondary),
+    'minWidth': sz(120),
+    'height': sz(40)
+  },
+  {
+    'fontSize': sz(LeoSize.fontSize.tertiary),
+    'minWidth': sz(100),
+    'height': sz(30)
+  }
+];
+
+class ButtonProperties {
+  final ButtonType type;
+  final ButtonSize size;
+  final bool full;
+  final bool circle;
+  final bool loading;
+  final bool disabled;
+  final bool square;
+  final LeoMaterialColor? color;
+  final String data;
+  final VoidCallback? onTap;
+
+  ButtonProperties({
+    this.full = false,
+    this.circle = false,
+    this.loading = false,
+    this.disabled = false,
+    this.square = false,
+    this.color,
+    this.type = ButtonType.primary,
+    required this.data,
+    this.size = ButtonSize.nomarl,
+    this.onTap,
+  });
+
+  Map toJson() {
+    Map json = {};
+    json['full'] = this.full;
+    json['circle'] = this.circle;
+    json['loading'] = this.loading;
+    json['square'] = this.square;
+    json['color'] = this.color;
+    json['type'] = this.type;
+    json['data'] = this.data;
+    return json;
+  }
+}
