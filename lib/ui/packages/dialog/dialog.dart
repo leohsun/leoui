@@ -176,7 +176,7 @@ class _DialogState extends State<Dialog> {
     return Expanded(
       child: buildButtonWidget(
         onPress: button.handler,
-        splashColor: theme.nonOpaqueSeparatorColor,
+        splashColor: theme.fillPrimaryColor,
         child: Container(
           height: _buttonHeight,
           padding:

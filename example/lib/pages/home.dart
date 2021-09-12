@@ -15,9 +15,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff3f4f5),
-      appBar: AppBar(
-        title: Text('LEOUI'),
-      ),
+      appBar: AppBar(title: Text('LEOUI'), brightness: Brightness.dark),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -84,6 +82,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       trailing: Icon(Icons.arrow_forward_ios_rounded),
                       onTap: () {
                         Navigator.of(context).pushNamed('selector');
+                      },
+                    ),
+                    ListTile(
+                      title: Text('TabPiker - 多频道选择器'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('tabPicker');
                       },
                     ),
                     Container(height: 1, color: Colors.grey.shade100),

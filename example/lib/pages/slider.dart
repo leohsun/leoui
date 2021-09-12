@@ -36,8 +36,8 @@ class _SliderPageState extends State<SliderPage> {
                     Button('中', full: true, onTap: () {
                       showSlider(
                           child: Container(
-                            height: SizeTool.designWidth! / 2,
-                            width: SizeTool.designWidth! - 20,
+                            height: SizeTool.deviceWidth / 2,
+                            width: SizeTool.deviceWidth - 20,
                             decoration: BoxDecoration(
                                 color: Colors.grey.shade300,
                                 borderRadius: BorderRadius.circular(8)),

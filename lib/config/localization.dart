@@ -3,13 +3,18 @@ import 'package:flutter/material.dart';
 
 class LocaleSubTag {
   final String languageCode;
-  final String scriptCode;
+  final String? scriptCode;
   final String countryCode;
 
   LocaleSubTag(
       {required this.languageCode,
       required this.scriptCode,
       required this.countryCode});
+
+  @override
+  String toString() {
+    return "languageCode:$languageCode,scriptCode:$scriptCode,countryCode:$countryCode;";
+  }
 }
 
 class LeouiLocalization {
@@ -20,7 +25,7 @@ class LeouiLocalization {
     LocaleSubTag localSubTag =
         LeouiLocalization.getLocaleSubTag(locale.toString());
     String languageName = localSubTag.languageCode;
-    if (localSubTag.scriptCode.isNotEmpty) {
+    if (localSubTag.scriptCode != null) {
       languageName += '_${localSubTag.scriptCode}';
     }
     return LeouiLocalization.raw(
@@ -31,9 +36,6 @@ class LeouiLocalization {
       {required this.languageName, required this.localeSubTag});
 
   static LeouiLocalization of(BuildContext context) {
-    print(
-        'localization --> ${Localizations.of<LeouiLocalization>(context, LeouiLocalization)}');
-    print('context --> $context');
     return Localizations.of<LeouiLocalization>(context, LeouiLocalization)!;
   }
 
@@ -43,21 +45,40 @@ class LeouiLocalization {
       'cancel': 'cancel',
       'demo': 'demo',
       'emptyHint': 'is required',
-      'notMathHint': 'is not matched'
+      'notMathHint': 'is not matched',
+      'warning': 'warning',
+      'toastDefaultSuccessMessage': 'Operation succeeded',
+      'toastDefaultWarningMessage': 'Operation failed'
     },
     'zh': {
       'confirm': '确定',
       'cancel': '取消',
       'demo': '示例',
       'emptyHint': '不能为空',
-      'notMathHint': '格式不匹配'
+      'notMathHint': '格式不匹配',
+      'warning': '警告',
+      'toastDefaultSuccessMessage': '操作成功',
+      'toastDefaultFailMessage': '操作失败'
+    },
+    'zh_Hans': {
+      'confirm': '确定',
+      'cancel': '取消',
+      'demo': '示例',
+      'emptyHint': '不能为空',
+      'notMathHint': '格式不匹配',
+      'warning': '警告',
+      'toastDefaultSuccessMessage': '操作成功',
+      'toastDefaultFailMessage': '操作失败'
     },
     'zh_Hant': {
       'confirm': '確定',
       'cancel': '取消',
       'demo': '舉例',
       'emptyHint': '不能為空',
-      'notMathHint': '格式不匹配'
+      'notMathHint': '格式不匹配',
+      'warning': '警告',
+      'toastDefaultSuccessMessage': '操作成功',
+      'toastDefaultFailMessage': '操作失敗'
     },
   };
 
@@ -81,17 +102,34 @@ class LeouiLocalization {
     return _localizedValues[languageName]!['notMathHint']!;
   }
 
+  String get warning {
+    return _localizedValues[languageName]!['warning']!;
+  }
+
+  String get toastDefaultSuccessMessage {
+    return _localizedValues[languageName]!['toastDefaultSuccessMessage']!;
+  }
+
+  String get toastDefaultFailMessage {
+    return _localizedValues[languageName]!['toastDefaultFailMessage']!;
+  }
+
+  static get delegate => LeouiLocalizationDelegate();
+
   static List<String> languages = _localizedValues.keys.toList();
 
   static LocaleSubTag getLocaleSubTag(String localName) {
     List<String> raw = localName.split('_');
-    String scriptCode = '';
+    String? scriptCode;
     String countryCode = '';
-    if (raw.length > 1) {
+
+    if (raw.length == 2) {
+      countryCode = raw.last;
+    }
+
+    if (raw.length == 3) {
       scriptCode = raw[1];
-      if (raw.length > 2) {
-        countryCode = raw.last;
-      }
+      countryCode = raw.last;
     }
 
     return LocaleSubTag(
@@ -108,7 +146,7 @@ class LeouiLocalizationDelegate
     LocaleSubTag localSubTag =
         LeouiLocalization.getLocaleSubTag(locale.toString());
     String languageName = localSubTag.languageCode;
-    if (localSubTag.scriptCode.isNotEmpty) {
+    if (localSubTag.scriptCode != null) {
       languageName += '_${localSubTag.scriptCode}';
     }
 

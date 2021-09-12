@@ -179,7 +179,9 @@ class FieldState extends State<Field> {
     Widget child = Container(
       padding: widget.plain == true ? EdgeInsets.zero : EdgeInsets.all(sz(18)),
       decoration: BoxDecoration(
-          color: widget.plain == true ? null : theme.backgroundTertiaryColor,
+          color: widget.plain == true
+              ? null
+              : widget.color ?? theme.backgroundTertiaryColor,
           borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,7 +318,7 @@ class FieldItem extends StatelessWidget implements ListItem {
 
       _colChildren.add(
         buildButtonWidget(
-          splashColor: theme.nonOpaqueSeparatorColor,
+          splashColor: theme.fillPrimaryColor,
           onPress: disabled == true ? null : onTap,
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 15)),
@@ -346,7 +348,7 @@ class FieldItem extends StatelessWidget implements ListItem {
       );
     } else {
       return buildButtonWidget(
-        splashColor: theme.nonOpaqueSeparatorColor,
+        splashColor: theme.fillPrimaryColor,
         onPress: disabled == true ? null : onTap,
         child: Padding(
           padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 15)),

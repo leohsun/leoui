@@ -27,9 +27,11 @@ void showToast(String? msg,
   }
 
   String _msg = type == ToastType.success
-      ? '操作成功'
+      ? LeouiLocalization.of(Feedback.currentContext!)
+          .toastDefaultSuccessMessage
       : type == ToastType.error
-          ? '操作失败'
+          ? LeouiLocalization.of(Feedback.currentContext!)
+              .toastDefaultFailMessage
           : 'toast';
 
   List<Widget> _children = [
@@ -435,7 +437,7 @@ void showLeoDialog(
 
 void showAlert(
     {LeouiBrightness? brightness, //主题
-    String title = '警告', //窗口标题
+    String? title, //窗口标题
     required String content, //正文内容
     VoidCallback? onConfirm // 点击确定后回调函数
     }) {
@@ -447,12 +449,12 @@ void showAlert(
         },
         color: LeoThemeData(brightness: brightness).userAccentColor,
         bold: true,
-        text: '确定')
+        text: LeouiLocalization.of(Feedback.currentContext!).confirm)
   ];
 
   showSlider(
       child: Dialog(
-        title: title,
+        title: title ?? LeouiLocalization.of(Feedback.currentContext!).warning,
         content: content,
         brightness: brightness,
         buttons: buttons,
@@ -463,10 +465,10 @@ void showAlert(
 
 void showConfirm(
     {LeouiBrightness? brightness, //主题
-    String title = '确认', //窗口标题
-    String content = '请确认是否进行操作', //正文内容
-    String confirmText = '确定', // 确定按钮文本
-    String cancelText = '取消', // 取消按钮文本
+    String? title, //窗口标题
+    String content = '...', //正文内容
+    String? confirmText, // 确定按钮文本
+    String? cancelText, // 取消按钮文本
     VoidCallback? onConfirm, // 点击确定后回调函数
     VoidCallback? onCancel // 点击取消后回调函数
     }) {
@@ -478,7 +480,7 @@ void showConfirm(
           if (onCancel != null) onCancel();
         },
         color: LeoThemeData(brightness: brightness).labelPrimaryColor,
-        text: '取消'),
+        text: LeouiLocalization.of(Feedback.currentContext!).cancel),
     DialogButton(
         handler: () {
           hideSlider();
@@ -486,12 +488,12 @@ void showConfirm(
         },
         bold: true,
         color: LeoThemeData(brightness: brightness).userAccentColor,
-        text: '确定')
+        text: LeouiLocalization.of(Feedback.currentContext!).confirm)
   ];
 
   showSlider(
       child: Dialog(
-        title: title,
+        title: title ?? LeouiLocalization.of(Feedback.currentContext!).confirm,
         content: content,
         brightness: brightness,
         buttons: buttons,

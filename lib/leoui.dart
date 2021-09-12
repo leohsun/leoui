@@ -79,38 +79,27 @@ class Leoui extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Localizations(
-      delegates: localizationsDelegates.toList(),
-      locale: locale,
-      child: MediaQuery(
-        data: MediaQueryData.fromWindow(WidgetsBinding.instance!.window),
-        child: LeoTheme(
-          theme: config.theme,
-          child: DefaultTextStyle(
+    return MediaQuery(
+      data: MediaQueryData.fromWindow(WidgetsBinding.instance!.window),
+      child: LeoTheme(
+        theme: config.theme,
+        child: DefaultTextStyle(
             style: TextStyle(
               color: LeoTheme.of(context).labelPrimaryColor,
             ),
-            child: Builder(
-              builder: (BuildContext context) {
-                return Overlay(
-                  initialEntries: [
-                    OverlayEntry(builder: (BuildContext context) {
-                      setup(config, context);
-                      // we need a context to show overlay, then we can call feedback functions without context in anywhere
-                      return child;
-                    }),
-                    OverlayEntry(builder: (BuildContext context) {
-                      // we need a context to show overlay, then we can call feedback functions without context in anywhere
-                      return Center(
-                        child: Text('haha'),
-                      );
-                    })
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
+            child: Localizations(
+              delegates: localizationsDelegates.toList(),
+              locale: locale,
+              child: Overlay(
+                initialEntries: [
+                  OverlayEntry(builder: (BuildContext context) {
+                    setup(config, context);
+                    // we need a context to show overlay, then we can call feedback functions without context at anywhere
+                    return child;
+                  }),
+                ],
+              ),
+            )),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:leoui_example/pages/popover.dart';
 import 'package:leoui_example/pages/selector.dart';
 import 'package:leoui_example/pages/skeleton.dart';
 import 'package:leoui_example/pages/slider.dart';
+import 'package:leoui_example/pages/tabPikcer.dart';
 import 'package:leoui_example/pages/toast.dart';
 import './pages/home.dart';
 
@@ -27,4 +28,5 @@ Map<String, WidgetBuilder> routes = {
   'field': (BuildContext context) => FieldPage(),
   'noticeBar': (BuildContext context) => NoticeBarPage(),
   'inputItem': (BuildContext context) => InputItemPage(),
+  'tabPicker': (BuildContext context) => TabPickerPage(),
 };

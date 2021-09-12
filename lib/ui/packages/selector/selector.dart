@@ -126,7 +126,7 @@ class Selector extends StatefulWidget {
       : assert(linkage != true || count != null,
             "when 'linkage' is true then 'count' must be provided"),
         count = count ?? dataList.length,
-        selectorHeight = selectorHeight ?? LeoSize.itemExtent * 5,
+        selectorHeight = selectorHeight ?? sz(LeoSize.itemExtent * 5),
         columnKey = columnKey ?? 'label',
         childrenKey = childrenKey ?? 'children',
         super(key: key);
@@ -352,9 +352,9 @@ class _SelectorState extends State<Selector> {
           ? _scrollControllerList[changedColumnIndex].selectedItem
           : 0;
 
-      // activeIndexList[changedColumnIndex] = parent.length == 0 ? -1 : 0;
+      activeIndexList[changedColumnIndex] =
+          parent.length == 0 ? -1 : changedCellIndex;
 
-      if (parent.length == 0) activeIndexList[changedColumnIndex] = -1;
       tmp.add(parent);
     }
     setState(() {

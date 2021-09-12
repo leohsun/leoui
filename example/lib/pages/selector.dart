@@ -26,7 +26,7 @@ class _SelectorPageState extends State<SelectorPage> {
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.all(10),
-            child: Center(
+            child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
