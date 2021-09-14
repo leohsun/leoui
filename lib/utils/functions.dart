@@ -60,3 +60,13 @@ Widget buildBlurWidget({required Widget child, BorderRadius? borderRadius}) {
     ),
   );
 }
+
+typedef dynamic MapWithIndexCallBack(element, int index);
+
+List mapWithIndex(List data, MapWithIndexCallBack cb) {
+  List result = [];
+  for (int i = 0; i < data.length; i++) {
+    result.add(cb(data[i], i));
+  }
+  return result;
+}

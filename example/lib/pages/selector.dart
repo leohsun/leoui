@@ -41,12 +41,12 @@ class _SelectorPageState extends State<SelectorPage> {
                     brightness: LeouiBrightness.dark,
                     dataList: [
                       [
-                        {'label': '中国'},
+                        {'label': '中国中国中国中国中国中国中国中国中国中国中国中国'},
                         {'label': '美国'},
                         {'label': '英国'},
                       ],
                       [
-                        {'label': '男'},
+                        {'label': '男男男男男男男男男男'},
                         {'label': '女'},
                       ],
                       [

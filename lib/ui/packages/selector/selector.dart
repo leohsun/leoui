@@ -3,6 +3,7 @@ library leo_ui.selector;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
+import 'package:leoui/ui/packages/scalableText/scalableText.dart';
 import 'package:leoui/utils/index.dart';
 
 // ignore: todo
@@ -138,6 +139,8 @@ class Selector extends StatefulWidget {
 class _SelectorState extends State<Selector> {
   List<List> _dataList = [];
 
+  GlobalKey selectorContainer = GlobalKey();
+
   List<FixedExtentScrollController> _scrollControllerList = [];
 
   List<int> activeIndexList = [];
@@ -244,11 +247,28 @@ class _SelectorState extends State<Selector> {
   Widget _buildCell(
     String label,
   ) {
+    // RenderBox selector =
+    //     selectorContainer.currentContext!.findRenderObject() as RenderBox;
+    // print(selector.size.width);
+    // return Container(
+    //   height: LeoSize.itemExtent,
+    //   child: Center(
+    //     child: Text(
+    //       label,
+    //       overflow: TextOverflow.ellipsis,
+    //       style: TextStyle(
+    //           fontSize: sz(LeoSize.fontSize.content),
+    //           color: theme.labelPrimaryColor),
+    //       maxLines: 1,
+    //     ),
+    //   ),
+    // );
     return Container(
       height: LeoSize.itemExtent,
       child: Center(
-        child: Text(
+        child: ScalableText(
           label,
+          minFontSize: sz(10),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
               fontSize: sz(LeoSize.fontSize.content),
@@ -315,6 +335,7 @@ class _SelectorState extends State<Selector> {
 
     return Container(
       height: widget.selectorHeight,
+      key: selectorContainer,
       color: theme.backgroundPrimaryColor,
       child: Row(
         mainAxisSize: MainAxisSize.min,
