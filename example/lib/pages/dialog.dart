@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide Dialog, showDialog;
+import 'package:flutter/widgets.dart';
 import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/index.dart';
@@ -93,8 +94,36 @@ class _DialogPageState extends State<DialogPage> {
                       height: 20,
                     ),
                     ListTile(
-                      title: Text('内容插槽'),
-                      subtitle: Text('可以调用\'hideSlider()\'来关闭'),
+                      title: Text('内容插槽，关闭modal:'),
+                      subtitle: RichText(
+                        text: TextSpan(
+                            text: "DialogButton(\n  handler: (",
+                            style: TextStyle(
+                                color: LeoTheme.of(context).labelPrimaryColor,
+                                height: 1.4),
+                            children: [
+                              TextSpan(
+                                text: ' context ',
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline),
+                              ),
+                              TextSpan(
+                                text: ') {\n  ModalScope.of(',
+                              ),
+                              TextSpan(
+                                text: ' context ',
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline),
+                              ),
+                              TextSpan(
+                                text: ')?.closeModal();\n  ......\n},]',
+                              )
+                            ]),
+                      ),
                     ),
                     Button(
                       '插入内容',
@@ -112,8 +141,8 @@ class _DialogPageState extends State<DialogPage> {
                             buttons: [
                               DialogButton(
                                   text: '好的',
-                                  handler: () {
-                                    hideSlider();
+                                  handler: (context) {
+                                    ModalScope.of(context)?.closeModal();
                                   },
                                   bold: true,
                                   icon: Icons.check_circle_outline_rounded),
@@ -137,13 +166,13 @@ class _DialogPageState extends State<DialogPage> {
                       buttons: [
                         DialogButton(
                             text: '订票',
-                            handler: () {},
+                            handler: (ctx) {},
                             icon: Icons.book_online_outlined),
                         DialogButton(
-                            text: '确认操作', handler: () {}, loading: true),
+                            text: '确认操作', handler: (ctx) {}, loading: true),
                         DialogButton(
                             text: '好的',
-                            handler: () {},
+                            handler: (ctx) {},
                             icon: Icons.check_circle),
                       ],
                     )

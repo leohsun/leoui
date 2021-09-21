@@ -20,7 +20,7 @@ class _LoadingPageState extends State<LoadingPage> {
                 Navigator.of(context).pop();
               },
               icon: Icon(Icons.arrow_back_ios_new_rounded)),
-          title: Text('Slider-滑动层'),
+          title: Text('Loading-加载中...'),
         ),
         body: SafeArea(
           child: Padding(
@@ -37,7 +37,8 @@ class _LoadingPageState extends State<LoadingPage> {
                       Button(
                         'dark',
                         onTap: () {
-                          showLoading(duration: Duration(seconds: 3));
+                          showLoading(
+                              duration: Duration(seconds: 3), closable: false);
                         },
                       ),
                       Button(
@@ -60,8 +61,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       'dark',
                       full: true,
                       onTap: () {
-                        showLoading(
-                            duration: Duration(seconds: 3), title: '正在保存...');
+                        showLoading(title: '正在保存...');
                       },
                     ),
                     SizedBox(

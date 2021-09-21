@@ -32,6 +32,9 @@ class DelayTween extends Tween<double> {
 Widget buildButtonWidget(
     {required Widget child,
     VoidCallback? onPress,
+    VoidCallback? onLongPress,
+    VoidCallback? onTapCancel,
+    ValueChanged<bool>? onFocusChange,
     BorderRadius? borderRadius,
     Color? splashColor,
     Color? color}) {
@@ -44,6 +47,9 @@ Widget buildButtonWidget(
       borderRadius: borderRadius,
       child: child,
       onTap: onPress,
+      onLongPress: onLongPress,
+      onTapCancel: onTapCancel,
+      onFocusChange: onFocusChange,
     ),
   );
 }

@@ -154,27 +154,25 @@ class _SelectorPageState extends State<SelectorPage> {
                   ),
                   Button(
                     '函数式调用',
-                    onTap: () {
-                      showSelector(
-                          dataList: [
-                            [
-                              {'label': '中国'},
-                              {'label': '美国'},
-                              {'label': '英国'},
-                            ],
-                            [
-                              {'label': '男'},
-                              {'label': '女'},
-                            ],
-                            [
-                              {'label': '学生'},
-                              {'label': '工人'},
-                              {'label': '教师'},
-                            ],
-                          ],
-                          onComfrim: (data) {
-                            showToast(data.toString());
-                          });
+                    onTap: () async {
+                      var result = await showSelector(dataList: [
+                        [
+                          {'label': '中国'},
+                          {'label': '美国'},
+                          {'label': '英国'},
+                        ],
+                        [
+                          {'label': '男'},
+                          {'label': '女'},
+                        ],
+                        [
+                          {'label': '学生'},
+                          {'label': '工人'},
+                          {'label': '教师'},
+                        ],
+                      ]);
+
+                      print('result-->$result');
                     },
                   )
                 ],

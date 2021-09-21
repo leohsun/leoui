@@ -14,9 +14,8 @@ class _InputItemPageState extends State<InputItemPage> {
 
   List<ListItem> _children = [
     InputItem(
-      title: Row(
-        children: [Icon(Icons.person), Text('用户名')],
-      ),
+      title: '用户名',
+      icon: Icon(Icons.person),
       placeholder: '请输入用户名',
       fieldKey: 'username',
       fieldLabel: '用户名',
@@ -25,7 +24,7 @@ class _InputItemPageState extends State<InputItemPage> {
       patternDescript: '小写字母开头，包含数字，不小于3位',
     ),
     InputItem(
-      title: Row(
+      leading: Row(
         children: [Icon(Icons.lock), Text('密码')],
       ),
       placeholder: '请输入密码',
@@ -62,27 +61,27 @@ class _InputItemPageState extends State<InputItemPage> {
                       title: Text('基础'),
                       children: [
                         InputItem(
-                          title: Text('普通文本'),
+                          title: '普通文本',
                           placeholder: '普通文本',
                         ),
                         InputItem(
-                          title: Text('禁用表单'),
+                          title: '禁用表单',
                           placeholder: '禁用表单',
                           disabled: true,
                         ),
                         InputItem(
-                          title: Text('只读表单'),
+                          title: '只读表单',
                           placeholder: '只读表单',
                           readonly: true,
                         ),
                         InputItem(
-                          title: Text('文字居中'),
+                          title: '文字居中',
                           placeholder: '文字居中',
                           textAlign: TextAlign.center,
                           clearable: false,
                         ),
                         InputItem(
-                          title: Text('文字居右'),
+                          title: '文字居右',
                           placeholder: '文字居右',
                           textAlign: TextAlign.right,
                           clearable: false,
@@ -108,13 +107,10 @@ class _InputItemPageState extends State<InputItemPage> {
                             onTap: () {
                               _children.add(
                                 InputItem(
-                                  title: Row(
-                                    children: [
-                                      Icon(Icons.person),
-                                      Text('用户名' +
-                                          (_children.length + 1).toString())
-                                    ],
-                                  ),
+                                  solid: false,
+                                  title:
+                                      '用户名' + (_children.length + 1).toString(),
+                                  icon: Icon(Icons.person),
                                   placeholder: '请输入用户名' +
                                       (_children.length + 1).toString(),
                                   fieldKey: 'username' +

@@ -9,7 +9,7 @@ import 'package:leoui_example/pages/noticeBar.dart';
 import 'package:leoui_example/pages/popover.dart';
 import 'package:leoui_example/pages/selector.dart';
 import 'package:leoui_example/pages/skeleton.dart';
-import 'package:leoui_example/pages/slider.dart';
+import 'package:leoui_example/pages/modal.dart';
 import 'package:leoui_example/pages/tabPikcer.dart';
 import 'package:leoui_example/pages/toast.dart';
 import './pages/home.dart';
@@ -20,7 +20,7 @@ Map<String, WidgetBuilder> routes = {
   'selector': (BuildContext context) => SelectorPage(),
   'message': (BuildContext context) => MessagePage(),
   'toast': (BuildContext context) => ToastPage(),
-  'slider': (BuildContext context) => SliderPage(),
+  'modal': (BuildContext context) => ModalPage(),
   'loading': (BuildContext context) => LoadingPage(),
   'dialog': (BuildContext context) => DialogPage(),
   'popover': (BuildContext context) => PopoverPage(),

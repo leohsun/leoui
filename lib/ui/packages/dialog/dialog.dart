@@ -175,7 +175,9 @@ class _DialogState extends State<Dialog> {
 
     return Expanded(
       child: buildButtonWidget(
-        onPress: button.handler,
+        onPress: () {
+          button.handler(context);
+        },
         splashColor: theme.fillPrimaryColor,
         child: Container(
           height: _buttonHeight,
@@ -226,7 +228,7 @@ class _DialogState extends State<Dialog> {
 
 class DialogButton {
   final String text; // 按钮文案
-  final VoidCallback handler; //点击回调
+  final ValueChanged<BuildContext> handler; //点击回调
   final Color? color; //字体颜色
   final bool? disabled; //禁用按钮
   final bool? loading; //加载中按钮

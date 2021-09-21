@@ -5,7 +5,9 @@ import 'package:leoui/ui/packages/common/common.dart';
 import 'package:leoui/utils/index.dart';
 
 class InputItem extends StatefulWidget implements ListItem {
-  final Widget? title; //标题
+  final String? title; //标题
+  final Icon? icon; //leading icon
+  final Widget? leading; //leading 与tile和icon互斥
   final String? defaultValue; //默认值
   final int? maxLength; //最大输入字数长度
   final Widget? content; //描述内容
@@ -27,6 +29,8 @@ class InputItem extends StatefulWidget implements ListItem {
   const InputItem(
       {Key? key,
       this.title,
+      this.icon,
+      this.leading,
       this.content,
       this.defaultValue,
       this.addon,
@@ -47,7 +51,9 @@ class InputItem extends StatefulWidget implements ListItem {
       this.patternDescript})
       : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
-            'when validatePattern is not null then fieldKey and fieldLable must be porvided'),
+            'when validatePattern is not null then fieldKey and fieldLable must be provided'),
+        assert(leading == null || (title == null && icon == null),
+            'can not provide both leading and (title or icon)'),
         super(key: key);
 
   @override
@@ -82,13 +88,35 @@ class _InputItemState extends State<InputItem> implements ListItemState {
     }
   }
 
-  Widget _buildTitle(LeoThemeData theme) {
+  Widget _buildLeading(LeoThemeData theme) {
+    Widget? child;
+    if (widget.leading != null) {
+      child = widget.leading;
+    } else {
+      List<Widget> children = [];
+      if (widget.icon != null) children.add(widget.icon!);
+      if (widget.title != null)
+        children.add(Flexible(child: Text(widget.title!)));
+
+      if (children.length == 2) {
+        children.insert(
+            1,
+            SizedBox(
+              width: sz(5),
+            ));
+      }
+
+      child = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      );
+    }
     return Container(
       margin: EdgeInsets.only(right: sz(5)),
       width: widget.solid ? sz(80) : null,
       child: DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
-        child: widget.title!,
+        child: child,
         size: sz(LeoSize.fontSize.title),
       ),
     );
@@ -100,8 +128,8 @@ class _InputItemState extends State<InputItem> implements ListItemState {
 
     List<Widget> rowChildren = [];
 
-    if (widget.title != null) {
-      rowChildren.add(_buildTitle(theme));
+    if (widget.title != null || widget.icon != null || widget.leading != null) {
+      rowChildren.add(_buildLeading(theme));
     }
 
     rowChildren.add(Expanded(

@@ -69,7 +69,7 @@ class _ToastPageState extends State<ToastPage> {
                   ),
                   Button('长文字', color: LeoColors.warn, full: true, onTap: () {
                     showToast(
-                      '长的请用\'showMessage(...)\'...',
+                      '长文字的请用\'showMessage(...)\'，长文字的请用\'showMessage(...)\'，长文字的请用\'showMessage(...)\'，长文字的请用\'showMessage(...)\'',
                     );
                   }),
                   SizedBox(

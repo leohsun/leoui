@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/index.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -15,12 +16,21 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff3f4f5),
-      appBar: AppBar(title: Text('LEOUI'), brightness: Brightness.dark),
+      appBar: AppBar(
+        title: Text('LEOUI'),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
+              Button('modal', full: true, onTap: () async {
+                var res = await showConfirm(content: 'confirm');
+                print(res);
+              }),
+              SizedBox(
+                height: 20,
+              ),
               Collapse(title: 'Basic - 基础', childern: [
                 ListTile(
                   title: Text('Button - 按钮'),
@@ -109,10 +119,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Container(height: 1, color: Colors.grey.shade100),
                     ListTile(
-                      title: Text('Slider - 滑动层'),
+                      title: Text('Modal - 模态框'),
                       trailing: Icon(Icons.arrow_forward_ios_rounded),
                       onTap: () {
-                        Navigator.of(context).pushNamed('slider');
+                        Navigator.of(context).pushNamed('modal');
                       },
                     ),
                     Container(height: 1, color: Colors.grey.shade100),

@@ -3,6 +3,7 @@ library leo_ui.selector;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
+import 'package:leoui/feedback/index.dart';
 import 'package:leoui/ui/packages/scalableText/scalableText.dart';
 import 'package:leoui/utils/index.dart';
 
@@ -177,22 +178,38 @@ class _SelectorState extends State<Selector> {
     if (widget.onCancel != null) {
       widget.onCancel!();
     }
+
+    bool isInModal = ModalScope.of(context) != null;
+
+    if (isInModal) {
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        ModalScope.of(context)?.closeModal();
+      });
+    }
   }
 
   void _handleCofirm() {
-    if (widget.onComfrim != null) {
-      List checkedData = [];
+    List checkedData = [];
 
-      for (int i = 0; i < activeIndexList.length; i++) {
-        Map item = activeIndexList[i] > -1
-            ? _dataList[i].length > 0
-                ? Map.from(_dataList[i][activeIndexList[i]])
-                : {}
-            : {};
-        item.remove(widget.childrenKey);
-        checkedData.add(item);
-      }
+    for (int i = 0; i < activeIndexList.length; i++) {
+      Map item = activeIndexList[i] > -1
+          ? _dataList[i].length > 0
+              ? Map.from(_dataList[i][activeIndexList[i]])
+              : {}
+          : {};
+      item.remove(widget.childrenKey);
+      checkedData.add(item);
+    }
+
+    if (widget.onComfrim != null) {
       widget.onComfrim!(checkedData);
+    }
+    bool isInModal = ModalScope.of(context) != null;
+
+    if (isInModal) {
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        ModalScope.of(context)?.closeModal(checkedData);
+      });
     }
   }
 
@@ -247,22 +264,6 @@ class _SelectorState extends State<Selector> {
   Widget _buildCell(
     String label,
   ) {
-    // RenderBox selector =
-    //     selectorContainer.currentContext!.findRenderObject() as RenderBox;
-    // print(selector.size.width);
-    // return Container(
-    //   height: LeoSize.itemExtent,
-    //   child: Center(
-    //     child: Text(
-    //       label,
-    //       overflow: TextOverflow.ellipsis,
-    //       style: TextStyle(
-    //           fontSize: sz(LeoSize.fontSize.content),
-    //           color: theme.labelPrimaryColor),
-    //       maxLines: 1,
-    //     ),
-    //   ),
-    // );
     return Container(
       height: LeoSize.itemExtent,
       child: Center(

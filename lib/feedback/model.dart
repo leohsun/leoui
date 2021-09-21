@@ -1,6 +1,6 @@
 part of leoui.feedback;
 
-enum FeedbackBrightness { dark, light }
+enum LeoFeedbackBrightness { dark, light }
 enum AlertType { normal, confirm }
 enum SliderDirection { top, bottom, right, left, center }
 enum MessageType { success, warning, info, error }

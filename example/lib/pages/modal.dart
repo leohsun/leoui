@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/utils/index.dart';
 
-class SliderPage extends StatefulWidget {
-  const SliderPage({Key? key}) : super(key: key);
+class ModalPage extends StatefulWidget {
+  const ModalPage({Key? key}) : super(key: key);
 
   @override
-  _SliderPageState createState() => _SliderPageState();
+  _ModalPageState createState() => _ModalPageState();
 }
 
-class _SliderPageState extends State<SliderPage> {
+class _ModalPageState extends State<ModalPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +20,7 @@ class _SliderPageState extends State<SliderPage> {
                 Navigator.of(context).pop();
               },
               icon: Icon(Icons.arrow_back_ios_new_rounded)),
-          title: Text('Slider-滑动层'),
+          title: Text('Modal-模态框'),
         ),
         body: SafeArea(
           child: Padding(
@@ -31,25 +31,44 @@ class _SliderPageState extends State<SliderPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ListTile(
-                      title: Text('关闭可调用hideSlider()'),
+                      title: Text('在child里需要关闭Modal，可以调用:'),
+                      subtitle:
+                          Text('ModalScope.of(context)?.closeModal(payload);'),
+                    ),
+                    ListTile(
+                      title: Text('[payload]参数传递， 可通过:'),
+                      subtitle:
+                          Text('\'var result = await showModal(...)\'来接收'),
                     ),
                     Button('中', full: true, onTap: () {
-                      showSlider(
+                      showModal(
+                        modal: Modal(
+                          closeOnClickMask: true,
                           child: Container(
                             height: SizeTool.deviceWidth / 2,
                             width: SizeTool.deviceWidth - 20,
                             decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                borderRadius: BorderRadius.circular(8)),
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'from center',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
                           ),
-                          direction: SliderDirection.center,
-                          closeOnClickMask: true);
+                        ),
+                      );
                     }),
                     SizedBox(
                       height: 20,
                     ),
                     Button('左', full: true, onTap: () {
-                      showSlider(
+                      showModal(
+                        modal: Modal(
+                          closeOnClickMask: true,
+                          direction: ModalDirection.left,
                           child: Stack(
                             children: [
                               Positioned(
@@ -67,14 +86,17 @@ class _SliderPageState extends State<SliderPage> {
                               ),
                             ],
                           ),
-                          closeOnClickMask: true,
-                          direction: SliderDirection.left);
+                        ),
+                      );
                     }),
                     SizedBox(
                       height: 20,
                     ),
                     Button('上', full: true, onTap: () {
-                      showSlider(
+                      showModal(
+                        modal: Modal(
+                          closeOnClickMask: true,
+                          direction: ModalDirection.top,
                           child: Stack(
                             children: [
                               Positioned(
@@ -91,14 +113,17 @@ class _SliderPageState extends State<SliderPage> {
                               ),
                             ],
                           ),
-                          closeOnClickMask: true,
-                          direction: SliderDirection.top);
+                        ),
+                      );
                     }),
                     SizedBox(
                       height: 20,
                     ),
                     Button('右', full: true, onTap: () {
-                      showSlider(
+                      showModal(
+                        modal: Modal(
+                          closeOnClickMask: true,
+                          direction: ModalDirection.right,
                           child: Stack(
                             children: [
                               Positioned(
@@ -117,14 +142,17 @@ class _SliderPageState extends State<SliderPage> {
                               ),
                             ],
                           ),
-                          closeOnClickMask: true,
-                          direction: SliderDirection.right);
+                        ),
+                      );
                     }),
                     SizedBox(
                       height: 20,
                     ),
                     Button('下', full: true, onTap: () {
-                      showSlider(
+                      showModal(
+                        modal: Modal(
+                          closeOnClickMask: true,
+                          direction: ModalDirection.bottom,
                           child: Stack(
                             children: [
                               Positioned(
@@ -143,8 +171,8 @@ class _SliderPageState extends State<SliderPage> {
                               ),
                             ],
                           ),
-                          closeOnClickMask: true,
-                          direction: SliderDirection.bottom);
+                        ),
+                      );
                     }),
                     SizedBox(
                       height: 20,

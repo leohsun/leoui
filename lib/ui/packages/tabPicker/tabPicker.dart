@@ -3,28 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:leoui/config/size.dart';
 import 'package:leoui/config/theme.dart';
-import 'package:leoui/leoui.dart';
+import 'package:leoui/feedback/index.dart';
 import 'package:leoui/ui/packages/scalableText/scalableText.dart';
 import 'package:leoui/utils/index.dart';
 import 'package:leoui/utils/size.dart';
 
 class TabPicker extends StatefulWidget {
   final List<List> dataList;
-  final String columnKey;
-  final String childrenKey;
+  final String? columnKey;
+  final String? childrenKey;
   final LeouiBrightness? brightness;
-  final bool linkage;
-  final double selectorHeight;
+  final bool? linkage;
+  final double? selectorHeight;
+  final ValueChanged? onSubmit;
 
   TabPicker(
       {Key? key,
-      this.columnKey = 'label',
-      this.childrenKey = 'children',
-      this.brightness = LeouiBrightness.light,
-      this.linkage = false,
+      String? columnKey,
+      String? childrenKey,
+      LeouiBrightness? brightness,
+      bool? linkage,
+      this.onSubmit,
       double? selectorHeight,
       required this.dataList})
       : selectorHeight = selectorHeight ?? sz(LeoSize.itemExtent * 4),
+        columnKey = columnKey ?? 'label',
+        childrenKey = childrenKey ?? 'children',
+        brightness = brightness ?? LeouiBrightness.light,
+        linkage = linkage ?? false,
         super(key: key);
 
   @override
@@ -47,7 +53,7 @@ class _TabPickerState extends State<TabPicker>
   }
 
   void _initNextTabData(int columnIdx, int cellIdx) {
-    if (widget.linkage) {
+    if (widget.linkage == true) {
       List? children = columnDataList[columnIdx][cellIdx][widget.childrenKey];
       if (children != null && children.length > 1) {
         if (columnIdx < columnDataList.length - 1) {
@@ -91,12 +97,23 @@ class _TabPickerState extends State<TabPicker>
   }
 
   void handleSelectSubmit() {
-    var submitList = selectedDataList.map((e) {
+    List submitList = selectedDataList.map((e) {
       Map data = Map.from(e);
       data.remove(widget.childrenKey);
       return data;
-    });
-    showAlert(content: submitList.toString());
+    }).toList();
+
+    bool isInModal = ModalScope.of(context) != null;
+
+    if (widget.onSubmit != null) {
+      widget.onSubmit!(submitList);
+    }
+
+    if (isInModal) {
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        ModalScope.of(context)?.closeModal(submitList);
+      });
+    }
   }
 
   @override
@@ -153,65 +170,56 @@ class _TabPickerState extends State<TabPicker>
     LeoThemeData theme = widget.brightness != null
         ? LeoThemeData(brightness: widget.brightness)
         : LeoTheme.of(context);
-    return Container(
-        decoration: BoxDecoration(
-          color: theme.backgroundPrimaryColor,
-          borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
-        ),
-        child: DefaultTabController(
-            length: selectedDataList.length,
-            child: Builder(builder: (BuildContext ctx) {
-              tabContext = ctx;
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: SizeTool.deviceWidth,
-                    child: TabBar(
-                        labelColor: theme.userAccentColor,
-                        indicatorColor: theme.userAccentColor,
-                        isScrollable: true,
-                        tabs: [
-                          ...mapWithIndex(selectedDataList, (data, idx) {
-                            return Container(
-                              height: sz(LeoSize.itemExtent),
-                              child: Center(
-                                child: Text(
-                                  data[widget.columnKey] ?? '请选择',
-                                  style: TextStyle(
-                                      fontSize: sz(LeoSize.fontSize.title)),
-                                ),
-                              ),
-                            );
-                          })
-                        ]),
-                  ),
-                  Container(
-                    height: widget.selectorHeight,
-                    child: TabBarView(
-                      children: [
-                        ...mapWithIndex(columnDataList, (e, idx) {
-                          return _buildTabViewChild(e, idx, theme);
-                        })
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            })));
-  }
-}
-
-class TabViewChild extends StatefulWidget {
-  const TabViewChild({Key? key}) : super(key: key);
-
-  @override
-  _TabViewChildState createState() => _TabViewChildState();
-}
-
-class _TabViewChildState extends State<TabViewChild> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+    return Material(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: SizeTool.devicePadding.bottom),
+        child: Container(
+            decoration: BoxDecoration(
+              color: theme.backgroundPrimaryColor,
+              borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+            ),
+            child: DefaultTabController(
+                length: selectedDataList.length,
+                child: Builder(builder: (BuildContext ctx) {
+                  tabContext = ctx;
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: SizeTool.deviceWidth,
+                        child: TabBar(
+                            labelColor: theme.userAccentColor,
+                            indicatorColor: theme.userAccentColor,
+                            isScrollable: true,
+                            tabs: [
+                              ...mapWithIndex(selectedDataList, (data, idx) {
+                                return Container(
+                                  height: sz(LeoSize.itemExtent),
+                                  child: Center(
+                                    child: Text(
+                                      data[widget.columnKey] ?? '请选择',
+                                      style: TextStyle(
+                                          fontSize: sz(LeoSize.fontSize.title)),
+                                    ),
+                                  ),
+                                );
+                              })
+                            ]),
+                      ),
+                      Container(
+                        height: widget.selectorHeight,
+                        child: TabBarView(
+                          children: [
+                            ...mapWithIndex(columnDataList, (e, idx) {
+                              return _buildTabViewChild(e, idx, theme);
+                            })
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }))),
+      ),
+    );
   }
 }
