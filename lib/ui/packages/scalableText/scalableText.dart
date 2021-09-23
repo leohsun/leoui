@@ -4,7 +4,7 @@ import 'package:leoui/utils/index.dart';
 class ScalableText extends StatelessWidget {
   final String content;
   final double? minFontSize;
-  final int maxLines;
+  final int? maxLines;
   final TextOverflow overflow;
   final TextStyle? style;
   final TextAlign textAlign;
@@ -34,7 +34,10 @@ class ScalableText extends StatelessWidget {
     }
 
     TextPainter _painter = TextPainter(
-        text: TextSpan(text: content, style: style),
+        text: TextSpan(
+          text: content,
+          style: style,
+        ),
         textAlign: textAlign,
         textScaleFactor: 1,
         maxLines: maxLines,
@@ -47,7 +50,7 @@ class ScalableText extends StatelessWidget {
 
         bool isOverflow = _painter.didExceedMaxLines;
 
-        double? currentTextFontSize = _painter.text!.style!.fontSize ??
+        double? currentTextFontSize = _painter.text!.style?.fontSize ??
             DefaultTextStyle.of(context).style.fontSize;
 
         double minTextScaleFactor = double.parse(

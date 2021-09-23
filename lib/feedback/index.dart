@@ -14,7 +14,7 @@ import 'package:leoui/utils/index.dart';
 
 part './model.dart';
 part './actions.dart';
-part 'modal.dart';
+part './modal.dart';
 
 class LeoFeedback {
   static init(

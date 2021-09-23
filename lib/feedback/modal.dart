@@ -1,20 +1,12 @@
 part of leoui.feedback;
 
-enum ModalDirection { left, top, right, bottom, center }
-
 class Modal {
   final Widget child;
   final OverlayEntry entry;
-  final bool gestureResponds;
 
   final Completer dismissCompleter;
 
   get dissmissed => dismissCompleter.future;
-
-  void completedWithPayload(payload) {
-    if (dismissCompleter.isCompleted) return;
-    dismissCompleter.complete(payload);
-  }
 
   void close([payload]) {
     if (!dismissCompleter.isCompleted) {
@@ -30,15 +22,19 @@ class Modal {
       bool? closeOnClickMask,
       bool? noMask,
       bool? autoClose,
-      bool? gestureResponds,
+      bool? dragToClose,
+      double? dragToCloseGap,
+      double? dragToCloseVelocity,
       bool? reverseAnimationWhenClose,
       Curve? curve}) {
     assert(autoClose != true || closeOnClickMask != true,
         'can not provide both autoColse and closeOnClickMask are \'ture\' value');
+    assert(dragToClose != true || direction != ModalDirection.center,
+        'can not procide both [dragToClose = true] and [direction = ModalDirection.center]');
 
     reverseAnimationWhenClose ??= false;
     closeOnClickMask ??= false;
-    gestureResponds ??= false;
+    dragToClose ??= false;
     Completer dismissedCompleter = Completer();
     OverlayEntry? entry;
     GlobalKey<_ModalWidgetState> childKey =
@@ -51,9 +47,11 @@ class Modal {
         duration: duration ?? Duration(milliseconds: 3000),
         closeOnClickMask: closeOnClickMask,
         noMask: noMask ?? false,
-        curve: curve ?? Curves.easeInOut,
+        curve: curve ?? Curves.easeIn,
         autoClose: autoClose ?? false,
-        gestureResponds: gestureResponds,
+        dragToClose: dragToClose,
+        dragToCloseGap: dragToCloseGap ?? 30,
+        dragToCloseVelocity: dragToCloseVelocity ?? 0.1,
         reverseAnimationWhenClose: reverseAnimationWhenClose);
 
     entry = OverlayEntry(
@@ -66,17 +64,16 @@ class Modal {
             ));
 
     return Modal.raw(
-        child: modalWidget,
-        entry: entry,
-        dismissCompleter: dismissedCompleter,
-        gestureResponds: gestureResponds);
+      child: modalWidget,
+      entry: entry,
+      dismissCompleter: dismissedCompleter,
+    );
   }
 
   Modal.raw(
       {required this.child,
       required this.entry,
-      required this.dismissCompleter,
-      required this.gestureResponds});
+      required this.dismissCompleter});
 }
 
 class ModalScope extends InheritedWidget {
@@ -118,7 +115,9 @@ class _ModalWidget extends StatefulWidget {
   final bool autoClose;
   final bool reverseAnimationWhenClose;
   final bool closeOnClickMask;
-  final bool gestureResponds;
+  final bool dragToClose;
+  final double dragToCloseGap;
+  final double dragToCloseVelocity;
   final bool noMask;
   final Curve curve;
 
@@ -130,7 +129,9 @@ class _ModalWidget extends StatefulWidget {
       required this.autoClose,
       required this.reverseAnimationWhenClose,
       required this.curve,
-      required this.gestureResponds,
+      required this.dragToClose,
+      required this.dragToCloseGap,
+      required this.dragToCloseVelocity,
       required this.closeOnClickMask,
       required this.noMask})
       : super(key: key);
@@ -141,8 +142,17 @@ class _ModalWidget extends StatefulWidget {
 class _ModalWidgetState extends State<_ModalWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-
   late Animation<double> _slide;
+
+  Timer? autoCloseCounter;
+
+  double? _left;
+  double _top = 0;
+  double? _right;
+  double? _bottom;
+
+  int tragStartTime = 0;
+  double tragVelocity = 0;
 
   @override
   void initState() {
@@ -159,7 +169,39 @@ class _ModalWidgetState extends State<_ModalWidget>
     _controller.forward();
 
     if (widget.autoClose) {
-      startCounter();
+      autoCloseCounter = Timer(widget.duration, () {
+        ModalScope.of(context)?.closeModal();
+      });
+    }
+
+    switch (widget.direction) {
+      case ModalDirection.left:
+        _left = 0;
+        _bottom = 0;
+        break;
+
+      case ModalDirection.top:
+        _left = 0;
+        _right = 0;
+        break;
+
+      case ModalDirection.right:
+        _right = 0;
+        _left = 0;
+        _bottom = 0;
+        break;
+
+      case ModalDirection.bottom:
+        _left = 0;
+        _right = 0;
+        _bottom = 0;
+        break;
+
+      case ModalDirection.center:
+        _left = 0;
+        _right = 0;
+        _bottom = 0;
+        break;
     }
   }
 
@@ -179,57 +221,55 @@ class _ModalWidgetState extends State<_ModalWidget>
 
   Future reverseAnimation() => _controller.reverse();
 
-  void startCounter() async {
-    await Future.delayed(widget.duration)
-        .then((value) => ModalScope.of(context)?.closeModal());
-  }
-
   void _handleMaskTap() {
     if (widget.closeOnClickMask) {
-      ModalScope.of(context)?.entry!.remove();
+      ModalScope.of(context)?.closeModal();
+      autoCloseCounter?.cancel();
     }
+  }
+
+  void resetCounter() {
+    if (autoCloseCounter != null && !autoCloseCounter!.isActive) {
+      autoCloseCounter = Timer(widget.duration, () {
+        ModalScope.of(context)?.closeModal();
+      });
+    }
+  }
+
+  void handleClose() async {
+    await reverseAnimation();
+    ModalScope.of(context)?.closeModal();
   }
 
   @override
   Widget build(BuildContext context) {
     Offset _offset;
-    double? _left;
-    double? _top;
-    double? _right;
-    double? _bottom;
+
+    bool isTop = widget.direction == ModalDirection.top;
+    bool isBottom = widget.direction == ModalDirection.bottom;
+
+    bool isLeft = widget.direction == ModalDirection.left;
+    bool isRight = widget.direction == ModalDirection.right;
 
     switch (widget.direction) {
       case ModalDirection.left:
         _offset = Offset(_slide.value, 0);
-        _left = 0;
-        _top = 0;
-        _bottom = 0;
-
         break;
+
       case ModalDirection.top:
         _offset = Offset(0, _slide.value);
-        _left = 0;
-        _top = 0;
-        _right = 0;
         break;
+
       case ModalDirection.right:
         _offset = Offset((_slide.value.abs()), 0);
-        _top = 0;
-        _right = 0;
-        _bottom = 0;
         break;
+
       case ModalDirection.bottom:
         _offset = Offset(0, _slide.value.abs());
-        _left = 0;
-        _right = 0;
-        _bottom = 0;
         break;
+
       case ModalDirection.center:
         _offset = Offset.zero;
-        _left = 0;
-        _top = 0;
-        _right = 0;
-        _bottom = 0;
         break;
     }
 
@@ -251,7 +291,7 @@ class _ModalWidgetState extends State<_ModalWidget>
       _children.add(Transform.scale(
         scale: 1.0 + _slide.value,
         child: Opacity(
-            opacity: 1.0 + _slide.value,
+            opacity: (1.0 + _slide.value).clamp(0, 1),
             child: Center(
               child: widget.child,
             )),
@@ -263,7 +303,112 @@ class _ModalWidgetState extends State<_ModalWidget>
           right: _right,
           bottom: _bottom,
           child: FractionalTranslation(
-              translation: _offset, child: widget.child)));
+              translation: _offset,
+              child: widget.dragToClose
+                  ? GestureDetector(
+                      child: widget.child,
+                      onTapDown: (_) {
+                        autoCloseCounter?.cancel();
+                      },
+                      onTapCancel: () {
+                        this.resetCounter();
+                      },
+                      onVerticalDragStart: (_) {
+                        if (!isTop && !isBottom) return;
+                        autoCloseCounter?.cancel();
+                        tragStartTime = DateTime.now().millisecondsSinceEpoch;
+                      },
+                      onVerticalDragUpdate: (DragUpdateDetails details) {
+                        if (!isTop && !isBottom) return;
+                        setState(() {
+                          if (isTop) _top += details.delta.dy;
+                          if (isBottom) _bottom = _bottom! - details.delta.dy;
+                        });
+                      },
+                      onVerticalDragEnd: (_) {
+                        if (!isTop && !isBottom) return;
+                        int tragEndTime = DateTime.now().millisecondsSinceEpoch;
+                        tragVelocity =
+                            _top.abs() / (tragEndTime - tragStartTime);
+
+                        bool achieveLimit = false;
+                        if (isTop) {
+                          achieveLimit =
+                              tragVelocity > widget.dragToCloseVelocity ||
+                                  _top.abs() > widget.dragToCloseGap;
+
+                          if (_top < 0 && achieveLimit) {
+                            handleClose();
+                          } else {
+                            setState(() {
+                              _top = 0;
+                            });
+                            resetCounter();
+                          }
+                        } else if (isBottom) {
+                          achieveLimit =
+                              tragVelocity > widget.dragToCloseVelocity ||
+                                  _bottom!.abs() > widget.dragToCloseGap;
+
+                          if (_bottom! < 0 && achieveLimit) {
+                            handleClose();
+                          } else {
+                            setState(() {
+                              _bottom = 0;
+                            });
+                            resetCounter();
+                          }
+                        }
+                      },
+                      onHorizontalDragStart: (_) {
+                        if (!isLeft && !isRight) return;
+                        autoCloseCounter?.cancel();
+                        tragStartTime = DateTime.now().millisecondsSinceEpoch;
+                      },
+                      onHorizontalDragUpdate: (DragUpdateDetails details) {
+                        if (!isLeft && !isRight) return;
+                        setState(() {
+                          if (isLeft) _left = _left! + details.delta.dx;
+                          if (isRight) _right = _right! - details.delta.dx;
+                        });
+                      },
+                      onHorizontalDragEnd: (_) {
+                        if (!isLeft && !isRight) return;
+                        int tragEndTime = DateTime.now().millisecondsSinceEpoch;
+                        tragVelocity =
+                            _top.abs() / (tragEndTime - tragStartTime);
+
+                        bool achieveLimit = false;
+                        if (isLeft) {
+                          achieveLimit =
+                              tragVelocity > widget.dragToCloseVelocity ||
+                                  _left!.abs() > widget.dragToCloseGap;
+
+                          if (_left! < 0 && achieveLimit) {
+                            handleClose();
+                          } else {
+                            setState(() {
+                              _left = 0;
+                            });
+                            resetCounter();
+                          }
+                        } else if (isRight) {
+                          achieveLimit =
+                              tragVelocity > widget.dragToCloseVelocity ||
+                                  _right!.abs() > widget.dragToCloseGap;
+
+                          if (_right! < 0 && achieveLimit) {
+                            handleClose();
+                          } else {
+                            setState(() {
+                              _right = 0;
+                            });
+                            resetCounter();
+                          }
+                        }
+                      },
+                    )
+                  : widget.child)));
     }
 
     return Stack(

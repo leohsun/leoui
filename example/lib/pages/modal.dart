@@ -31,14 +31,21 @@ class _ModalPageState extends State<ModalPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ListTile(
-                      title: Text('在child里需要关闭Modal，可以调用:'),
+                      title: Text('1、在child里需要关闭Modal，可以调用:'),
                       subtitle:
                           Text('ModalScope.of(context)?.closeModal(payload);'),
                     ),
                     ListTile(
-                      title: Text('[payload]参数传递， 可通过:'),
+                      title: Text('2、[payload]参数传递， 可通过:'),
                       subtitle:
                           Text('\'var result = await showModal(...)\'来接收'),
+                    ),
+                    ListTile(
+                      title: Text(
+                          '3、[tragToClose:true]拖动关闭，\n不适用与[ModalDirection.center]'),
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     Button('中', full: true, onTap: () {
                       showModal(
@@ -68,6 +75,7 @@ class _ModalPageState extends State<ModalPage> {
                       showModal(
                         modal: Modal(
                           closeOnClickMask: true,
+                          dragToClose: true,
                           direction: ModalDirection.left,
                           child: Stack(
                             children: [
@@ -97,6 +105,7 @@ class _ModalPageState extends State<ModalPage> {
                         modal: Modal(
                           closeOnClickMask: true,
                           direction: ModalDirection.top,
+                          dragToClose: true,
                           child: Stack(
                             children: [
                               Positioned(
@@ -124,6 +133,7 @@ class _ModalPageState extends State<ModalPage> {
                         modal: Modal(
                           closeOnClickMask: true,
                           direction: ModalDirection.right,
+                          dragToClose: true,
                           child: Stack(
                             children: [
                               Positioned(
@@ -153,6 +163,7 @@ class _ModalPageState extends State<ModalPage> {
                         modal: Modal(
                           closeOnClickMask: true,
                           direction: ModalDirection.bottom,
+                          dragToClose: true,
                           child: Stack(
                             children: [
                               Positioned(

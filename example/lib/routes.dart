@@ -7,11 +7,13 @@ import 'package:leoui_example/pages/loading.dart';
 import 'package:leoui_example/pages/message.dart';
 import 'package:leoui_example/pages/noticeBar.dart';
 import 'package:leoui_example/pages/popover.dart';
+import 'package:leoui_example/pages/scalable.dart';
 import 'package:leoui_example/pages/selector.dart';
 import 'package:leoui_example/pages/skeleton.dart';
 import 'package:leoui_example/pages/modal.dart';
 import 'package:leoui_example/pages/tabPikcer.dart';
 import 'package:leoui_example/pages/toast.dart';
+import 'package:leoui_example/pages/utils.dart';
 import './pages/home.dart';
 
 Map<String, WidgetBuilder> routes = {
@@ -29,4 +31,6 @@ Map<String, WidgetBuilder> routes = {
   'noticeBar': (BuildContext context) => NoticeBarPage(),
   'inputItem': (BuildContext context) => InputItemPage(),
   'tabPicker': (BuildContext context) => TabPickerPage(),
+  'scalableText': (BuildContext context) => ScalableTextPage(),
+  'utils': (BuildContext context) => UtilsPage(),
 };

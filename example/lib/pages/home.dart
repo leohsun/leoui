@@ -25,8 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             children: [
               Button('modal', full: true, onTap: () async {
-                var res = await showConfirm(content: 'confirm');
-                print(res);
+                showMessage('haha', type: MessageType.error);
               }),
               SizedBox(
                 height: 20,
@@ -49,10 +48,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Container(height: 1, color: Colors.grey.shade100),
                 ListTile(
-                  title: Text('noticeBar - 通知栏'),
+                  title: Text('NoticeBar - 通知栏'),
                   trailing: Icon(Icons.arrow_forward_ios_rounded),
                   onTap: () {
                     Navigator.of(context).pushNamed('noticeBar');
+                  },
+                ),
+                Container(height: 1, color: Colors.grey.shade100),
+                ListTile(
+                  title: Text('ScalableText - 响应尺寸文字'),
+                  trailing: Icon(Icons.arrow_forward_ios_rounded),
+                  onTap: () {
+                    Navigator.of(context).pushNamed('scalableText');
                   },
                 ),
               ]),
@@ -94,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context).pushNamed('selector');
                       },
                     ),
+                    Container(height: 1, color: Colors.grey.shade100),
                     ListTile(
                       title: Text('TabPiker - 多频道选择器'),
                       trailing: Icon(Icons.arrow_forward_ios_rounded),
@@ -149,6 +157,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context).pushNamed('popover');
                       },
                     ),
+                  ]),
+              SizedBox(
+                height: 20,
+              ),
+              Collapse(
+                  title: 'Other - 其他',
+                  leadingColor: Colors.red.shade400,
+                  childern: [
+                    ListTile(
+                      title: Text('Utils - 工具'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('utils');
+                      },
+                    ),
+                    Container(height: 1, color: Colors.grey.shade100),
                   ]),
             ],
           ),

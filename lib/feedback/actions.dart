@@ -16,8 +16,7 @@ Future showLoading({
   bool isDark = brightness == LeouiBrightness.dark;
   LeoThemeData theme = LeoThemeData(brightness: brightness);
   Modal? modal;
-  bool closedByHand = false;
-  Future? autoCloseCounter = duration != null ? Future.delayed(duration) : null;
+  Timer? counter;
 
   modal = Modal(
       child: ClipRRect(
@@ -74,7 +73,7 @@ Future showLoading({
                         BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
                     onPress: () {
                       modal?.close();
-                      closedByHand = true;
+                      counter?.cancel();
                       LeoFeedback.loadingModal = null;
                     },
                     child: Icon(Icons.clear_rounded,
@@ -88,12 +87,8 @@ Future showLoading({
   ));
 
   LeoFeedback.loadingModal = modal;
-  if (autoCloseCounter != null) {
-    autoCloseCounter.then((value) {
-      if (!closedByHand) {
-        hideLoading();
-      }
-    });
+  if (duration != null) {
+    counter = Timer(duration, hideLoading);
   }
   return showModal(modal: modal);
 }
@@ -105,6 +100,7 @@ void hideLoading() {
 }
 
 void noop() {}
+
 Future showLeoDialog(
     {LeouiBrightness? brightness,
     String? title, //窗口标题
@@ -230,6 +226,8 @@ Future showMessage(String message,
       modal: Modal(
     direction: ModalDirection.top,
     reverseAnimationWhenClose: true,
+    dragToClose: true,
+    dragToCloseGap: 15,
     noMask: true,
     autoClose: true,
     duration: duration,
@@ -242,10 +240,6 @@ Future showMessage(String message,
           color: _bgColor,
           borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
           onPress: onPress,
-          onLongPress: () {
-            print('long press');
-            // isLongPress = true;
-          },
           child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: sz(LeoSize.fontSize.title),

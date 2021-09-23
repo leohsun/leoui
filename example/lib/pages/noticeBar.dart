@@ -15,7 +15,7 @@ class NoticeBarPage extends StatelessWidget {
               Navigator.of(context).pop();
             },
             icon: Icon(Icons.arrow_back_ios_new_rounded)),
-        title: Text('noticeBar-通知栏'),
+        title: Text('NoticeBar-通知栏'),
       ),
       body: SafeArea(
         bottom: false,

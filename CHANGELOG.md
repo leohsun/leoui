@@ -1,3 +1,7 @@
+## 0.0.3
+
+- Modal support drag action.
+
 ## 0.0.2
 
 - optimized feedback.
