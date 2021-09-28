@@ -27,7 +27,7 @@ class ButtonProperties {
   final bool loading;
   final bool disabled;
   final bool square;
-  final LeoMaterialColor? color;
+  final Color? color;
   final String data;
   final VoidCallback? onTap;
 

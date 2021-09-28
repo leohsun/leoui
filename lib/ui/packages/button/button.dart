@@ -15,7 +15,7 @@ class Button extends StatefulWidget {
   final bool loading;
   final bool disabled;
   final bool square;
-  final LeoMaterialColor? color;
+  final Color? color;
   final Border? border;
   final BorderRadius? borderRadius;
   final String data;
@@ -69,6 +69,7 @@ class _ButtonState extends State<Button> {
 
   @override
   Widget build(BuildContext context) {
+    LeoThemeData theme = LeoTheme.of(context);
     BorderRadius? borderRadius = widget.circle
         ? BorderRadius.circular(100)
         : widget.square
@@ -81,7 +82,7 @@ class _ButtonState extends State<Button> {
         widget.full ? MainAxisSize.max : MainAxisSize.min;
     double padding = sz(20);
 
-    LeoMaterialColor _widgetColor = widget.color ?? LeoColors.primary;
+    Color _widgetColor = widget.color ?? theme.userAccentColor;
 
     Color backgroundColor =
         widget.type == ButtonType.primary ? _widgetColor : Colors.white;

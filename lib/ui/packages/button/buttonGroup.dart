@@ -13,7 +13,7 @@ class ButtonGroup extends StatefulWidget {
   final bool? disabled;
   final ButtonType type;
   final ButtonSize size;
-  final LeoMaterialColor? color;
+  final Color? color;
   final List<Button> children;
 
   const ButtonGroup(
@@ -22,7 +22,7 @@ class ButtonGroup extends StatefulWidget {
       this.square = false,
       this.full = false,
       this.disabled,
-      LeoMaterialColor? color,
+      this.color,
       required this.children,
       this.type = ButtonType.primary,
       this.size = ButtonSize.nomarl})
@@ -34,9 +34,6 @@ class ButtonGroup extends StatefulWidget {
           children.length > 1,
           'chidren length must be greater than 1',
         ),
-        color = type == ButtonType.secondary && color == null
-            ? LeoColors.primary
-            : color,
         super(key: key);
 
   @override
@@ -44,6 +41,8 @@ class ButtonGroup extends StatefulWidget {
 }
 
 class ButtonGroupState extends State<ButtonGroup> {
+  late LeoThemeData theme;
+
   late List<Widget> _children;
 
   late bool onlyTwo = widget.children.length == 2;
@@ -63,7 +62,7 @@ class ButtonGroupState extends State<ButtonGroup> {
 
       if (widget.type == ButtonType.secondary && widget.children.length > 2) {
         _border =
-            Border.all(width: 1, color: widget.color ?? LeoColors.primary);
+            Border.all(width: 1, color: widget.color ?? theme.userAccentColor);
       }
 
       if (i == 0) {
@@ -82,7 +81,7 @@ class ButtonGroupState extends State<ButtonGroup> {
                     ? Colors.white
                     : widget.color ??
                         _buttonProperties.color ??
-                        LeoColors.primary)
+                        theme.userAccentColor)
             : null;
       } else if (i == widget.children.length - 1) {
         _borderRadius = widget.circle
@@ -101,18 +100,18 @@ class ButtonGroupState extends State<ButtonGroup> {
                     ? Colors.white
                     : widget.color ??
                         _buttonProperties.color ??
-                        LeoColors.primary)
+                        theme.userAccentColor)
             : null;
       } else if (i > 0 && i < widget.children.length - 2) {
         _borderRadius = null;
         _border = widget.type == ButtonType.secondary
             ? Border(
                 top: BorderSide(
-                    width: 1, color: widget.color ?? LeoColors.primary),
+                    width: 1, color: widget.color ?? theme.userAccentColor),
                 right: BorderSide(
-                    width: 1, color: widget.color ?? LeoColors.primary),
+                    width: 1, color: widget.color ?? theme.userAccentColor),
                 bottom: BorderSide(
-                    width: 1, color: widget.color ?? LeoColors.primary))
+                    width: 1, color: widget.color ?? theme.userAccentColor))
             : null;
       } else {
         // the last third one
@@ -120,9 +119,9 @@ class ButtonGroupState extends State<ButtonGroup> {
         _border = widget.type == ButtonType.secondary
             ? Border(
                 top: BorderSide(
-                    width: 1, color: widget.color ?? LeoColors.primary),
+                    width: 1, color: widget.color ?? theme.userAccentColor),
                 bottom: BorderSide(
-                    width: 1, color: widget.color ?? LeoColors.primary))
+                    width: 1, color: widget.color ?? theme.userAccentColor))
             : null;
       }
 
@@ -176,30 +175,14 @@ class ButtonGroupState extends State<ButtonGroup> {
   }
 
   @override
-  void initState() {
-    // assert(() {
-    //   bool isAllChildrenAreButton = false;
-    //   widget.children.forEach((element) {
-    //     isAllChildrenAreButton = element.runtimeType == Button;
-    //   });
-    //   if (!isAllChildrenAreButton) {
-    //     throw 'each child of children property must be \'Button\'';
-    //   }
-    //   return true;
-    // }());
-
-    _assembleChildrenList();
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    theme = LeoTheme.of(context);
+    _assembleChildrenList();
     if (onlyTwo && widget.type == ButtonType.secondary) {
       return DecoratedBox(
         decoration: BoxDecoration(
-          border:
-              Border.all(width: 1, color: widget.color ?? LeoColors.primary),
+          border: Border.all(
+              width: 1, color: widget.color ?? theme.userAccentColor),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(

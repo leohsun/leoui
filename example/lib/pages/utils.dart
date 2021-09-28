@@ -31,8 +31,10 @@ class _UtilsPageState extends State<UtilsPage> {
               child: Text('hex(#f2f2f2)'),
             ),
             ListTile(
-              title: ScalableText(
-                  '2、List mapWithIndex(List data, MapWithIndexCallBack cb)'),
+              title: Text(
+                '2、List mapWithIndex(List data,\n MapWithIndexCallBack cb)',
+                maxLines: 2,
+              ),
               subtitle: Text('map方法，可同时返回item及index'),
             ),
             Container(
@@ -47,7 +49,7 @@ class _UtilsPageState extends State<UtilsPage> {
             ),
             ListTile(
               title: Text('3、SizeTool()'),
-              subtitle: Text('尺寸工具：\n可更具设计图缩放尺寸、获取设备尺寸'),
+              subtitle: Text('尺寸工具：\n可根据设计图缩放尺寸、获取设备尺寸'),
             ),
             Container(
               padding: EdgeInsets.all(12),

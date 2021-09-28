@@ -24,12 +24,6 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Button('modal', full: true, onTap: () async {
-                showMessage('haha', type: MessageType.error);
-              }),
-              SizedBox(
-                height: 20,
-              ),
               Collapse(title: 'Basic - 基础', childern: [
                 ListTile(
                   title: Text('Button - 按钮'),
