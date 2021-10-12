@@ -8,6 +8,7 @@ import 'package:leoui_example/pages/message.dart';
 import 'package:leoui_example/pages/noticeBar.dart';
 import 'package:leoui_example/pages/popover.dart';
 import 'package:leoui_example/pages/scalable.dart';
+import 'package:leoui_example/pages/searchBar.dart';
 import 'package:leoui_example/pages/selector.dart';
 import 'package:leoui_example/pages/skeleton.dart';
 import 'package:leoui_example/pages/modal.dart';
@@ -33,4 +34,5 @@ Map<String, WidgetBuilder> routes = {
   'tabPicker': (BuildContext context) => TabPickerPage(),
   'scalableText': (BuildContext context) => ScalableTextPage(),
   'utils': (BuildContext context) => UtilsPage(),
+  'searchBar': (BuildContext context) => SearchBarPage(),
 };

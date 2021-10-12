@@ -147,13 +147,16 @@ Future showTabPicker(
       modal: Modal(
           direction: ModalDirection.bottom,
           reverseAnimationWhenClose: true,
-          child: TabPicker(
-            dataList: dataList,
-            columnKey: columnKey,
-            childrenKey: childrenKey,
-            brightness: brightness,
-            linkage: linkage,
-            selectorHeight: selectorHeight,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: TabPicker(
+              dataList: dataList,
+              columnKey: columnKey,
+              childrenKey: childrenKey,
+              brightness: brightness,
+              linkage: linkage,
+              selectorHeight: selectorHeight,
+            ),
           )));
 }
 
@@ -177,20 +180,23 @@ Future showSelector(
       "when 'linkage' is ture then 'count' must be provided");
   return showModal(
       modal: Modal(
-          reverseAnimationWhenClose: true,
-          direction: ModalDirection.bottom,
-          child: Selector(
-              dataList: dataList,
-              count: count,
-              title: title,
-              cancleText: cancleText,
-              cancleTextColor: cancleTextColor,
-              confirmText: confirmText,
-              confirmTextTextColor: confirmTextTextColor,
-              columnKey: columnKey,
-              brightness: brightness,
-              selectorHeight: selectorHeight,
-              hideHeader: hideHeader = false)));
+    reverseAnimationWhenClose: true,
+    direction: ModalDirection.bottom,
+    child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Selector(
+            dataList: dataList,
+            count: count,
+            title: title,
+            cancleText: cancleText,
+            cancleTextColor: cancleTextColor,
+            confirmText: confirmText,
+            confirmTextTextColor: confirmTextTextColor,
+            columnKey: columnKey,
+            brightness: brightness,
+            selectorHeight: selectorHeight,
+            hideHeader: hideHeader = false)),
+  ));
 }
 
 Future showMessage(String message,

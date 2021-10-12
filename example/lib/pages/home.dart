@@ -80,6 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                     Container(height: 1, color: Colors.grey.shade100),
+                    ListTile(
+                      title: Text('SearchBar - 搜索栏'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('searchBar');
+                      },
+                    ),
                   ]),
               SizedBox(
                 height: 20,

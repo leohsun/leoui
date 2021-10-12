@@ -48,37 +48,45 @@ class LeouiLocalization {
       'notMathHint': 'is not matched',
       'warning': 'warning',
       'toastDefaultSuccessMessage': 'Operation succeeded',
-      'toastDefaultWarningMessage': 'Operation failed'
+      'toastDefaultWarningMessage': 'Operation failed',
+      'tabPickerSelectHintText': 'select',
+      'search': 'search',
     },
     'zh': {
-      'confirm': '确定',
+      'confirm': '确认',
       'cancel': '取消',
       'demo': '示例',
       'emptyHint': '不能为空',
       'notMathHint': '格式不匹配',
       'warning': '警告',
       'toastDefaultSuccessMessage': '操作成功',
-      'toastDefaultFailMessage': '操作失败'
+      'toastDefaultFailMessage': '操作失败',
+      'tabPickerSelectHintText': '请选择',
+      'search': '搜索',
     },
     'zh_Hans': {
-      'confirm': '确定',
+      'confirm': '确认',
       'cancel': '取消',
       'demo': '示例',
       'emptyHint': '不能为空',
       'notMathHint': '格式不匹配',
       'warning': '警告',
       'toastDefaultSuccessMessage': '操作成功',
-      'toastDefaultFailMessage': '操作失败'
+      'toastDefaultFailMessage': '操作失败',
+      'tabPickerSelectHintText': '请选择',
+      'search': '搜索',
     },
     'zh_Hant': {
-      'confirm': '確定',
+      'confirm': '確認',
       'cancel': '取消',
-      'demo': '舉例',
+      'demo': '演示',
       'emptyHint': '不能為空',
       'notMathHint': '格式不匹配',
       'warning': '警告',
       'toastDefaultSuccessMessage': '操作成功',
-      'toastDefaultFailMessage': '操作失敗'
+      'toastDefaultFailMessage': '操作失敗',
+      'tabPickerSelectHintText': '請選擇',
+      'search': '搜尋',
     },
   };
 
@@ -112,6 +120,14 @@ class LeouiLocalization {
 
   String get toastDefaultFailMessage {
     return _localizedValues[languageName]!['toastDefaultFailMessage']!;
+  }
+
+  String get tabPickerSelectHintText {
+    return _localizedValues[languageName]!['tabPickerSelectHintText']!;
+  }
+
+  String get search {
+    return _localizedValues[languageName]!['search']!;
   }
 
   static get delegate => LeouiLocalizationDelegate();

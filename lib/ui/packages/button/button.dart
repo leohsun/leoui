@@ -74,7 +74,8 @@ class _ButtonState extends State<Button> {
         ? BorderRadius.circular(100)
         : widget.square
             ? null
-            : widget.borderRadius ?? BorderRadius.circular(sz(8));
+            : widget.borderRadius ??
+                BorderRadius.circular(sz(LeoSize.cardBorderRadius));
 
     Map size = sizeList[widget.size.index];
 
@@ -129,31 +130,34 @@ class _ButtonState extends State<Button> {
 
     return Opacity(
       opacity: widget.disabled ? 0.3 : 1,
-      child: Material(
-        color: backgroundColor,
-        elevation: widget.inGroup ? 0 : 4,
+      child: ClipRRect(
         borderRadius: borderRadius,
-        child: InkWell(
-            highlightColor: Colors.transparent,
-            borderRadius: borderRadius,
-            onTap: widget.disabled ? null : widget.onTap,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: borderRadius,
-                border: _border,
-              ),
-              constraints: BoxConstraints(
-                  minHeight: size['height'], maxWidth: _maxWidth - padding),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding),
-                child: Row(
-                  mainAxisSize: mainAxisSize,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: children,
+        child: Material(
+          color: backgroundColor,
+          elevation: widget.inGroup ? 0 : 4,
+          borderRadius: borderRadius,
+          child: InkWell(
+              highlightColor: Colors.transparent,
+              borderRadius: borderRadius,
+              onTap: widget.disabled ? null : widget.onTap,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: borderRadius,
+                  border: _border,
                 ),
-              ),
-            )),
+                constraints: BoxConstraints(
+                    minHeight: size['height'], maxWidth: _maxWidth - padding),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: padding),
+                  child: Row(
+                    mainAxisSize: mainAxisSize,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: children,
+                  ),
+                ),
+              )),
+        ),
       ),
     );
   }

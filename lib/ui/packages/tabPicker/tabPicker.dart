@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:leoui/config/index.dart';
 import 'package:leoui/config/size.dart';
 import 'package:leoui/config/theme.dart';
 import 'package:leoui/feedback/index.dart';
@@ -10,6 +11,7 @@ import 'package:leoui/utils/size.dart';
 
 class TabPicker extends StatefulWidget {
   final List<List> dataList;
+  final String? selectHintText;
   final String? columnKey;
   final String? childrenKey;
   final LeouiBrightness? brightness;
@@ -21,6 +23,7 @@ class TabPicker extends StatefulWidget {
       {Key? key,
       String? columnKey,
       String? childrenKey,
+      this.selectHintText,
       LeouiBrightness? brightness,
       bool? linkage,
       this.onSubmit,
@@ -182,6 +185,8 @@ class _TabPickerState extends State<TabPicker>
                 length: selectedDataList.length,
                 child: Builder(builder: (BuildContext ctx) {
                   tabContext = ctx;
+                  final hintText = widget.selectHintText ??
+                      LeouiLocalization.of(context).tabPickerSelectHintText;
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -197,7 +202,7 @@ class _TabPickerState extends State<TabPicker>
                                   height: sz(LeoSize.itemExtent),
                                   child: Center(
                                     child: Text(
-                                      data[widget.columnKey] ?? '请选择',
+                                      data[widget.columnKey] ?? hintText,
                                       style: TextStyle(
                                           fontSize: sz(LeoSize.fontSize.title)),
                                     ),

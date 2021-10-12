@@ -1,1 +1,1 @@
-
+typedef LoadingAsyncAction = Future Function();

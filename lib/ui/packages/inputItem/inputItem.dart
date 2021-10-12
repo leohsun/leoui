@@ -22,34 +22,38 @@ class InputItem extends StatefulWidget implements ListItem {
   final TextAlign textAlign; // 文字对齐方式
   final bool obscureText; // 加密文字
   final ValueChanged<String>? onChanged; // 输入框change时回调
+  final ValueChanged<String>? onFocus; //输入框聚焦时回调
+  final ValueChanged<String>? onBlur; //输入框聚失焦时回调
   final RegExp? validatePattern; // 表单校验码规则 --> RegExp(r'^[a-z][a-z\d]{3,}$')
   final String? patternDescript; // 表单正确格式描述 --> 小写字母开头，包含数字，不小于3位
   final String? fieldKey; // 用于Field导出数据的key --> {'username':'kim'}
   final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
-  const InputItem(
-      {Key? key,
-      this.title,
-      this.icon,
-      this.leading,
-      this.content,
-      this.defaultValue,
-      this.addon,
-      this.placeholder,
-      this.disabled = false,
-      this.verticalPadding,
-      this.solid = true,
-      this.type = TextInputType.text,
-      this.clearable = true,
-      this.readonly = false,
-      this.textAlign = TextAlign.left,
-      this.obscureText = false,
-      this.onChanged,
-      this.validatePattern,
-      this.maxLength,
-      this.fieldKey,
-      this.fieldLabel,
-      this.patternDescript})
-      : assert(
+  const InputItem({
+    Key? key,
+    this.title,
+    this.icon,
+    this.leading,
+    this.content,
+    this.defaultValue,
+    this.addon,
+    this.placeholder,
+    this.disabled = false,
+    this.verticalPadding,
+    this.solid = true,
+    this.type = TextInputType.text,
+    this.clearable = true,
+    this.readonly = false,
+    this.textAlign = TextAlign.left,
+    this.obscureText = false,
+    this.onChanged,
+    this.onFocus,
+    this.onBlur,
+    this.validatePattern,
+    this.maxLength,
+    this.fieldKey,
+    this.fieldLabel,
+    this.patternDescript,
+  })  : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
             'when validatePattern is not null then fieldKey and fieldLable must be provided'),
         assert(leading == null || (title == null && icon == null),
@@ -57,7 +61,7 @@ class InputItem extends StatefulWidget implements ListItem {
         super(key: key);
 
   @override
-  _InputItemState createState() => _InputItemState();
+  InputItemState createState() => InputItemState();
 
   @override
   Widget? get child => null;
@@ -69,7 +73,7 @@ class InputItem extends StatefulWidget implements ListItem {
   String? get itemLabel => fieldLabel;
 }
 
-class _InputItemState extends State<InputItem> implements ListItemState {
+class InputItemState extends State<InputItem> implements ListItemState {
   FocusNode focusNode = FocusNode();
 
   bool showCloseButton = false;
@@ -77,6 +81,16 @@ class _InputItemState extends State<InputItem> implements ListItemState {
   String value = '';
 
   TextEditingController _controller = TextEditingController();
+
+  String blur() {
+    focusNode.unfocus();
+    return value;
+  }
+
+  String focus() {
+    focusNode.requestFocus();
+    return value;
+  }
 
   @override
   void initState() {
@@ -86,6 +100,18 @@ class _InputItemState extends State<InputItem> implements ListItemState {
       value = widget.defaultValue!;
       showCloseButton = value.isNotEmpty;
     }
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        if (widget.onFocus != null) {
+          widget.onFocus!(value);
+        }
+      } else {
+        if (widget.onBlur != null) {
+          widget.onBlur!(value);
+        }
+      }
+    });
   }
 
   Widget _buildLeading(LeoThemeData theme) {
@@ -149,7 +175,6 @@ class _InputItemState extends State<InputItem> implements ListItemState {
             showCloseButton = input.isNotEmpty;
           });
         }
-
         if (widget.onChanged != null) {
           widget.onChanged!(input);
         }
@@ -157,6 +182,7 @@ class _InputItemState extends State<InputItem> implements ListItemState {
       decoration: InputDecoration(
           border: InputBorder.none,
           hintText: widget.placeholder,
+          isDense: true,
           contentPadding:
               EdgeInsets.symmetric(vertical: widget.verticalPadding ?? 0)),
       style: TextStyle(
