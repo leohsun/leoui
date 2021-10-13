@@ -158,7 +158,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   void initState() {
     super.initState();
     _controller =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
 
     _slide = Tween<double>(begin: -1, end: 0)
         .animate(CurvedAnimation(parent: _controller, curve: widget.curve)

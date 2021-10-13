@@ -131,7 +131,10 @@ class _DialogPageState extends State<DialogPage> {
                       color: LeoColors.warn,
                       onTap: () {
                         showLeoDialog(
-                            slot: Image.asset('assets/langzhong.jpeg'),
+                            slot: Image.asset(
+                              'assets/langzhong.jpeg',
+                              fit: BoxFit.cover,
+                            ),
                             title: '阆中古城',
                             content:
                                 '阆（làng）中古城，是国家AAAAA级旅游景区，千年古县，中国春节文化之乡，中国四大古城之一。',
@@ -156,7 +159,10 @@ class _DialogPageState extends State<DialogPage> {
                       title: Text('组件示例'),
                     ),
                     Dialog(
-                      slot: Image.asset('assets/langzhong.jpeg'),
+                      slot: Image.asset(
+                        'assets/langzhong.jpeg',
+                        fit: BoxFit.cover,
+                      ),
                       title: '阆中古城',
                       content:
                           '阆（làng）中古城，是国家AAAAA级旅游景区，千年古县，中国春节文化之乡，中国四大古城之一。',

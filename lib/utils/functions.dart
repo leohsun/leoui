@@ -59,8 +59,8 @@ Widget buildBlurWidget({required Widget child, BorderRadius? borderRadius}) {
     borderRadius: borderRadius ?? BorderRadius.circular(12),
     child: BackdropFilter(
       filter: ImageFilter.blur(
-        sigmaX: 0,
-        sigmaY: 0,
+        sigmaX: 0.001,
+        sigmaY: 0.001,
       ),
       child: child,
     ),

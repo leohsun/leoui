@@ -12,3 +12,4 @@ export './packages/noticeBar/noticeBar.dart';
 export './packages/inputItem/inputItem.dart';
 export './packages/tabPicker/tabPicker.dart';
 export './packages/searchBar/searchBar.dart';
+export './packages/indexes/indexes.dart';

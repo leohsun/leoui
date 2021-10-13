@@ -46,7 +46,7 @@ class _TabPickerPageState extends State<TabPickerPage> {
                           content: content.isNotEmpty ? Text(content) : null,
                           arrow: true,
                           onTap: () async {
-                            List<Map> result = await showTabPicker(dataList: [
+                            List<Map>? result = await showTabPicker(dataList: [
                               [
                                 {
                                   "value": "pk",
@@ -93,6 +93,7 @@ class _TabPickerPageState extends State<TabPickerPage> {
                                 },
                               ]
                             ], linkage: true);
+                            if (result == null) return;
                             setState(() {
                               var res = result.reduce((s, n) =>
                                   ({"label": "${s['label']}-${n['label']}"}));

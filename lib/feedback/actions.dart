@@ -140,6 +140,7 @@ Future showTabPicker(
     {required List<List> dataList,
     String? columnKey,
     String? childrenKey,
+    String? selectHintText,
     LeouiBrightness? brightness,
     bool? linkage,
     double? selectorHeight}) {
@@ -147,12 +148,14 @@ Future showTabPicker(
       modal: Modal(
           direction: ModalDirection.bottom,
           reverseAnimationWhenClose: true,
+          closeOnClickMask: true,
           child: Align(
             alignment: Alignment.bottomCenter,
             child: TabPicker(
               dataList: dataList,
               columnKey: columnKey,
               childrenKey: childrenKey,
+              selectHintText: selectHintText,
               brightness: brightness,
               linkage: linkage,
               selectorHeight: selectorHeight,
