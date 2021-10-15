@@ -81,11 +81,11 @@ class Leoui extends StatelessWidget {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQueryData.fromWindow(WidgetsBinding.instance!.window),
-      child: LeoTheme(
-        theme: config.theme,
+      child: LeouiTheme(
+        theme: LeouiThemeData(brightness: config.brightness),
         child: DefaultTextStyle(
             style: TextStyle(
-              color: LeoTheme.of(context).labelPrimaryColor,
+              color: LeouiTheme.of(context).labelPrimaryColor,
             ),
             child: Localizations(
               delegates: localizationsDelegates.toList(),

@@ -69,13 +69,11 @@ class _ButtonState extends State<Button> {
 
   @override
   Widget build(BuildContext context) {
-    LeoThemeData theme = LeoTheme.of(context);
     BorderRadius? borderRadius = widget.circle
         ? BorderRadius.circular(100)
         : widget.square
             ? null
-            : widget.borderRadius ??
-                BorderRadius.circular(sz(LeoSize.cardBorderRadius));
+            : widget.borderRadius ?? BorderRadius.circular(sz(8));
 
     Map size = sizeList[widget.size.index];
 
@@ -83,7 +81,7 @@ class _ButtonState extends State<Button> {
         widget.full ? MainAxisSize.max : MainAxisSize.min;
     double padding = sz(20);
 
-    Color _widgetColor = widget.color ?? theme.userAccentColor;
+    Color _widgetColor = widget.color ?? LeoColors.primary;
 
     Color backgroundColor =
         widget.type == ButtonType.primary ? _widgetColor : Colors.white;
@@ -130,34 +128,31 @@ class _ButtonState extends State<Button> {
 
     return Opacity(
       opacity: widget.disabled ? 0.3 : 1,
-      child: ClipRRect(
+      child: Material(
+        color: backgroundColor,
+        elevation: widget.inGroup ? 0 : 4,
         borderRadius: borderRadius,
-        child: Material(
-          color: backgroundColor,
-          elevation: widget.inGroup ? 0 : 4,
-          borderRadius: borderRadius,
-          child: InkWell(
-              highlightColor: Colors.transparent,
-              borderRadius: borderRadius,
-              onTap: widget.disabled ? null : widget.onTap,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: borderRadius,
-                  border: _border,
+        child: InkWell(
+            highlightColor: Colors.transparent,
+            borderRadius: borderRadius,
+            onTap: widget.disabled ? null : widget.onTap,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+                border: _border,
+              ),
+              constraints: BoxConstraints(
+                  minHeight: size['height'], maxWidth: _maxWidth - padding),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: padding),
+                child: Row(
+                  mainAxisSize: mainAxisSize,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: children,
                 ),
-                constraints: BoxConstraints(
-                    minHeight: size['height'], maxWidth: _maxWidth - padding),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: padding),
-                  child: Row(
-                    mainAxisSize: mainAxisSize,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: children,
-                  ),
-                ),
-              )),
-        ),
+              ),
+            )),
       ),
     );
   }

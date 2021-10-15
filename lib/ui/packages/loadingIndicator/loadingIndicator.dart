@@ -140,7 +140,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
 
   @override
   Widget build(BuildContext context) {
-    LeoThemeData theme = LeoTheme.of(context);
+    LeouiThemeData theme = LeouiTheme.of(context);
 
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,

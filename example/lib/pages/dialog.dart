@@ -99,7 +99,7 @@ class _DialogPageState extends State<DialogPage> {
                         text: TextSpan(
                             text: "DialogButton(\n  handler: (",
                             style: TextStyle(
-                                color: LeoTheme.of(context).labelPrimaryColor,
+                                color: LeouiTheme.of(context).labelPrimaryColor,
                                 height: 1.4),
                             children: [
                               TextSpan(

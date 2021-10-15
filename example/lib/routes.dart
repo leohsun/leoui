@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leoui_example/pages/button.dart';
 import 'package:leoui_example/pages/dialog.dart';
 import 'package:leoui_example/pages/field.dart';
+import 'package:leoui_example/pages/indexes.dart';
 import 'package:leoui_example/pages/inputItem.dart';
 import 'package:leoui_example/pages/loading.dart';
 import 'package:leoui_example/pages/message.dart';
@@ -35,4 +36,5 @@ Map<String, WidgetBuilder> routes = {
   'scalableText': (BuildContext context) => ScalableTextPage(),
   'utils': (BuildContext context) => UtilsPage(),
   'searchBar': (BuildContext context) => SearchBarPage(),
+  'indexes': (BuildContext context) => IndexesPage(),
 };

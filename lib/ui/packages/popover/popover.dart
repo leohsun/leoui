@@ -44,7 +44,7 @@ class _PopoverState extends State<Popover> with SingleTickerProviderStateMixin {
 
   bool isExpanded = false;
 
-  late LeoThemeData theme;
+  late LeouiThemeData theme;
 
   double gap = 30;
 
@@ -210,8 +210,8 @@ class _PopoverState extends State<Popover> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     theme = widget.brightness != null
-        ? LeoThemeData(brightness: Brightness)
-        : LeoTheme.of(context);
+        ? LeouiThemeData(brightness: Brightness)
+        : LeouiTheme.of(context);
     List<Widget> _children = [
       Flexible(child: widget.child),
     ];

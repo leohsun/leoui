@@ -92,6 +92,22 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 20,
               ),
               Collapse(
+                  title: 'Navigation - 导航',
+                  leadingColor: Colors.purple.shade400,
+                  childern: [
+                    ListTile(
+                      title: Text('Indexes - 索引选择器'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('indexes');
+                      },
+                    ),
+                    Container(height: 1, color: Colors.grey.shade100),
+                  ]),
+              SizedBox(
+                height: 20,
+              ),
+              Collapse(
                   title: 'Feedback - 反馈',
                   leadingColor: Colors.orange.shade400,
                   childern: [

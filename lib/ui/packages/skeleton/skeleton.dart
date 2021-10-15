@@ -38,7 +38,7 @@ class _SkeletonState extends State<Skeleton>
 
   @override
   Widget build(BuildContext context) {
-    LeoThemeData theme = LeoTheme.of(context);
+    LeouiThemeData theme = LeouiTheme.of(context);
     return ShaderMask(
         shaderCallback: (Rect bounds) {
           return LinearGradient(

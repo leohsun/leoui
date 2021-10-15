@@ -14,7 +14,7 @@ Future showLoading({
 
   bool showTitle = title != 'none';
   bool isDark = brightness == LeouiBrightness.dark;
-  LeoThemeData theme = LeoThemeData(brightness: brightness);
+  LeouiThemeData theme = LeouiThemeData(brightness: brightness);
   Modal? modal;
   Timer? counter;
 
@@ -31,7 +31,7 @@ Future showLoading({
             decoration: BoxDecoration(
               color: theme.dialogBackgroundColor,
               borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
-              //          boxShadow: LeoTheme.of(LeoFeedback.currentContext!).boxShadow,
+              //          boxShadow: LeouiTheme.of(LeoFeedback.currentContext!).boxShadow,
             ),
           )),
           Positioned.fill(
@@ -214,21 +214,21 @@ Future showMessage(String message,
   switch (type) {
     case MessageType.success:
       _icon = Icons.check_circle_outline;
-      _bgColor = LeoTheme.of(LeoFeedback.currentContext!).baseGreenColor;
+      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseGreenColor;
       break;
     case MessageType.error:
       _icon = Icons.error;
-      _bgColor = LeoTheme.of(LeoFeedback.currentContext!).baseRedColor;
+      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseRedColor;
       HapticFeedback.lightImpact();
       break;
     case MessageType.warning:
       _icon = Icons.remove_circle;
-      _bgColor = LeoTheme.of(LeoFeedback.currentContext!).baseOrangeColor;
+      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseOrangeColor;
       HapticFeedback.lightImpact();
       break;
     case MessageType.info:
       _icon = Icons.info_outline;
-      _bgColor = LeoTheme.of(LeoFeedback.currentContext!).baseTealColor;
+      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseTealColor;
       break;
   }
   return showModal(
@@ -291,7 +291,7 @@ Future showToast(String? msg,
     {Duration? duration,
     LeouiBrightness brightness = LeouiBrightness.dark,
     ToastType? type}) {
-  LeoThemeData theme = LeoThemeData(brightness: brightness);
+  LeouiThemeData theme = LeouiThemeData(brightness: brightness);
 
   bool isDark = brightness == LeouiBrightness.dark;
 
@@ -358,7 +358,7 @@ Future showToast(String? msg,
         decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
-            boxShadow: LeoTheme.of(LeoFeedback.currentContext!).boxShadow),
+            boxShadow: LeouiTheme.of(LeoFeedback.currentContext!).boxShadow),
         child: buildBlurWidget(
           borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
           child: Padding(
@@ -393,7 +393,7 @@ Future showAlert(
             modal?.close();
             if (onConfirm != null) onConfirm();
           },
-          color: LeoThemeData(brightness: brightness).userAccentColor,
+          color: LeouiThemeData(brightness: brightness).userAccentColor,
           bold: true,
           text: LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
     ],
@@ -419,7 +419,7 @@ Future showConfirm(
           modal?.close('cancel');
           if (onCancel != null) onCancel();
         },
-        color: LeoThemeData(brightness: brightness).labelPrimaryColor,
+        color: LeouiThemeData(brightness: brightness).labelPrimaryColor,
         text: LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
     DialogButton(
         handler: (ctx) {
@@ -427,7 +427,7 @@ Future showConfirm(
           if (onConfirm != null) onConfirm();
         },
         bold: true,
-        color: LeoThemeData(brightness: brightness).userAccentColor,
+        color: LeouiThemeData(brightness: brightness).userAccentColor,
         text: LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
   ];
 

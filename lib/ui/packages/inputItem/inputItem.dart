@@ -11,7 +11,8 @@ class InputItem extends StatefulWidget implements ListItem {
   final String? defaultValue; //默认值
   final int? maxLength; //最大输入字数长度
   final Widget? content; //描述内容
-  final TextInputType? type; // 输入类型
+  final TextInputType? inputType; // 输入类型
+  final TextInputAction? inputAction; //键盘类型
   final Widget? addon; //附加文案
   final String? placeholder; //提示文本
   final bool disabled; // 是否禁用项目
@@ -24,10 +25,13 @@ class InputItem extends StatefulWidget implements ListItem {
   final ValueChanged<String>? onChanged; // 输入框change时回调
   final ValueChanged<String>? onFocus; //输入框聚焦时回调
   final ValueChanged<String>? onBlur; //输入框聚失焦时回调
+  final ValueChanged<String>? onSubmit; //输入框聚失焦时回调
   final RegExp? validatePattern; // 表单校验码规则 --> RegExp(r'^[a-z][a-z\d]{3,}$')
   final String? patternDescript; // 表单正确格式描述 --> 小写字母开头，包含数字，不小于3位
   final String? fieldKey; // 用于Field导出数据的key --> {'username':'kim'}
   final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
+  final LeouiBrightness? brightness; // 主题 dark 、light
+
   const InputItem({
     Key? key,
     this.title,
@@ -40,7 +44,8 @@ class InputItem extends StatefulWidget implements ListItem {
     this.disabled = false,
     this.verticalPadding,
     this.solid = true,
-    this.type = TextInputType.text,
+    this.inputType = TextInputType.text,
+    this.inputAction,
     this.clearable = true,
     this.readonly = false,
     this.textAlign = TextAlign.left,
@@ -48,11 +53,13 @@ class InputItem extends StatefulWidget implements ListItem {
     this.onChanged,
     this.onFocus,
     this.onBlur,
+    this.onSubmit,
     this.validatePattern,
     this.maxLength,
     this.fieldKey,
     this.fieldLabel,
     this.patternDescript,
+    this.brightness,
   })  : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
             'when validatePattern is not null then fieldKey and fieldLable must be provided'),
@@ -92,6 +99,17 @@ class InputItemState extends State<InputItem> implements ListItemState {
     return value;
   }
 
+  void clear() {
+    _controller.value = TextEditingValue.empty;
+    value = '';
+    setState(() {
+      showCloseButton = false;
+    });
+    if (widget.onChanged != null) {
+      widget.onChanged!('');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -114,7 +132,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
     });
   }
 
-  Widget _buildLeading(LeoThemeData theme) {
+  Widget _buildLeading(LeouiThemeData theme) {
     Widget? child;
     if (widget.leading != null) {
       child = widget.leading;
@@ -150,7 +168,9 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   @override
   Widget build(BuildContext context) {
-    LeoThemeData theme = LeoTheme.of(context);
+    LeouiThemeData theme = widget.brightness == null
+        ? LeouiTheme.of(context)
+        : LeouiThemeData(brightness: widget.brightness);
 
     List<Widget> rowChildren = [];
 
@@ -165,7 +185,9 @@ class InputItemState extends State<InputItem> implements ListItemState {
       readOnly: widget.readonly,
       maxLength: widget.maxLength,
       focusNode: focusNode,
-      keyboardType: widget.type,
+      keyboardType: widget.inputType,
+      textInputAction: widget.inputAction,
+      onSubmitted: widget.onSubmit,
       textAlign: widget.textAlign,
       obscureText: widget.obscureText,
       onChanged: (String input) {
@@ -182,6 +204,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
       decoration: InputDecoration(
           border: InputBorder.none,
           hintText: widget.placeholder,
+          hintStyle: TextStyle(color: theme.labelSecondaryColor),
           isDense: true,
           contentPadding:
               EdgeInsets.symmetric(vertical: widget.verticalPadding ?? 0)),
@@ -202,16 +225,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
           icon: Icon(Icons.cancel),
           iconSize: sz(LeoSize.fontSize.title * 1.5),
           color: theme.userAccentColor,
-          onPressed: () {
-            _controller.value = TextEditingValue.empty;
-            value = '';
-            setState(() {
-              showCloseButton = false;
-            });
-            if (widget.onChanged != null) {
-              widget.onChanged!('');
-            }
-          },
+          onPressed: clear,
         ),
       ));
     }

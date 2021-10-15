@@ -146,7 +146,7 @@ class _SelectorState extends State<Selector> {
 
   List<int> activeIndexList = [];
 
-  late LeoThemeData theme;
+  late LeouiThemeData theme;
 
   @override
   void initState() {
@@ -389,8 +389,8 @@ class _SelectorState extends State<Selector> {
     double bottom = SizeTool.devicePadding.bottom;
 
     theme = widget.brightness != null
-        ? LeoThemeData(brightness: widget.brightness)
-        : LeoTheme.of(context);
+        ? LeouiThemeData(brightness: widget.brightness)
+        : LeouiTheme.of(context);
 
     return Material(
       child: Padding(

@@ -7,15 +7,15 @@ import 'package:leoui/ui/packages/inputItem/inputItem.dart';
 import 'package:leoui/utils/index.dart';
 
 class SearchBar extends StatefulWidget {
-  final String? searchText;
   final String? placeholder;
   final String? defaultkeywords;
   final ValueChanged<String> onSubmit;
+  final LeouiBrightness? brightness;
   const SearchBar(
       {Key? key,
-      this.searchText,
       this.placeholder,
       this.defaultkeywords,
+      this.brightness,
       required this.onSubmit})
       : super(key: key);
 
@@ -49,7 +49,16 @@ class _SearchBarState extends State<SearchBar>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    LeouiThemeData theme = widget.brightness == null
+        ? LeouiTheme.of(context)
+        : LeouiThemeData(brightness: widget.brightness);
     return Container(
       height: sz(LeoSize.itemExtent),
       child: Row(
@@ -58,60 +67,45 @@ class _SearchBarState extends State<SearchBar>
           Expanded(
             child: Container(
               padding: EdgeInsets.only(left: sz(LeoSize.cardBorderRadius)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.search,
-                  ),
-                  _controller.status == AnimationStatus.dismissed
-                      ? Text(
-                          widget.placeholder ??
-                              LeouiLocalization.of(context).search,
-                          style: TextStyle(
-                              fontSize: sz(LeoSize.fontSize.title),
-                              color: LeoTheme.of(context).labelSecondaryColor),
-                        )
-                      : SizedBox(
-                          width: sz(LeoSize.fontSize.title / 3),
-                        ),
-                  Expanded(
-                    child: InputItem(
-                      onChanged: (_keywords) {
-                        keywords = _keywords;
-                      },
-                      onFocus: (_) {
-                        _controller.forward();
-                      },
-                      key: input,
-                      defaultValue: keywords,
-                    ),
-                  ),
-                ],
+              child: InputItem(
+                brightness: widget.brightness,
+                icon: Icon(
+                  Icons.search,
+                ),
+                solid: false,
+                placeholder:
+                    widget.placeholder ?? LeouiLocalization.of(context).search,
+                onChanged: (_keywords) {
+                  keywords = _keywords;
+                },
+                onFocus: (_) {
+                  _controller.forward();
+                },
+                key: input,
+                onSubmit: widget.onSubmit,
+                defaultValue: keywords,
+                inputAction: TextInputAction.search,
               ),
               height: sz(LeoSize.itemExtent),
               decoration: BoxDecoration(
-                  color: LeoTheme.of(context).fillQuarternaryColor,
+                  color: theme.fillTertiaryColor,
                   borderRadius:
                       BorderRadius.circular(sz(LeoSize.cardBorderRadius))),
             ),
           ),
           AnimatedBuilder(
-              animation: _controller,
+              animation: _animation,
               child: Padding(
-                child: Button(
-                  widget.searchText ?? LeouiLocalization.of(context).search,
-                  onTap: () {
-                    String keywords =
-                        (input.currentState as InputItemState).blur();
-                    if (keywords.isEmpty) {
+                child: GestureDetector(
+                    child: Center(
+                      child: Text(LeouiLocalization.of(context).cancel,
+                          style: TextStyle(color: theme.labelPrimaryColor)),
+                    ),
+                    onTap: () {
+                      (input.currentState as InputItemState).clear();
+                      (input.currentState as InputItemState).blur();
                       _controller.reverse();
-                    } else {
-                      widget.onSubmit(keywords);
-                    }
-                  },
-                ),
+                    }),
                 padding: EdgeInsets.only(left: sz(LeoSize.cardBorderRadius)),
               ),
               builder: (context, child) {

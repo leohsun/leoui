@@ -126,7 +126,7 @@ class _TabPickerState extends State<TabPicker>
   }
 
   Widget _buildTabViewChild(
-      List columnData, int columnIndex, LeoThemeData theme) {
+      List columnData, int columnIndex, LeouiThemeData theme) {
     return CustomScrollView(
       slivers: [
         ...mapWithIndex(
@@ -170,9 +170,9 @@ class _TabPickerState extends State<TabPicker>
 
   @override
   Widget build(BuildContext context) {
-    LeoThemeData theme = widget.brightness != null
-        ? LeoThemeData(brightness: widget.brightness)
-        : LeoTheme.of(context);
+    LeouiThemeData theme = widget.brightness != null
+        ? LeouiThemeData(brightness: widget.brightness)
+        : LeouiTheme.of(context);
     return Material(
       child: Padding(
         padding: EdgeInsets.only(bottom: SizeTool.devicePadding.bottom),

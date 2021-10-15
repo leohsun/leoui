@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
 
 class SearchBarPage extends StatefulWidget {
@@ -44,7 +45,7 @@ class _SearchBarPageState extends State<SearchBarPage> {
                     ),
                     SearchBar(
                       placeholder: '搜一搜',
-                      searchText: '搜一搜',
+                      // brightness: LeouiBrightness.dark,
                       onSubmit: (keywords) {
                         showToast(keywords);
                       },

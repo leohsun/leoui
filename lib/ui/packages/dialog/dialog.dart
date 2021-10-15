@@ -35,7 +35,7 @@ class _DialogState extends State<Dialog> {
   double _buttonHeight = sz(50);
 
   late Color labelPrimaryColor;
-  late LeoThemeData theme;
+  late LeouiThemeData theme;
 
   Widget _buildBody() {
     List<Widget> _children = [];
@@ -129,7 +129,7 @@ class _DialogState extends State<Dialog> {
   }
 
   Widget _buildButton(DialogButton button) {
-    Color color = button.color ?? LeoTheme.of(context).userAccentColor;
+    Color color = button.color ?? LeouiTheme.of(context).userAccentColor;
     List<Widget> _children = [
       Flexible(
         child: Text(
@@ -198,8 +198,8 @@ class _DialogState extends State<Dialog> {
   @override
   Widget build(BuildContext context) {
     theme = widget.brightness == null
-        ? LeoTheme.of(context)
-        : LeoThemeData(brightness: widget.brightness);
+        ? LeouiTheme.of(context)
+        : LeouiThemeData(brightness: widget.brightness);
 
     List<Widget> _children = [];
     if (widget.slot != null) _children.add(widget.slot!);

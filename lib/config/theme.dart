@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 enum LeouiBrightness { light, dark }
 
-class LeoThemeData {
+class LeouiThemeData {
   final Color backgroundPrimaryColor;
   final Color backgroundSecondaryColor;
   final Color backgroundTertiaryColor;
@@ -44,7 +44,7 @@ class LeoThemeData {
   final List<BoxShadow>? boxShadow;
   final LeouiBrightness? brightness;
 
-  factory LeoThemeData(
+  factory LeouiThemeData(
       {backgroundPrimaryColor,
       backgroundSecondaryColor,
       backgroundTertiaryColor,
@@ -190,7 +190,7 @@ class LeoThemeData {
                 blurRadius: 4,
                 spreadRadius: 0),
           ];
-    return LeoThemeData.raw(
+    return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,
         backgroundTertiaryColor: backgroundTertiaryColor,
@@ -226,7 +226,7 @@ class LeoThemeData {
         brightness: brightness);
   }
 
-  const LeoThemeData.raw(
+  const LeouiThemeData.raw(
       {required this.backgroundPrimaryColor,
       required this.backgroundSecondaryColor,
       required this.backgroundTertiaryColor,
@@ -261,26 +261,27 @@ class LeoThemeData {
       required this.boxShadow,
       required this.brightness});
 
-  factory LeoThemeData.dark() => LeoThemeData(brightness: LeouiBrightness.dark);
-  factory LeoThemeData.light() =>
-      LeoThemeData(brightness: LeouiBrightness.light);
+  factory LeouiThemeData.dark() =>
+      LeouiThemeData(brightness: LeouiBrightness.dark);
+  factory LeouiThemeData.light() =>
+      LeouiThemeData(brightness: LeouiBrightness.light);
 }
 
-class LeoTheme extends InheritedWidget {
+class LeouiTheme extends InheritedWidget {
   final Widget child;
 
-  final LeoThemeData? theme;
+  final LeouiThemeData? theme;
 
-  LeoTheme({
+  LeouiTheme({
     Key? key,
     required this.child,
     this.theme,
   }) : super(key: key, child: child);
 
-  static LeoThemeData of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<LeoTheme>()?.theme ??
-      LeoThemeData.light();
+  static LeouiThemeData of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<LeouiTheme>()?.theme ??
+      LeouiThemeData.light();
 
   @override
-  bool updateShouldNotify(LeoTheme oldWidget) => theme != oldWidget.theme;
+  bool updateShouldNotify(LeouiTheme oldWidget) => theme != oldWidget.theme;
 }

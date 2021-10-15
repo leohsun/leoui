@@ -88,7 +88,7 @@ class _NoticeBarState extends State<NoticeBar> {
   Widget build(BuildContext context) {
     if (closed) return SizedBox.shrink();
 
-    LeoThemeData theme = LeoTheme.of(context);
+    LeouiThemeData theme = LeouiTheme.of(context);
 
     Color color = widget.color ?? theme.userAccentColor;
 
