@@ -9,9 +9,11 @@ import 'package:leoui/config/index.dart';
 import 'package:leoui/utils/index.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-export '../feedback/index.dart';
-export '../ui/index.dart';
-export '../model/index.dart';
+export './feedback/index.dart';
+export './model/index.dart';
+export './utils/index.dart';
+export './ui/index.dart';
+export './config/index.dart';
 
 class Leoui extends StatelessWidget {
   final MaterialApp child;
