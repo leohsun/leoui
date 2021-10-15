@@ -21,8 +21,7 @@ class Leoui extends StatelessWidget {
   final Iterable<LocalizationsDelegate<dynamic>> localizationsDelegates;
   final Locale locale;
 
-  factory Leoui(
-      {Key? key, required MaterialApp child, required LeouiConfig config}) {
+  factory Leoui({Key? key, required MaterialApp child, LeouiConfig? config}) {
     Locale localeRaw;
     if (child.locale != null) {
       localeRaw = child.locale!;
@@ -42,7 +41,7 @@ class Leoui extends StatelessWidget {
 
     return Leoui.raw(
         child: child,
-        config: config,
+        config: config ?? LeouiConfig(),
         localizationsDelegates: localizationsDelegatesRaw,
         locale: localeRaw);
   }
