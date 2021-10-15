@@ -9,7 +9,7 @@ enum dialogType { alert, confirm, successed, fialed }
 class Dialog extends StatefulWidget {
   final LeouiBrightness? brightness;
   final String? title; //窗口标题
-  final String content; //正文内容
+  final String? content; //正文内容
   final IconData? icon; //Icon组件图标名称
   final dialogLayout layout; //底部按钮组布局方式, row, column
   final List<DialogButton>? buttons; //底部操作按钮组
@@ -22,7 +22,7 @@ class Dialog extends StatefulWidget {
       this.slot,
       this.layout = dialogLayout.row,
       this.buttons,
-      required this.content})
+      this.content})
       : super(key: key);
 
   @override
@@ -67,13 +67,15 @@ class _DialogState extends State<Dialog> {
       );
     }
 
-    _children.add(Text(
-      widget.content,
-      style: TextStyle(
-          height: 1.2,
-          fontSize: sz(LeoSize.fontSize.tertiary),
-          color: theme.labelPrimaryColor),
-    ));
+    if (widget.content != null) {
+      _children.add(Text(
+        widget.content!,
+        style: TextStyle(
+            height: 1.2,
+            fontSize: sz(LeoSize.fontSize.tertiary),
+            color: theme.labelPrimaryColor),
+      ));
+    }
 
     return Padding(
       padding: EdgeInsets.all(sz(26)),

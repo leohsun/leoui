@@ -104,7 +104,7 @@ void noop() {}
 Future showLeoDialog(
     {LeouiBrightness? brightness,
     String? title, //窗口标题
-    required String content, //正文内容
+    String? content, //正文内容
     IconData? icon, //Icon组件图标名称
     dialogLayout layout = dialogLayout.column, //底部按钮组布局方式, row, column
     List<DialogButton>? buttons, //底部操作按钮组
@@ -115,6 +115,7 @@ Future showLeoDialog(
   return showModal(
       modal: Modal(
           curve: curve,
+          closeOnClickMask: closeOnClickMask,
           child: Dialog(
             title: title,
             content: content,
