@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
 
 class SearchBarPage extends StatefulWidget {

@@ -99,7 +99,7 @@ class Selector extends StatefulWidget {
   final String? cancleText;
   final String? confirmText;
   final Color? cancleTextColor;
-  final Color? confirmTextTextColor;
+  final Color? confirmTextColor;
   final VoidCallback? onCancel;
   final ValueChanged? onComfrim;
   final String columnKey;
@@ -116,7 +116,7 @@ class Selector extends StatefulWidget {
       this.title,
       this.brightness,
       this.cancleTextColor,
-      this.confirmTextTextColor,
+      this.confirmTextColor,
       selectorHeight,
       columnKey,
       childrenKey,
@@ -251,8 +251,7 @@ class _SelectorState extends State<Selector> {
                 child: Text(
                   widget.confirmText ?? LeouiLocalization.of(context).confirm,
                   style: TextStyle(
-                      color:
-                          widget.confirmTextTextColor ?? theme.userAccentColor,
+                      color: widget.confirmTextColor ?? theme.userAccentColor,
                       fontSize: LeoSize.fontSize.title),
                 ))
           ],
