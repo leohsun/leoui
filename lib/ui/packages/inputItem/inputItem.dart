@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
+import 'package:leoui/config/size.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 import 'package:leoui/utils/index.dart';
@@ -89,6 +90,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   TextEditingController _controller = TextEditingController();
 
+  bool valid = true;
+
   String blur() {
     focusNode.unfocus();
     return value;
@@ -159,7 +162,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
       margin: EdgeInsets.only(right: sz(5)),
       width: widget.solid ? sz(80) : null,
       child: DefaultTextIconStyle(
-        color: theme.labelPrimaryColor,
+        color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
         child: child,
         size: sz(LeoSize.fontSize.title),
       ),
@@ -220,12 +223,18 @@ class InputItemState extends State<InputItem> implements ListItemState {
     if (widget.clearable && showCloseButton) {
       rowChildren.add(Padding(
         padding: EdgeInsets.only(left: sz(5)),
-        child: IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(Icons.cancel),
-          iconSize: sz(LeoSize.fontSize.title * 1.5),
-          color: theme.userAccentColor,
-          onPressed: clear,
+        child: GestureDetector(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: sz(LeoSize.fontSize.title / 2)),
+            height: sz(LeoSize.itemExtent),
+            child: Icon(
+              Icons.cancel,
+              size: sz(LeoSize.fontSize.title * 1.5),
+              color: theme.userAccentColor,
+            ),
+          ),
+          onTap: clear,
         ),
       ));
     }
@@ -242,8 +251,11 @@ class InputItemState extends State<InputItem> implements ListItemState {
     }
 
     Field.of(context)?.add(this);
-    return Row(
-      children: rowChildren,
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
+      child: Row(
+        children: rowChildren,
+      ),
     );
   }
 
@@ -261,22 +273,24 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   @override
   String validate() {
-    if (widget.validatePattern == null) {
-      return '';
-    } else {
+    String hint = '';
+    if (widget.validatePattern != null) {
       if (value.isEmpty) {
-        return widget.itemLabel! + LeouiLocalization.of(context).emptyHint;
-      } else if (widget.validatePattern!.hasMatch(value)) {
-        return '';
+        hint = widget.itemLabel! + LeouiLocalization.of(context).emptyHint;
+      } else if (!widget.validatePattern!.hasMatch(value)) {
+        hint = widget.itemLabel! + LeouiLocalization.of(context).notMathHint;
       }
-      String hint =
-          widget.itemLabel! + LeouiLocalization.of(context).notMathHint;
-      if (widget.patternDescript != null) {
+
+      if (widget.patternDescript != null && hint.isNotEmpty) {
         hint += '(' + widget.patternDescript! + ')';
       }
 
-      return hint;
+      setState(() {
+        valid = hint.isEmpty;
+      });
     }
+
+    return hint;
   }
 
   @override

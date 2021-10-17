@@ -26,7 +26,5 @@ class LeoFeedback {
 
   static BuildContext? currentContext;
 
-  static GlobalKey? uniqueGlobalStateKey;
-
   static Modal? loadingModal;
 }

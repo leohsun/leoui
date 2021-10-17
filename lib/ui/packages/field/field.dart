@@ -339,8 +339,9 @@ class FieldItem extends StatelessWidget implements ListItem {
 
       _colChildren.add(child!);
 
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 15)),
+      return Container(
+        padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 0)),
+        constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _colChildren,
@@ -350,8 +351,9 @@ class FieldItem extends StatelessWidget implements ListItem {
       return buildButtonWidget(
         splashColor: theme.fillPrimaryColor,
         onPress: disabled == true ? null : onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 15)),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 0)),
+          constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
