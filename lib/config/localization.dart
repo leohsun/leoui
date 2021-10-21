@@ -4,16 +4,32 @@ import 'package:flutter/material.dart';
 class LocaleSubTag {
   final String languageCode;
   final String? scriptCode;
-  final String countryCode;
+  final String? countryCode;
 
-  LocaleSubTag(
-      {required this.languageCode,
-      required this.scriptCode,
-      required this.countryCode});
+  LocaleSubTag({required this.languageCode, this.scriptCode, this.countryCode});
 
   @override
   String toString() {
     return "languageCode:$languageCode,scriptCode:$scriptCode,countryCode:$countryCode;";
+  }
+
+  factory LocaleSubTag.fromLocaleName(String localeName) {
+    List<String> raw = localeName.split('_');
+    String? scriptCode;
+    String? countryCode;
+    if (raw.length == 2) {
+      countryCode = raw.last;
+    }
+
+    if (raw.length == 3) {
+      scriptCode = raw[1];
+      countryCode = raw.last;
+    }
+
+    return LocaleSubTag(
+        languageCode: raw.first,
+        scriptCode: scriptCode,
+        countryCode: countryCode);
   }
 }
 
@@ -22,8 +38,7 @@ class LeouiLocalization {
   final String languageName;
 
   factory LeouiLocalization(Locale locale) {
-    LocaleSubTag localSubTag =
-        LeouiLocalization.getLocaleSubTag(locale.toString());
+    LocaleSubTag localSubTag = LocaleSubTag.fromLocaleName(locale.toString());
     String languageName = localSubTag.languageCode;
     if (localSubTag.scriptCode != null) {
       languageName += '_${localSubTag.scriptCode}';
@@ -133,34 +148,13 @@ class LeouiLocalization {
   static get delegate => LeouiLocalizationDelegate();
 
   static List<String> languages = _localizedValues.keys.toList();
-
-  static LocaleSubTag getLocaleSubTag(String localName) {
-    List<String> raw = localName.split('_');
-    String? scriptCode;
-    String countryCode = '';
-
-    if (raw.length == 2) {
-      countryCode = raw.last;
-    }
-
-    if (raw.length == 3) {
-      scriptCode = raw[1];
-      countryCode = raw.last;
-    }
-
-    return LocaleSubTag(
-        languageCode: raw.first,
-        scriptCode: scriptCode,
-        countryCode: countryCode);
-  }
 }
 
 class LeouiLocalizationDelegate
     extends LocalizationsDelegate<LeouiLocalization> {
   @override
   bool isSupported(Locale locale) {
-    LocaleSubTag localSubTag =
-        LeouiLocalization.getLocaleSubTag(locale.toString());
+    LocaleSubTag localSubTag = LocaleSubTag.fromLocaleName(locale.toString());
     String languageName = localSubTag.languageCode;
     if (localSubTag.scriptCode != null) {
       languageName += '_${localSubTag.scriptCode}';

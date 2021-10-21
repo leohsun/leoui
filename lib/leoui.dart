@@ -1,6 +1,7 @@
 library leoui;
 
 import 'dart:io' show Platform;
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class Leoui extends StatelessWidget {
       localeRaw = child.locale!;
     } else {
       LocaleSubTag localeSubTag =
-          LeouiLocalization.getLocaleSubTag(Platform.localeName);
+          LocaleSubTag.fromLocaleName(Platform.localeName);
       localeRaw = Locale.fromSubtags(
           languageCode: localeSubTag.languageCode,
           scriptCode: localeSubTag.scriptCode,
