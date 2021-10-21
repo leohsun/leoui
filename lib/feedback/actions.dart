@@ -192,6 +192,7 @@ Future showSelector(
             dataList: dataList,
             count: count,
             title: title,
+            linkage: linkage,
             cancleText: cancleText,
             cancleTextColor: cancleTextColor,
             confirmText: confirmText,

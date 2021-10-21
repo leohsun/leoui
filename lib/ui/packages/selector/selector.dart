@@ -92,7 +92,7 @@ import 'package:leoui/utils/index.dart';
 // ),
 
 class Selector extends StatefulWidget {
-  final bool linkage;
+  final bool? linkage;
   final List<List> dataList;
   final int count;
   final String? title;
@@ -152,14 +152,14 @@ class _SelectorState extends State<Selector> {
   void initState() {
     _dataList = widget.dataList;
 
-    int length = widget.linkage ? widget.count : widget.dataList.length;
+    int length = widget.linkage == true ? widget.count : widget.dataList.length;
 
     for (int i = 0; i < length; i++) {
       activeIndexList.add(0);
       _scrollControllerList.add(FixedExtentScrollController());
     }
 
-    if (widget.linkage) {
+    if (widget.linkage == true) {
       initNextColumnListData(0, 0);
     }
 

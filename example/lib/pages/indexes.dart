@@ -37,8 +37,11 @@ class _IndexesPageState extends State<IndexesPage> {
                     Indexes(
                       // brightness: LeouiBrightness.dark,
                       dataList: [
+                        {"key": "B", "label": "Book", "value": 'book'},
+                        {"key": "B", "label": "Bag", "value": 'bag'},
                         {"key": "A", "label": "Apple", "value": 'apple'},
-                        {"key": "B", "label": "Blue", "value": 'blue'}
+                        {"key": "B", "label": "Blue", "value": 'blue'},
+                        {"key": "B", "label": "blur", "value": 'blur'},
                       ],
                       indexKey: "key",
                       itemLabel: "label",
