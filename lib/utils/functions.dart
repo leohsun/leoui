@@ -67,9 +67,7 @@ Widget buildBlurWidget({required Widget child, BorderRadius? borderRadius}) {
   );
 }
 
-typedef MapWithIndexCallBack(element, int index);
-
-List<T> mapWithIndex<T>(List data, MapWithIndexCallBack cb) {
+List<T> mapWithIndex<T>(List data, cb(element, int index)) {
   List<T> result = [];
   for (int i = 0; i < data.length; i++) {
     result.add(cb(data[i], i));

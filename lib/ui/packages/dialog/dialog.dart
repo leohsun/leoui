@@ -205,7 +205,8 @@ class _DialogState extends State<Dialog> {
 
     List<Widget> _children = [];
     if (widget.slot != null) _children.add(widget.slot!);
-    _children.add(_buildBody());
+    if (widget.title != null || widget.icon != null || widget.content != null)
+      _children.add(_buildBody());
     if (widget.buttons != null) {
       _children.add(_buildButtons());
     }
