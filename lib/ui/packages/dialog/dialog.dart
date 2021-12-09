@@ -14,6 +14,7 @@ class Dialog extends StatefulWidget {
   final dialogLayout layout; //底部按钮组布局方式, row, column
   final List<DialogButton>? buttons; //底部操作按钮组
   final Widget? slot; // 插槽内容
+  final double? width;
   const Dialog(
       {Key? key,
       this.brightness,
@@ -22,7 +23,8 @@ class Dialog extends StatefulWidget {
       this.slot,
       this.layout = dialogLayout.row,
       this.buttons,
-      this.content})
+      this.content,
+      this.width})
       : super(key: key);
 
   @override
@@ -30,7 +32,7 @@ class Dialog extends StatefulWidget {
 }
 
 class _DialogState extends State<Dialog> {
-  double _width = sz(300);
+  late double _width;
 
   double _buttonHeight = sz(50);
 
@@ -195,6 +197,12 @@ class _DialogState extends State<Dialog> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    _width = widget.width ?? sz(300);
+    super.initState();
   }
 
   @override

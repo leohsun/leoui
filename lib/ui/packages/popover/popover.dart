@@ -139,20 +139,7 @@ class _PopoverState extends State<Popover> with SingleTickerProviderStateMixin {
                     child: Material(
                       borderRadius:
                           BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
-                      child: PhysicalModel(
-                        elevation: 2,
-                        color: theme.backgroundPrimaryColor,
-                        borderRadius:
-                            BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
-                        child: Container(
-                          constraints: BoxConstraints(minHeight: 60),
-                          decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(
-                                  sz(LeoSize.cardBorderRadius))),
-                          child: widget.menu,
-                        ),
-                      ),
+                      child: widget.menu,
                     ),
                   ),
                 );

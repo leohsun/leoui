@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:leoui/config/index.dart';
 import 'package:leoui/config/theme.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/utils/index.dart';
@@ -8,12 +12,14 @@ class Indexes extends StatefulWidget {
   final String indexKey;
   final String itemLabel;
   final LeouiBrightness? brightness;
+  final ValueChanged? onItemTap;
 
   const Indexes(
       {Key? key,
       required this.dataList,
       required this.indexKey,
       required this.itemLabel,
+      this.onItemTap,
       this.brightness})
       : super(key: key);
 
@@ -21,26 +27,34 @@ class Indexes extends StatefulWidget {
   _IndexesState createState() => _IndexesState();
 }
 
+class IndexPostion {
+  double startY;
+  double endY;
+  IndexPostion(this.startY, this.endY);
+  @override
+  String toString() {
+    return 'startY->$startY endY->$endY';
+  }
+}
+
 class _IndexesState extends State<Indexes> {
-  GlobalKey scrollWidget = GlobalKey();
+  ScrollController scrollView = ScrollController();
+  List<GlobalKey> sliverKeys = [];
+  List<String> indexKeyList = [];
+  double indexKeyExtend = 26;
+  List<IndexPostion> indexPostionList = [];
+  String activeKey = 'c';
+  double maxScrollExtend = 0;
 
-  late List<GlobalKey> sliverKeys = [];
-
-  late Map<String, double> indexKeyMap;
-
-  bool _handleScrollNotification(ScrollNotification notification) {
+  bool _onScrollNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
-      var sliverRenderObj = sliverKeys[0].currentContext?.findRenderObject();
-      var trasiction = sliverRenderObj?.getTransformTo(null).getTranslation();
-      print(trasiction?.y);
+      calcActivekey(notification.metrics.extentBefore);
     }
     return false;
   }
 
   List<Map> _assembleListData() {
-    print(widget.dataList);
     Map<String, List> tmp = {};
-
     widget.dataList.forEach((element) {
       String key = element[widget.indexKey];
       if (tmp[key] != null) {
@@ -60,22 +74,104 @@ class _IndexesState extends State<Indexes> {
     sortedList.sort((a, b) {
       return a["key"].compareTo(b["key"]);
     });
-    print('sortedList => $sortedList');
+    sortedList.forEach((element) {
+      indexKeyList.add(element['key']);
+
+      indexPostionList.add(IndexPostion(0, 0));
+    });
+
+    activeKey = indexKeyList.first;
 
     return sortedList;
   }
 
   late List<Map> scrollListData;
 
+  void calcSliverPostions() {
+    for (int i = 0; i < sliverKeys.length; i++) {
+      RenderBox? sliverRenderBox =
+          sliverKeys[i].currentContext?.findRenderObject() as RenderBox;
+
+      double startY = i == 0 ? 0 : indexPostionList[i - 1].endY;
+      double endY = startY + sliverRenderBox.size.height;
+
+      indexPostionList[i].startY = startY;
+      indexPostionList[i].endY = endY;
+    }
+  }
+
+  void calcActivekey(double offset) {
+    late int activeKeyIndex;
+
+    if (offset <= 0)
+      activeKeyIndex = 0;
+    else if (offset >= indexPostionList.last.endY)
+      activeKeyIndex = indexPostionList.length - 1;
+    else
+      activeKeyIndex = indexPostionList.indexWhere((indexPostion) =>
+          offset >= indexPostion.startY && offset < indexPostion.endY);
+
+    String aimedKey = indexKeyList[activeKeyIndex];
+    if (mounted) {
+      setState(() {
+        activeKey = aimedKey;
+      });
+    }
+  }
+
   @override
   void initState() {
     scrollListData = _assembleListData();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      RenderBox? scrollWidgetRenderbox =
-          (scrollWidget.currentContext!.findRenderObject() as RenderBox);
-      print(scrollWidgetRenderbox.size);
+      calcSliverPostions();
+      maxScrollExtend = scrollView.position.maxScrollExtent;
     });
     super.initState();
+  }
+
+  void _handleVerticalDragUpdate(DragUpdateDetails details) {
+    int index = (details.localPosition.dy ~/ indexKeyExtend)
+        .clamp(0, indexKeyList.length - 1);
+
+    if (activeKey != indexKeyList[index]) {
+      setState(() {
+        activeKey = indexKeyList[index];
+      });
+      _handleScroll(index);
+    }
+  }
+
+  void _handleVerticalDragEnd(DragEndDetails details) {
+    calcActivekey(scrollView.offset);
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    int index = (details.localPosition.dy ~/ indexKeyExtend)
+        .clamp(0, indexKeyList.length - 1);
+    if (activeKey != indexKeyList[index]) {
+      setState(() {
+        activeKey = indexKeyList[index];
+      });
+      _handleScroll(index);
+    }
+  }
+
+  void _handleScroll(int activeIndex) {
+    double expectPostionStartY = indexPostionList[activeIndex].startY;
+
+    double startY = min(expectPostionStartY, maxScrollExtend);
+    HapticFeedback.lightImpact();
+    scrollView.jumpTo(startY);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    calcActivekey(scrollView.offset);
+  }
+
+  @override
+  void dispose() {
+    scrollView.dispose();
+    super.dispose();
   }
 
   @override
@@ -83,52 +179,106 @@ class _IndexesState extends State<Indexes> {
     LeouiThemeData theme = widget.brightness == null
         ? LeouiTheme.of(context)
         : LeouiThemeData(brightness: widget.brightness);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SearchBar(brightness: widget.brightness, onSubmit: (keywords) {}),
-        Stack(
-          children: [
-            Container(
-              height: 400,
-              child: NotificationListener<ScrollNotification>(
-                onNotification: _handleScrollNotification,
-                child: CustomScrollView(
-                  key: scrollWidget,
-                  slivers: mapWithIndex<Widget>(scrollListData, (item, index) {
-                    return SliverToBoxAdapter(
-                      key: sliverKeys[index],
+    return LayoutBuilder(builder: (context, constrains) {
+      double contentHeight = constrains.maxHeight == double.infinity
+          ? SizeTool.deviceHeight / 2
+          : constrains.maxHeight;
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            children: [
+              Container(
+                  height: contentHeight,
+                  color: theme.backgroundSecondaryColor,
+                  child: NotificationListener(
+                    onNotification: _onScrollNotification,
+                    child: SingleChildScrollView(
+                        controller: scrollView,
+                        child: Column(
+                          children: [
+                            ...mapWithIndex<Widget>(scrollListData,
+                                (item, filedIndex) {
+                              return Field(
+                                key: sliverKeys[filedIndex],
+                                brightness: widget.brightness,
+                                title: Text(item[widget.indexKey]),
+                                margin: EdgeInsets.only(bottom: 20),
+                                children: [
+                                  ...mapWithIndex<ListItem>(item['data'],
+                                      (item, index) {
+                                    return FieldItem(
+                                        onTap: widget.onItemTap != null
+                                            ? () {
+                                                Map callback = {
+                                                  "data": item,
+                                                  "itemIndex": index,
+                                                  "filedIndex": filedIndex
+                                                };
+                                                widget.onItemTap!(callback);
+                                              }
+                                            : null,
+                                        brightness: widget.brightness,
+                                        title: Text(item[widget.itemLabel]));
+                                  })
+                                ],
+                              );
+                            })
+                          ],
+                        )),
+                  )),
+              Positioned(
+                  right: 0,
+                  bottom: 0,
+                  top: 0,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onVerticalDragUpdate: _handleVerticalDragUpdate,
+                      onVerticalDragEnd: _handleVerticalDragEnd,
+                      onTapUp: _handleTapUp,
+                      onTapDown: _handleTapDown,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          ListTile(
-                            title: Text(item[widget.indexKey]),
-                          ),
-                          ...mapWithIndex<Widget>(item['data'], (item, index) {
-                            return ListTile(
-                              title: Text(item[widget.itemLabel]),
+                          ...indexKeyList.map((e) {
+                            bool active = activeKey == e;
+                            return SizedBox(
+                              height: indexKeyExtend,
+                              width: indexKeyExtend,
+                              child: Center(
+                                child: Container(
+                                  height: sz(LeoSize.fontSize.tertiary * 1.5),
+                                  width: sz(LeoSize.fontSize.tertiary * 1.5),
+                                  decoration: BoxDecoration(
+                                      color:
+                                          active ? theme.userAccentColor : null,
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                    child: Text(
+                                      e,
+                                      style: TextStyle(
+                                          height: 1,
+                                          fontSize:
+                                              sz(LeoSize.fontSize.tertiary),
+                                          color: active
+                                              ? Colors.white
+                                              : theme.labelSecondaryColor),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             );
                           })
                         ],
                       ),
-                    );
-                  }),
-                ),
-              ),
-            ),
-            Positioned(
-                right: 0,
-                bottom: 0,
-                top: 0,
-                child: Container(
-                  color: Colors.orange,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text('A'), Text('B')],
-                  ),
-                ))
-          ],
-        )
-      ],
-    );
+                    ),
+                  )),
+            ],
+          )
+        ],
+      );
+    });
   }
 }

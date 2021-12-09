@@ -25,7 +25,7 @@ class _IndexesPageState extends State<IndexesPage> {
         ),
         body: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.symmetric(horizontal: 0),
             child: Container(
               width: double.infinity,
               child: Column(
@@ -34,17 +34,31 @@ class _IndexesPageState extends State<IndexesPage> {
                     ListTile(
                       title: Text('主题'),
                     ),
-                    Indexes(
-                      // brightness: LeouiBrightness.dark,
-                      dataList: [
-                        {"key": "B", "label": "Book", "value": 'book'},
-                        {"key": "B", "label": "Bag", "value": 'bag'},
-                        {"key": "A", "label": "Apple", "value": 'apple'},
-                        {"key": "B", "label": "Blue", "value": 'blue'},
-                        {"key": "B", "label": "blur", "value": 'blur'},
-                      ],
-                      indexKey: "key",
-                      itemLabel: "label",
+                    Container(
+                      height: 500,
+                      child: Indexes(
+                        // brightness: LeouiBrightness.dark,
+                        dataList: [
+                          {"key": "B", "label": "Book", "value": 'book'},
+                          {"key": "B", "label": "Bag", "value": 'bag'},
+                          {"key": "A", "label": "Apple", "value": 'apple'},
+                          {"key": "B", "label": "Blue", "value": 'blue'},
+                          {"key": "B", "label": "blur", "value": 'blur'},
+                          {"key": "B", "label": "bar", "value": 'bar'},
+                          {"key": "B", "label": "bady", "value": 'bady'},
+                          {"key": "A", "label": "able", "value": 'able'},
+                          {"key": "A", "label": "achieve", "value": 'achieve'},
+                          {"key": "C", "label": "card", "value": 'card'},
+                          {"key": "C", "label": "care", "value": 'care'},
+                          {"key": "C", "label": "carry", "value": 'carry'},
+                          {"key": "C", "label": "cat", "value": 'cat'},
+                        ],
+                        indexKey: "key",
+                        itemLabel: "label",
+                        onItemTap: (data) {
+                          print(data);
+                        },
+                      ),
                     )
                   ]),
             ),

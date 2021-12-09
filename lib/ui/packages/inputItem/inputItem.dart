@@ -32,6 +32,7 @@ class InputItem extends StatefulWidget implements ListItem {
   final String? fieldKey; // 用于Field导出数据的key --> {'username':'kim'}
   final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
   final LeouiBrightness? brightness; // 主题 dark 、light
+  final double? fontSize;
 
   const InputItem({
     Key? key,
@@ -61,6 +62,7 @@ class InputItem extends StatefulWidget implements ListItem {
     this.fieldLabel,
     this.patternDescript,
     this.brightness,
+    this.fontSize,
   })  : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
             'when validatePattern is not null then fieldKey and fieldLable must be provided'),
@@ -164,7 +166,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
       child: DefaultTextIconStyle(
         color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
         child: child,
-        size: sz(LeoSize.fontSize.title),
+        size: widget.fontSize ?? sz(LeoSize.fontSize.title),
       ),
     );
   }
@@ -216,7 +218,9 @@ class InputItemState extends State<InputItem> implements ListItemState {
             ? theme.labelSecondaryColor
             : theme.labelPrimaryColor,
         fontWeight: FontWeight.w500,
-        fontSize: sz(LeoSize.fontSize.content),
+        fontSize: widget.fontSize != null
+            ? sz(widget.fontSize!)
+            : sz(LeoSize.fontSize.content),
       ),
     )));
 
@@ -226,11 +230,15 @@ class InputItemState extends State<InputItem> implements ListItemState {
         child: GestureDetector(
           child: Container(
             padding: EdgeInsets.symmetric(
-                horizontal: sz(LeoSize.fontSize.title / 2)),
+                horizontal: widget.fontSize != null
+                    ? sz(widget.fontSize!)
+                    : sz(LeoSize.fontSize.title / 2)),
             height: sz(LeoSize.itemExtent),
             child: Icon(
               Icons.cancel,
-              size: sz(LeoSize.fontSize.title * 1.5),
+              size: widget.fontSize != null
+                  ? sz(widget.fontSize! * 1.5)
+                  : sz(LeoSize.fontSize.title * 1.5),
               color: theme.userAccentColor,
             ),
           ),
@@ -245,7 +253,9 @@ class InputItemState extends State<InputItem> implements ListItemState {
         child: DefaultTextIconStyle(
           color: theme.labelSecondaryColor,
           child: widget.addon,
-          size: sz(LeoSize.fontSize.secondary),
+          size: widget.fontSize != null
+              ? sz(widget.fontSize! - 2)
+              : sz(LeoSize.fontSize.secondary),
         ),
       ));
     }

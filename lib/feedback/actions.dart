@@ -110,8 +110,8 @@ Future showLeoDialog(
     List<DialogButton>? buttons, //底部操作按钮组
     Curve? curve, // carve 动画进行方式
     Widget? slot, // 插槽内容
-    bool closeOnClickMask = false //点击遮罩关闭
-    }) {
+    bool closeOnClickMask = false, //点击遮罩关闭
+    double? width}) {
   return showModal(
       modal: Modal(
           curve: curve,
@@ -123,6 +123,7 @@ Future showLeoDialog(
             icon: icon,
             brightness: brightness,
             layout: layout,
+            width: width,
             buttons: buttons,
           )));
 }

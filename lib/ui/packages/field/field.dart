@@ -15,7 +15,9 @@ class Field extends StatefulWidget {
   final Widget? trailing; //标题尾部内容
   final Color? color; //背景颜色
   final Color? dividerColor; //分割线颜色
+  final LeouiBrightness? brightness; // 主题色
   final FieldValidateErrorMessageType? messageType; // 表单校验失败后提示类型
+  final EdgeInsets? margin;
 
   final List<ListItem>? children; //  FieldItem
   const Field(
@@ -29,6 +31,8 @@ class Field extends StatefulWidget {
       this.footer,
       this.color,
       this.dividerColor,
+      this.brightness,
+      this.margin,
       this.messageType = FieldValidateErrorMessageType.message})
       : super(key: key);
 
@@ -150,7 +154,9 @@ class FieldState extends State<Field> {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = LeouiTheme.of(context);
+    LeouiThemeData theme = widget.brightness == null
+        ? LeouiTheme.of(context)
+        : LeouiThemeData(brightness: widget.brightness);
 
     List<Widget> _children = [];
     if (widget.title != null ||
@@ -177,6 +183,7 @@ class FieldState extends State<Field> {
     }
 
     Widget child = Container(
+      margin: widget.margin,
       padding: widget.plain == true ? EdgeInsets.zero : EdgeInsets.all(sz(18)),
       decoration: BoxDecoration(
           color: widget.plain == true
@@ -232,6 +239,7 @@ class FieldItem extends StatelessWidget implements ListItem {
   final bool solid; //是否固定标题宽度，超出会自动换行
   final VoidCallback? onTap; // 点击回调
   final Widget? child; // 子组件
+  final LeouiBrightness? brightness;
 
   const FieldItem(
       {Key? key,
@@ -244,6 +252,7 @@ class FieldItem extends StatelessWidget implements ListItem {
       this.solid = true,
       this.onTap,
       this.child,
+      this.brightness,
       this.placeholder})
       : assert(content == null || placeholder == null,
             'can not provice both \'content\' and \'placeholder\''),
@@ -263,7 +272,9 @@ class FieldItem extends StatelessWidget implements ListItem {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = LeouiTheme.of(context);
+    LeouiThemeData theme = brightness != null
+        ? LeouiThemeData(brightness: brightness)
+        : LeouiTheme.of(context);
 
     List<Widget> _children = [];
     if (title != null) {
