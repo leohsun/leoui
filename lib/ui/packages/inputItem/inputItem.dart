@@ -209,7 +209,11 @@ class InputItemState extends State<InputItem> implements ListItemState {
       decoration: InputDecoration(
           border: InputBorder.none,
           hintText: widget.placeholder,
-          hintStyle: TextStyle(color: theme.labelSecondaryColor),
+          hintStyle: TextStyle(
+              color: theme.labelSecondaryColor,
+              fontSize: widget.fontSize != null
+                  ? widget.fontSize!
+                  : sz(LeoSize.fontSize.title)),
           isDense: true,
           contentPadding:
               EdgeInsets.symmetric(vertical: widget.verticalPadding ?? 0)),
@@ -219,7 +223,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
             : theme.labelPrimaryColor,
         fontWeight: FontWeight.w500,
         fontSize: widget.fontSize != null
-            ? sz(widget.fontSize!)
+            ? widget.fontSize!
             : sz(LeoSize.fontSize.content),
       ),
     )));
@@ -231,13 +235,13 @@ class InputItemState extends State<InputItem> implements ListItemState {
           child: Container(
             padding: EdgeInsets.symmetric(
                 horizontal: widget.fontSize != null
-                    ? sz(widget.fontSize!)
+                    ? widget.fontSize! / 2
                     : sz(LeoSize.fontSize.title / 2)),
             height: sz(LeoSize.itemExtent),
             child: Icon(
               Icons.cancel,
               size: widget.fontSize != null
-                  ? sz(widget.fontSize! * 1.5)
+                  ? widget.fontSize! * 1.5
                   : sz(LeoSize.fontSize.title * 1.5),
               color: theme.userAccentColor,
             ),
@@ -254,7 +258,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
           color: theme.labelSecondaryColor,
           child: widget.addon,
           size: widget.fontSize != null
-              ? sz(widget.fontSize! - 2)
+              ? widget.fontSize! - 2
               : sz(LeoSize.fontSize.secondary),
         ),
       ));
