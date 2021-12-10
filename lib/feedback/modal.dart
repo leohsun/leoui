@@ -5,14 +5,23 @@ class Modal {
   final OverlayEntry entry;
 
   final Completer dismissCompleter;
+  final ValueChanged<bool>? onClose;
+  final GlobalKey<_ModalWidgetState> modalWidgetKey;
 
   get dissmissed => dismissCompleter.future;
 
-  void close([payload]) {
+  Future<void> close([payload]) async {
     if (!dismissCompleter.isCompleted) {
+      if (modalWidgetKey.currentState!.autoCloseCounter != null) {
+        modalWidgetKey.currentState!.autoCloseCounter!.cancel();
+      }
       dismissCompleter.complete(payload);
+      entry.remove();
+
+      if (onClose != null) {
+        onClose!(false);
+      }
     }
-    entry.remove();
   }
 
   factory Modal(
@@ -26,6 +35,8 @@ class Modal {
       double? dragToCloseGap,
       double? dragToCloseVelocity,
       bool? reverseAnimationWhenClose,
+      bool? animateWhenOpen,
+      ValueChanged<bool>? onClose,
       Curve? curve}) {
     assert(autoClose != true || closeOnClickMask != true,
         'can not provide both autoColse and closeOnClickMask are \'ture\' value');
@@ -52,6 +63,7 @@ class Modal {
         dragToClose: dragToClose,
         dragToCloseGap: dragToCloseGap ?? 30,
         dragToCloseVelocity: dragToCloseVelocity ?? 0.1,
+        animateWhenOpen: animateWhenOpen ?? true,
         reverseAnimationWhenClose: reverseAnimationWhenClose);
 
     entry = OverlayEntry(
@@ -60,6 +72,7 @@ class Modal {
               entry: entry,
               dismissCompleter: dismissedCompleter,
               childKey: childKey,
+              onClose: onClose,
               reverseAnimationWhenClose: reverseAnimationWhenClose,
             ));
 
@@ -67,13 +80,17 @@ class Modal {
       child: modalWidget,
       entry: entry,
       dismissCompleter: dismissedCompleter,
+      modalWidgetKey: childKey,
+      onClose: onClose,
     );
   }
 
   Modal.raw(
       {required this.child,
       required this.entry,
-      required this.dismissCompleter});
+      required this.dismissCompleter,
+      required this.modalWidgetKey,
+      this.onClose});
 }
 
 class ModalScope extends InheritedWidget {
@@ -82,11 +99,15 @@ class ModalScope extends InheritedWidget {
   final OverlayEntry? entry;
   final bool? reverseAnimationWhenClose;
   final Completer? dismissCompleter;
-  void closeModal([data]) async {
+  final ValueChanged<bool>? onClose;
+  void closeModal([data, autoColse = false]) async {
     if (reverseAnimationWhenClose == true) {
       await childKey.currentState!.reverseAnimation();
     }
     entry?.remove();
+    if (onClose != null) {
+      onClose!(autoColse);
+    }
     if (!dismissCompleter!.isCompleted) {
       dismissCompleter!.complete(data);
     }
@@ -97,6 +118,7 @@ class ModalScope extends InheritedWidget {
       required this.childKey,
       this.entry,
       this.dismissCompleter,
+      this.onClose,
       this.reverseAnimationWhenClose})
       : super(child: child);
 
@@ -114,6 +136,7 @@ class _ModalWidget extends StatefulWidget {
   final Duration duration;
   final bool autoClose;
   final bool reverseAnimationWhenClose;
+  final bool animateWhenOpen;
   final bool closeOnClickMask;
   final bool dragToClose;
   final double dragToCloseGap;
@@ -128,6 +151,7 @@ class _ModalWidget extends StatefulWidget {
       required this.duration,
       required this.autoClose,
       required this.reverseAnimationWhenClose,
+      required this.animateWhenOpen,
       required this.curve,
       required this.dragToClose,
       required this.dragToCloseGap,
@@ -166,11 +190,15 @@ class _ModalWidgetState extends State<_ModalWidget>
             setState(() {});
           }));
 
-    _controller.forward();
+    if (widget.animateWhenOpen) {
+      _controller.forward();
+    } else {
+      _controller.value = 1;
+    }
 
     if (widget.autoClose) {
       autoCloseCounter = Timer(widget.duration, () {
-        ModalScope.of(context)?.closeModal();
+        ModalScope.of(context)?.closeModal(null, true);
       });
     }
 
@@ -209,6 +237,9 @@ class _ModalWidgetState extends State<_ModalWidget>
   void deactivate() {
     if (!ModalScope.of(context)!.dismissCompleter!.isCompleted) {
       ModalScope.of(context)?.dismissCompleter?.complete();
+      if (ModalScope.of(context)?.onClose != null) {
+        ModalScope.of(context)?.onClose!(false);
+      }
     }
     super.deactivate();
   }

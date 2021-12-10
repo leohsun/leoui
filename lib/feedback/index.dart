@@ -26,4 +26,5 @@ class LeoFeedback {
   static BuildContext? currentContext;
 
   static Modal? loadingModal;
+  static Modal? toastModal;
 }

@@ -12,6 +12,7 @@ class LeouiSize {
   final double tab;
   final double itemExtent;
   final double itemElevation;
+  final double dialogWidth;
   const LeouiSize(
       {this.title = 17,
       this.content = 17,
@@ -21,6 +22,7 @@ class LeouiSize {
       this.cardBorderRadius = 8,
       this.tab = 10,
       this.itemExtent = 40,
+      this.dialogWidth = 300,
       this.itemElevation = 4});
 }
 

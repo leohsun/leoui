@@ -294,7 +294,7 @@ Future showMessage(String message,
 Future showToast(String? msg,
     {Duration? duration,
     LeouiBrightness brightness = LeouiBrightness.dark,
-    ToastType? type}) {
+    ToastType? type}) async {
   LeouiThemeData theme = LeouiThemeData(brightness: brightness);
 
   bool isDark = brightness == LeouiBrightness.dark;
@@ -349,10 +349,20 @@ Future showToast(String? msg,
     );
   }
 
-  return showModal(
-      modal: Modal(
+  if (LeoFeedback.toastModal != null) {
+    await LeoFeedback.toastModal!.close();
+  }
+
+  Modal modal = Modal(
     autoClose: true,
     noMask: true,
+    animateWhenOpen: LeoFeedback.toastModal == null,
+    reverseAnimationWhenClose: true,
+    onClose: (auto) {
+      if (LeoFeedback.toastModal != null && auto) {
+        LeoFeedback.toastModal = null;
+      }
+    },
     child: Container(
         constraints: BoxConstraints(
           minWidth: sz(100),
@@ -376,7 +386,10 @@ Future showToast(String? msg,
             ),
           ),
         )),
-  ));
+  );
+
+  LeoFeedback.toastModal = modal;
+  return showModal(modal: modal);
 }
 
 Future showAlert(

@@ -32,8 +32,6 @@ class Dialog extends StatefulWidget {
 }
 
 class _DialogState extends State<Dialog> {
-  late double _width;
-
   double _buttonHeight = sz(50);
 
   late Color labelPrimaryColor;
@@ -200,17 +198,12 @@ class _DialogState extends State<Dialog> {
   }
 
   @override
-  void initState() {
-    _width = widget.width ?? sz(300);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     theme = widget.brightness == null
         ? LeouiTheme.of(context)
         : LeouiThemeData(brightness: widget.brightness);
 
+    double _width = widget.width ?? theme.size.dialogWidth;
     List<Widget> _children = [];
     if (widget.slot != null) _children.add(widget.slot!);
     if (widget.title != null || widget.icon != null || widget.content != null)
