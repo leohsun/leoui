@@ -249,8 +249,8 @@ class _IndexesState extends State<Indexes> {
                               width: indexKeyExtend,
                               child: Center(
                                 child: Container(
-                                  height: sz(LeoSize.fontSize.tertiary * 1.5),
-                                  width: sz(LeoSize.fontSize.tertiary * 1.5),
+                                  height: sz(theme.size.tertiary * 1.5),
+                                  width: sz(theme.size.tertiary * 1.5),
                                   decoration: BoxDecoration(
                                       color:
                                           active ? theme.userAccentColor : null,
@@ -260,8 +260,7 @@ class _IndexesState extends State<Indexes> {
                                       e,
                                       style: TextStyle(
                                           height: 1,
-                                          fontSize:
-                                              sz(LeoSize.fontSize.tertiary),
+                                          fontSize: sz(theme.size.tertiary),
                                           color: active
                                               ? Colors.white
                                               : theme.labelSecondaryColor),

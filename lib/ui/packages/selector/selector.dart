@@ -104,7 +104,7 @@ class Selector extends StatefulWidget {
   final ValueChanged? onComfrim;
   final String columnKey;
   final String childrenKey;
-  final double selectorHeight;
+  final double? selectorHeight;
   final bool hideHeader;
   final LeouiBrightness? brightness;
 
@@ -117,7 +117,7 @@ class Selector extends StatefulWidget {
       this.brightness,
       this.cancleTextColor,
       this.confirmTextColor,
-      selectorHeight,
+      this.selectorHeight,
       columnKey,
       childrenKey,
       this.onCancel,
@@ -128,7 +128,6 @@ class Selector extends StatefulWidget {
       : assert(linkage != true || count != null,
             "when 'linkage' is true then 'count' must be provided"),
         count = count ?? dataList.length,
-        selectorHeight = selectorHeight ?? sz(LeoSize.itemExtent * 5),
         columnKey = columnKey ?? 'label',
         childrenKey = childrenKey ?? 'children',
         super(key: key);
@@ -220,8 +219,8 @@ class _SelectorState extends State<Selector> {
       );
     return ClipRRect(
       borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(sz(LeoSize.cardBorderRadius)),
-          topRight: Radius.circular(sz(LeoSize.cardBorderRadius))),
+          topLeft: Radius.circular(sz(theme.size.cardBorderRadius)),
+          topRight: Radius.circular(sz(theme.size.cardBorderRadius))),
       child: Container(
         // height: LeoSize.itemExtent * 1.5,
         decoration: BoxDecoration(
@@ -237,7 +236,7 @@ class _SelectorState extends State<Selector> {
                   style: TextStyle(
                       color:
                           widget.cancleTextColor ?? theme.labelSecondaryColor,
-                      fontSize: sz(LeoSize.fontSize.title)),
+                      fontSize: sz(theme.size.title)),
                 )),
             Expanded(
                 child: Center(
@@ -245,14 +244,14 @@ class _SelectorState extends State<Selector> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: widget.cancleTextColor,
-                            fontSize: LeoSize.fontSize.title)))),
+                            fontSize: theme.size.title)))),
             TextButton(
                 onPressed: _handleCofirm,
                 child: Text(
                   widget.confirmText ?? LeouiLocalization.of(context).confirm,
                   style: TextStyle(
                       color: widget.confirmTextColor ?? theme.userAccentColor,
-                      fontSize: LeoSize.fontSize.title),
+                      fontSize: theme.size.title),
                 ))
           ],
         ),
@@ -264,15 +263,14 @@ class _SelectorState extends State<Selector> {
     String label,
   ) {
     return Container(
-      height: LeoSize.itemExtent,
+      height: theme.size.itemExtent,
       child: Center(
         child: ScalableText(
           label,
           minFontSize: sz(10),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: sz(LeoSize.fontSize.content),
-              color: theme.labelPrimaryColor),
+              fontSize: sz(theme.size.content), color: theme.labelPrimaryColor),
           maxLines: 1,
         ),
       ),
@@ -319,7 +317,7 @@ class _SelectorState extends State<Selector> {
             capRightEdge: columnIndex == _dataList.length - 1,
             background: theme.fillSecondaryColor,
           ),
-          itemExtent: LeoSize.itemExtent,
+          itemExtent: theme.size.itemExtent,
           onSelectedItemChanged: (int cellIndex) {
             _handleSelectChange(columnIndex, cellIndex);
           },
@@ -334,7 +332,7 @@ class _SelectorState extends State<Selector> {
     }
 
     return Container(
-      height: widget.selectorHeight,
+      height: widget.selectorHeight ?? sz(theme.size.itemExtent * 5),
       key: selectorContainer,
       color: theme.backgroundPrimaryColor,
       child: Row(

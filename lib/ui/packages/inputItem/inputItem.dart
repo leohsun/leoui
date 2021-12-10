@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
-import 'package:leoui/config/size.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 import 'package:leoui/utils/index.dart';
@@ -166,7 +165,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
       child: DefaultTextIconStyle(
         color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
         child: child,
-        size: widget.fontSize ?? sz(LeoSize.fontSize.title),
+        size: widget.fontSize ?? sz(theme.size.title),
       ),
     );
   }
@@ -213,7 +212,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
               color: theme.labelSecondaryColor,
               fontSize: widget.fontSize != null
                   ? widget.fontSize!
-                  : sz(LeoSize.fontSize.title)),
+                  : sz(theme.size.title)),
           isDense: true,
           contentPadding:
               EdgeInsets.symmetric(vertical: widget.verticalPadding ?? 0)),
@@ -222,9 +221,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
             ? theme.labelSecondaryColor
             : theme.labelPrimaryColor,
         fontWeight: FontWeight.w500,
-        fontSize: widget.fontSize != null
-            ? widget.fontSize!
-            : sz(LeoSize.fontSize.content),
+        fontSize:
+            widget.fontSize != null ? widget.fontSize! : sz(theme.size.content),
       ),
     )));
 
@@ -236,13 +234,13 @@ class InputItemState extends State<InputItem> implements ListItemState {
             padding: EdgeInsets.symmetric(
                 horizontal: widget.fontSize != null
                     ? widget.fontSize! / 2
-                    : sz(LeoSize.fontSize.title / 2)),
-            height: sz(LeoSize.itemExtent),
+                    : sz(theme.size.title / 2)),
+            height: sz(theme.size.itemExtent),
             child: Icon(
               Icons.cancel,
               size: widget.fontSize != null
                   ? widget.fontSize! * 1.5
-                  : sz(LeoSize.fontSize.title * 1.5),
+                  : sz(theme.size.title * 1.5),
               color: theme.userAccentColor,
             ),
           ),
@@ -259,14 +257,14 @@ class InputItemState extends State<InputItem> implements ListItemState {
           child: widget.addon,
           size: widget.fontSize != null
               ? widget.fontSize! - 2
-              : sz(LeoSize.fontSize.secondary),
+              : sz(theme.size.secondary),
         ),
       ));
     }
 
     Field.of(context)?.add(this);
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
+      constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
       child: Row(
         children: rowChildren,
       ),

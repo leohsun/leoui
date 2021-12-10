@@ -20,7 +20,7 @@ Future showLoading({
 
   modal = Modal(
       child: ClipRRect(
-    borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+    borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius)),
     child: Container(
       width: sz(100),
       height: sz(100),
@@ -30,35 +30,36 @@ Future showLoading({
               child: Container(
             decoration: BoxDecoration(
               color: theme.dialogBackgroundColor,
-              borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+              borderRadius:
+                  BorderRadius.circular(sz(theme.size.cardBorderRadius)),
               //          boxShadow: LeouiTheme.of(LeoFeedback.currentContext!).boxShadow,
             ),
           )),
           Positioned.fill(
               child: Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: sz(LeoSize.fontSize.title / 2),
-                vertical: sz(LeoSize.fontSize.title / 3)),
+                horizontal: sz(theme.size.title / 2),
+                vertical: sz(theme.size.title / 3)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
-                  width: sz(LeoSize.fontSize.title) * 2,
-                  height: sz(LeoSize.fontSize.title) * 2,
+                  width: sz(theme.size.title) * 2,
+                  height: sz(theme.size.title) * 2,
                   child: CircularProgressIndicator(
                     color: isDark ? Colors.white : Colors.black,
-                    strokeWidth: sz(LeoSize.fontSize.tertiary) / 5,
+                    strokeWidth: sz(theme.size.tertiary) / 5,
                   ),
                 ),
                 SizedBox(
-                  height: showTitle ? sz(LeoSize.fontSize.title) : 0,
+                  height: showTitle ? sz(theme.size.title) : 0,
                 ),
                 showTitle
                     ? Text(
                         title,
                         style: TextStyle(
-                            fontSize: sz(LeoSize.fontSize.tertiary),
+                            fontSize: sz(theme.size.tertiary),
                             color: isDark ? Colors.white : Colors.black),
                       )
                     : SizedBox.shrink()
@@ -70,7 +71,7 @@ Future showLoading({
                   right: 0,
                   child: buildButtonWidget(
                     borderRadius:
-                        BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+                        BorderRadius.circular(sz(theme.size.cardBorderRadius)),
                     onPress: () {
                       modal?.close();
                       counter?.cancel();
@@ -213,25 +214,26 @@ Future showMessage(String message,
   Color _bgColor;
 
   final String _msg = message;
+  LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!);
 
   switch (type) {
     case MessageType.success:
       _icon = Icons.check_circle_outline;
-      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseGreenColor;
+      _bgColor = theme.baseGreenColor;
       break;
     case MessageType.error:
       _icon = Icons.error;
-      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseRedColor;
+      _bgColor = theme.baseRedColor;
       HapticFeedback.lightImpact();
       break;
     case MessageType.warning:
       _icon = Icons.remove_circle;
-      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseOrangeColor;
+      _bgColor = theme.baseOrangeColor;
       HapticFeedback.lightImpact();
       break;
     case MessageType.info:
       _icon = Icons.info_outline;
-      _bgColor = LeouiTheme.of(LeoFeedback.currentContext!).baseTealColor;
+      _bgColor = theme.baseTealColor;
       break;
   }
   return showModal(
@@ -247,22 +249,21 @@ Future showMessage(String message,
       padding:
           EdgeInsets.only(left: 8, right: 8, top: SizeTool.devicePadding.top),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+        borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius)),
         child: buildButtonWidget(
           color: _bgColor,
-          borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+          borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius)),
           onPress: onPress,
           child: Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: sz(LeoSize.fontSize.title),
-                vertical: sz(LeoSize.fontSize.title / 2)),
+                horizontal: sz(theme.size.title),
+                vertical: sz(theme.size.title / 2)),
             child: Container(
-              constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
+              constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
               child: Row(
                 children: <Widget>[
                   Padding(
-                    padding:
-                        EdgeInsets.only(right: sz(LeoSize.fontSize.title) / 2),
+                    padding: EdgeInsets.only(right: sz(theme.size.title) / 2),
                     child: Icon(
                       _icon,
                       color: Colors.white,
@@ -273,7 +274,7 @@ Future showMessage(String message,
                       _msg,
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: sz(LeoSize.fontSize.secondary),
+                          fontSize: sz(theme.size.secondary),
                           fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
@@ -325,8 +326,7 @@ Future showToast(String? msg,
     Flexible(
       child: Text(
         msg ?? _msg,
-        style: TextStyle(
-            color: textColor, fontSize: sz(LeoSize.fontSize.secondary)),
+        style: TextStyle(color: textColor, fontSize: sz(theme.size.secondary)),
         textAlign: TextAlign.center,
         // overflow: TextOverflow.ellipsis,
       ),
@@ -337,13 +337,13 @@ Future showToast(String? msg,
     _children.insert(
       0,
       Padding(
-        padding: EdgeInsets.only(right: sz(LeoSize.fontSize.secondary / 3)),
+        padding: EdgeInsets.only(right: sz(theme.size.secondary / 3)),
         child: Icon(
           type == ToastType.success
               ? Icons.check_circle_outline
               : Icons.error_outline,
           color: textColor,
-          size: sz(LeoSize.fontSize.secondary),
+          size: sz(theme.size.secondary),
         ),
       ),
     );
@@ -360,14 +360,15 @@ Future showToast(String? msg,
         ),
         decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+            borderRadius:
+                BorderRadius.circular(sz(theme.size.cardBorderRadius)),
             boxShadow: LeouiTheme.of(LeoFeedback.currentContext!).boxShadow),
         child: buildBlurWidget(
-          borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+          borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius)),
           child: Padding(
             padding: EdgeInsets.symmetric(
-                horizontal: sz(LeoSize.fontSize.tertiary),
-                vertical: sz(LeoSize.fontSize.tertiary / 2)),
+                horizontal: sz(theme.size.tertiary),
+                vertical: sz(theme.size.tertiary / 2)),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: _children,

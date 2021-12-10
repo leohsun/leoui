@@ -39,7 +39,7 @@ class _DialogState extends State<Dialog> {
   late Color labelPrimaryColor;
   late LeouiThemeData theme;
 
-  Widget _buildBody() {
+  Widget _buildBody(LeouiThemeData theme) {
     List<Widget> _children = [];
 
     if (widget.title != null) {
@@ -49,7 +49,7 @@ class _DialogState extends State<Dialog> {
           widget.title!,
           style: TextStyle(
               height: 1.2,
-              fontSize: sz(LeoSize.fontSize.title),
+              fontSize: sz(theme.size.title),
               color: theme.labelPrimaryColor),
         ),
       ));
@@ -74,7 +74,7 @@ class _DialogState extends State<Dialog> {
         widget.content!,
         style: TextStyle(
             height: 1.2,
-            fontSize: sz(LeoSize.fontSize.tertiary),
+            fontSize: sz(theme.size.tertiary),
             color: theme.labelPrimaryColor),
       ));
     }
@@ -133,14 +133,15 @@ class _DialogState extends State<Dialog> {
   }
 
   Widget _buildButton(DialogButton button) {
-    Color color = button.color ?? LeouiTheme.of(context).userAccentColor;
+    LeouiThemeData theme = LeouiTheme.of(context);
+    Color color = button.color ?? theme.userAccentColor;
     List<Widget> _children = [
       Flexible(
         child: Text(
           button.text,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: sz(LeoSize.fontSize.title),
+              fontSize: sz(theme.size.title),
               color: color,
               fontWeight:
                   button.bold == true ? FontWeight.bold : FontWeight.normal),
@@ -152,10 +153,10 @@ class _DialogState extends State<Dialog> {
       _children.insert(
           0,
           Padding(
-            padding: EdgeInsets.only(right: sz(LeoSize.fontSize.title) / 3),
+            padding: EdgeInsets.only(right: sz(theme.size.title) / 3),
             child: Icon(
               button.icon,
-              size: sz(LeoSize.fontSize.title),
+              size: sz(theme.size.title),
               color: color,
             ),
           ));
@@ -165,10 +166,10 @@ class _DialogState extends State<Dialog> {
       _children.insert(
         0,
         Padding(
-          padding: EdgeInsets.only(right: sz(LeoSize.fontSize.title) / 3),
+          padding: EdgeInsets.only(right: sz(theme.size.title) / 3),
           child: SizedBox(
-              width: sz(LeoSize.fontSize.title),
-              height: sz(LeoSize.fontSize.title),
+              width: sz(theme.size.title),
+              height: sz(theme.size.title),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 color: color,
@@ -185,8 +186,7 @@ class _DialogState extends State<Dialog> {
         splashColor: theme.fillPrimaryColor,
         child: Container(
           height: _buttonHeight,
-          padding:
-              EdgeInsets.symmetric(horizontal: sz(LeoSize.fontSize.title / 2)),
+          padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: widget.layout == dialogLayout.row
@@ -214,7 +214,7 @@ class _DialogState extends State<Dialog> {
     List<Widget> _children = [];
     if (widget.slot != null) _children.add(widget.slot!);
     if (widget.title != null || widget.icon != null || widget.content != null)
-      _children.add(_buildBody());
+      _children.add(_buildBody(theme));
     if (widget.buttons != null) {
       _children.add(_buildButtons());
     }

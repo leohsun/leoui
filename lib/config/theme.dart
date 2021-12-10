@@ -2,6 +2,28 @@ import 'package:flutter/material.dart';
 
 enum LeouiBrightness { light, dark }
 
+class LeouiSize {
+  final double title;
+  final double content;
+  final double secondary;
+  final double tertiary;
+  final double formControls;
+  final double cardBorderRadius;
+  final double tab;
+  final double itemExtent;
+  final double itemElevation;
+  const LeouiSize(
+      {this.title = 17,
+      this.content = 17,
+      this.secondary = 15,
+      this.tertiary = 13,
+      this.formControls = 17,
+      this.cardBorderRadius = 8,
+      this.tab = 10,
+      this.itemExtent = 40,
+      this.itemElevation = 4});
+}
+
 class LeouiThemeData {
   final Color backgroundPrimaryColor;
   final Color backgroundSecondaryColor;
@@ -41,8 +63,9 @@ class LeouiThemeData {
 
   final Color dialogBackgroundColor;
 
-  final List<BoxShadow>? boxShadow;
-  final LeouiBrightness? brightness;
+  final List<BoxShadow> boxShadow;
+  final LeouiBrightness brightness;
+  final LeouiSize size;
 
   factory LeouiThemeData(
       {backgroundPrimaryColor,
@@ -78,7 +101,8 @@ class LeouiThemeData {
       textPrimaryColor,
       dialogBackgroundColor,
       boxShadow,
-      brightness}) {
+      brightness,
+      size}) {
     brightness = brightness ?? LeouiBrightness.light;
     bool isDark = brightness == LeouiBrightness.dark;
     backgroundPrimaryColor = isDark ? Colors.black : Colors.white;
@@ -190,6 +214,7 @@ class LeouiThemeData {
                 blurRadius: 4,
                 spreadRadius: 0),
           ];
+    size ??= LeouiSize();
     return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,
@@ -223,7 +248,8 @@ class LeouiThemeData {
         userAccentColor: userAccentColor,
         dialogBackgroundColor: dialogBackgroundColor,
         boxShadow: boxShadow,
-        brightness: brightness);
+        brightness: brightness,
+        size: size);
   }
 
   const LeouiThemeData.raw(
@@ -259,7 +285,8 @@ class LeouiThemeData {
       required this.userAccentColor,
       required this.dialogBackgroundColor,
       required this.boxShadow,
-      required this.brightness});
+      required this.brightness,
+      required this.size});
 
   factory LeouiThemeData.dark() =>
       LeouiThemeData(brightness: LeouiBrightness.dark);

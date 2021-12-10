@@ -65,28 +65,28 @@ class _SkeletonState extends State<Skeleton>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                    height: LeoSize.fontSize.content,
+                    height: theme.size.content,
                     color: Colors.white,
                     width: SizeTool.deviceWidth / 1.5),
                 SizedBox(
-                  height: LeoSize.fontSize.secondary,
+                  height: theme.size.secondary,
                 ),
                 Container(
-                  height: LeoSize.fontSize.content,
+                  height: theme.size.content,
                   color: Colors.white,
                 ),
                 SizedBox(
-                  height: LeoSize.fontSize.secondary,
+                  height: theme.size.secondary,
                 ),
                 Container(
-                  height: LeoSize.fontSize.content,
+                  height: theme.size.content,
                   color: Colors.white,
                 ),
                 SizedBox(
-                  height: LeoSize.fontSize.secondary,
+                  height: theme.size.secondary,
                 ),
                 Container(
-                    height: LeoSize.fontSize.content,
+                    height: theme.size.content,
                     color: Colors.white,
                     width: SizeTool.deviceWidth / 1.5),
               ],

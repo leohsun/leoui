@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Slider, Dialog;
 import 'package:flutter/services.dart';
 import 'package:leoui/config/index.dart';
-import 'package:leoui/config/size.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/utils/index.dart';

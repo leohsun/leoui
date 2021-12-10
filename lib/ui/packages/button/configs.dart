@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:leoui/config/index.dart';
+import 'package:leoui/feedback/index.dart';
 import 'package:leoui/utils/size.dart';
 
 enum ButtonType { primary, secondary }
@@ -8,12 +9,12 @@ enum ButtonSize { nomarl, small }
 
 List<Map<String, double>> sizeList = [
   {
-    'fontSize': sz(LeoSize.fontSize.secondary),
+    'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!).size.secondary),
     'minWidth': sz(120),
     'height': sz(40)
   },
   {
-    'fontSize': sz(LeoSize.fontSize.tertiary),
+    'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!).size.tertiary),
     'minWidth': sz(100),
     'height': sz(30)
   }

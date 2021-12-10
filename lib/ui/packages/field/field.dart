@@ -96,7 +96,7 @@ class FieldState extends State<Field> {
       preffix.add(DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
         child: widget.title!,
-        size: sz(LeoSize.fontSize.title),
+        size: sz(theme.size.title),
       ));
     }
 
@@ -104,7 +104,7 @@ class FieldState extends State<Field> {
       preffix.add(DefaultTextIconStyle(
         color: theme.labelSecondaryColor,
         child: widget.brief!,
-        size: sz(LeoSize.fontSize.secondary),
+        size: sz(theme.size.secondary),
       ));
     }
 
@@ -177,7 +177,7 @@ class FieldState extends State<Field> {
         child: DefaultTextIconStyle(
           color: theme.labelTertiaryColor,
           child: widget.footer,
-          size: sz(LeoSize.fontSize.tertiary),
+          size: sz(theme.size.tertiary),
         ),
       ));
     }
@@ -189,7 +189,7 @@ class FieldState extends State<Field> {
           color: widget.plain == true
               ? null
               : widget.color ?? theme.backgroundTertiaryColor,
-          borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius))),
+          borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: _children,
@@ -265,7 +265,7 @@ class FieldItem extends StatelessWidget implements ListItem {
       child: DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
         child: title!,
-        size: sz(LeoSize.fontSize.title),
+        size: sz(theme.size.title),
       ),
     );
   }
@@ -289,7 +289,7 @@ class FieldItem extends StatelessWidget implements ListItem {
             : theme.labelPrimaryColor,
         child: content,
         fontWeight: FontWeight.w500,
-        size: sz(LeoSize.fontSize.content),
+        size: sz(theme.size.content),
       )));
     }
 
@@ -299,7 +299,7 @@ class FieldItem extends StatelessWidget implements ListItem {
           child: DefaultTextIconStyle(
             color: theme.labelSecondaryColor,
             child: placeholder,
-            size: sz(LeoSize.fontSize.content),
+            size: sz(theme.size.content),
           )));
     }
 
@@ -309,7 +309,7 @@ class FieldItem extends StatelessWidget implements ListItem {
         child: DefaultTextIconStyle(
           color: theme.labelSecondaryColor,
           child: addon,
-          size: sz(LeoSize.fontSize.secondary),
+          size: sz(theme.size.secondary),
         ),
       ));
     }
@@ -352,7 +352,7 @@ class FieldItem extends StatelessWidget implements ListItem {
 
       return Container(
         padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 0)),
-        constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
+        constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _colChildren,
@@ -364,7 +364,7 @@ class FieldItem extends StatelessWidget implements ListItem {
         onPress: disabled == true ? null : onTap,
         child: Container(
           padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 0)),
-          constraints: BoxConstraints(minHeight: sz(LeoSize.itemExtent)),
+          constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,

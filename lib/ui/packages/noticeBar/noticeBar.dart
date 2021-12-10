@@ -56,8 +56,9 @@ class _NoticeBarState extends State<NoticeBar> {
   void initState() {
     if (widget.scrollable) {
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        LeouiThemeData theme = LeouiTheme.of(context);
         int time = (_scrollController.position.maxScrollExtent /
-                sz(LeoSize.fontSize.title * 2))
+                sz(theme.size.title * 2))
             .floor();
 
         _scrollController.animateTo(_scrollController.position.maxScrollExtent,
@@ -93,19 +94,19 @@ class _NoticeBarState extends State<NoticeBar> {
     Color color = widget.color ?? theme.userAccentColor;
 
     return LayoutBuilder(builder: (context, constrains) {
-      maxWidth = constrains.maxWidth - sz(LeoSize.fontSize.title * 2);
+      maxWidth = constrains.maxWidth - sz(theme.size.title * 2);
       if (widget.closable != null) {
-        maxWidth -= sz(LeoSize.fontSize.title * 1.5);
+        maxWidth -= sz(theme.size.title * 1.5);
       }
 
       if (widget.link != null) {
-        maxWidth -= sz(LeoSize.fontSize.title * 1.5);
+        maxWidth -= sz(theme.size.title * 1.5);
       }
 
       List<Widget> rowChildren = [];
 
       rowChildren.add(SizedBox(
-        width: sz(LeoSize.fontSize.title * 1.5),
+        width: sz(theme.size.title * 1.5),
         child: Center(
           child: widget.icon ?? SizedBox.shrink(),
         ),
@@ -113,8 +114,7 @@ class _NoticeBarState extends State<NoticeBar> {
 
       rowChildren.add(Expanded(
         child: Padding(
-          padding:
-              EdgeInsets.symmetric(vertical: sz(LeoSize.fontSize.title / 3)),
+          padding: EdgeInsets.symmetric(vertical: sz(theme.size.title / 3)),
           child: widget.scrollable == true
               ? SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -144,7 +144,7 @@ class _NoticeBarState extends State<NoticeBar> {
           ? buildButtonWidget(
               onPress: _handleActionIconTab,
               child: Container(
-                  width: sz(LeoSize.fontSize.title * 1.5),
+                  width: sz(theme.size.title * 1.5),
                   child: Center(
                     child: Icon(Icons.close_sharp),
                   )),
@@ -155,7 +155,7 @@ class _NoticeBarState extends State<NoticeBar> {
           ? buildButtonWidget(
               onPress: _handleActionIconTab,
               child: Container(
-                  width: sz(LeoSize.fontSize.title * 1.5),
+                  width: sz(theme.size.title * 1.5),
                   child: Center(
                     child: Icon(Icons.arrow_forward_ios_rounded),
                   )),
@@ -177,11 +177,11 @@ class _NoticeBarState extends State<NoticeBar> {
                       : BorderRadius.zero),
               child: DefaultTextIconStyle(
                 color: color,
-                size: LeoSize.fontSize.secondary,
+                size: theme.size.secondary,
                 child: IntrinsicHeight(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: sz(LeoSize.fontSize.title / 2)),
+                        horizontal: sz(theme.size.title / 2)),
                     child: Row(
                       children: rowChildren,
                     ),

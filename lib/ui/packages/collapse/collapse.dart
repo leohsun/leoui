@@ -41,12 +41,13 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    LeouiThemeData theme = LeouiTheme.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         PhysicalModel(
           color: Colors.white,
-          elevation: LeoSize.itemElevation,
+          elevation: theme.size.itemElevation,
           child: GestureDetector(
             onTap: () {
               if (expanded) {
@@ -72,7 +73,7 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
                   children: [
                     Text(
                       widget.title,
-                      style: TextStyle(fontSize: LeoSize.fontSize.title),
+                      style: TextStyle(fontSize: theme.size.title),
                     ),
                     Transform(
                       alignment: Alignment.center,
@@ -80,7 +81,7 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
                         ..rotateZ(_tween.value * 3.1415926),
                       child: Icon(
                         Icons.arrow_forward_ios_outlined,
-                        size: LeoSize.fontSize.content,
+                        size: theme.size.content,
                       ),
                     )
                   ],

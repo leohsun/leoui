@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
-import 'package:leoui/config/size.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/ui/packages/inputItem/inputItem.dart';
@@ -60,13 +59,13 @@ class _SearchBarState extends State<SearchBar>
         ? LeouiTheme.of(context)
         : LeouiThemeData(brightness: widget.brightness);
     return Container(
-      height: sz(LeoSize.itemExtent),
+      height: sz(theme.size.itemExtent),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(left: sz(LeoSize.cardBorderRadius)),
+              padding: EdgeInsets.only(left: sz(theme.size.cardBorderRadius)),
               child: InputItem(
                 brightness: widget.brightness,
                 icon: Icon(
@@ -86,11 +85,11 @@ class _SearchBarState extends State<SearchBar>
                 defaultValue: keywords,
                 inputAction: TextInputAction.search,
               ),
-              height: sz(LeoSize.itemExtent),
+              height: sz(theme.size.itemExtent),
               decoration: BoxDecoration(
                   color: theme.fillTertiaryColor,
                   borderRadius:
-                      BorderRadius.circular(sz(LeoSize.cardBorderRadius))),
+                      BorderRadius.circular(sz(theme.size.cardBorderRadius))),
             ),
           ),
           AnimatedBuilder(
@@ -106,7 +105,7 @@ class _SearchBarState extends State<SearchBar>
                       (input.currentState as InputItemState).blur();
                       _controller.reverse();
                     }),
-                padding: EdgeInsets.only(left: sz(LeoSize.cardBorderRadius)),
+                padding: EdgeInsets.only(left: sz(theme.size.cardBorderRadius)),
               ),
               builder: (context, child) {
                 return ClipRect(

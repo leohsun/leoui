@@ -137,8 +137,8 @@ class _PopoverState extends State<Popover> with SingleTickerProviderStateMixin {
                     transform: _transform,
                     alignment: _alignment,
                     child: Material(
-                      borderRadius:
-                          BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+                      borderRadius: BorderRadius.circular(
+                          sz(LeouiTheme.of(context).size.cardBorderRadius)),
                       child: widget.menu,
                     ),
                   ),

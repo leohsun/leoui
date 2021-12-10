@@ -1,9 +1,9 @@
 import 'package:leoui/config/theme.dart';
 
 class LeouiConfig {
-  final LeouiBrightness? brightness;
+  final LeouiThemeData? theme;
 
-  const LeouiConfig({this.brightness});
+  const LeouiConfig({this.theme});
 
   Map toJson() {
     Map json = {};

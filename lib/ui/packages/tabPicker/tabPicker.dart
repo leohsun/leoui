@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:leoui/config/index.dart';
-import 'package:leoui/config/size.dart';
 import 'package:leoui/config/theme.dart';
 import 'package:leoui/feedback/index.dart';
 import 'package:leoui/ui/packages/scalableText/scalableText.dart';
@@ -27,10 +26,9 @@ class TabPicker extends StatefulWidget {
       LeouiBrightness? brightness,
       bool? linkage,
       this.onSubmit,
-      double? selectorHeight,
+      this.selectorHeight,
       required this.dataList})
-      : selectorHeight = selectorHeight ?? sz(LeoSize.itemExtent * 4),
-        columnKey = columnKey ?? 'label',
+      : columnKey = columnKey ?? 'label',
         childrenKey = childrenKey ?? 'children',
         brightness = brightness ?? LeouiBrightness.light,
         linkage = linkage ?? false,
@@ -143,7 +141,7 @@ class _TabPickerState extends State<TabPicker>
                   decoration: BoxDecoration(
                       border: Border(
                           top: BorderSide(color: theme.fillPrimaryColor))),
-                  height: sz(LeoSize.itemExtent),
+                  height: sz(theme.size.itemExtent),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: sz(10)),
                     child: Align(
@@ -152,7 +150,7 @@ class _TabPickerState extends State<TabPicker>
                         data[widget.columnKey] ?? 'unknown',
                         minFontSize: sz(10),
                         style: TextStyle(
-                            fontSize: sz(LeoSize.fontSize.content),
+                            fontSize: sz(theme.size.content),
                             color: isSelected
                                 ? theme.userAccentColor
                                 : theme.labelPrimaryColor),
@@ -179,7 +177,8 @@ class _TabPickerState extends State<TabPicker>
         child: Container(
             decoration: BoxDecoration(
               color: theme.backgroundPrimaryColor,
-              borderRadius: BorderRadius.circular(sz(LeoSize.cardBorderRadius)),
+              borderRadius:
+                  BorderRadius.circular(sz(theme.size.cardBorderRadius)),
             ),
             child: DefaultTabController(
                 length: selectedDataList.length,
@@ -199,12 +198,12 @@ class _TabPickerState extends State<TabPicker>
                             tabs: [
                               ...mapWithIndex(selectedDataList, (data, idx) {
                                 return Container(
-                                  height: sz(LeoSize.itemExtent),
+                                  height: sz(theme.size.itemExtent),
                                   child: Center(
                                     child: Text(
                                       data[widget.columnKey] ?? hintText,
                                       style: TextStyle(
-                                          fontSize: sz(LeoSize.fontSize.title)),
+                                          fontSize: sz(theme.size.title)),
                                     ),
                                   ),
                                 );
@@ -212,7 +211,8 @@ class _TabPickerState extends State<TabPicker>
                             ]),
                       ),
                       Container(
-                        height: widget.selectorHeight,
+                        height: widget.selectorHeight ??
+                            sz(theme.size.itemExtent * 4),
                         child: TabBarView(
                           children: [
                             ...mapWithIndex(columnDataList, (e, idx) {

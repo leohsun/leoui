@@ -84,7 +84,7 @@ class Leoui extends StatelessWidget {
     return MediaQuery(
       data: MediaQueryData.fromWindow(WidgetsBinding.instance!.window),
       child: LeouiTheme(
-        theme: LeouiThemeData(brightness: config.brightness),
+        theme: config.theme,
         child: DefaultTextStyle(
             style: TextStyle(
               color: LeouiTheme.of(context).labelPrimaryColor,
