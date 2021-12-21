@@ -12,7 +12,8 @@ class Modal {
 
   Future<void> close([payload]) async {
     if (!dismissCompleter.isCompleted) {
-      if (modalWidgetKey.currentState!.autoCloseCounter != null) {
+      if (modalWidgetKey.currentState != null &&
+          modalWidgetKey.currentState!.autoCloseCounter != null) {
         modalWidgetKey.currentState!.autoCloseCounter!.cancel();
       }
       dismissCompleter.complete(payload);

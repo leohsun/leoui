@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:leoui/config/index.dart';
 import 'package:leoui/config/theme.dart';
+import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/utils/index.dart';
 
@@ -136,6 +137,7 @@ class _IndexesState extends State<Indexes> {
     if (activeKey != indexKeyList[index]) {
       setState(() {
         activeKey = indexKeyList[index];
+        showToast(activeKey);
       });
       _handleScroll(index);
     }
@@ -143,6 +145,7 @@ class _IndexesState extends State<Indexes> {
 
   void _handleVerticalDragEnd(DragEndDetails details) {
     calcActivekey(scrollView.offset);
+    showToast(activeKey);
   }
 
   void _handleTapDown(TapDownDetails details) {
@@ -166,6 +169,7 @@ class _IndexesState extends State<Indexes> {
 
   void _handleTapUp(TapUpDetails details) {
     calcActivekey(scrollView.offset);
+    showToast(activeKey);
   }
 
   @override

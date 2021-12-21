@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
+import 'package:leoui/ui/index.dart';
 import 'package:leoui/utils/index.dart';
 
 enum dialogLayout { row, column }
@@ -15,6 +16,13 @@ class Dialog extends StatefulWidget {
   final List<DialogButton>? buttons; //底部操作按钮组
   final Widget? slot; // 插槽内容
   final double? width;
+  final bool promopt; // 輸入框
+  final String? placeholder; // 輸入框提示
+  final RegExp? validatePattern;
+  final String? patternDescript;
+  final String? fieldKey; // 用于Field导出数据的key --> {'username':'kim'}
+  final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
+  final GlobalKey<InputItemState>? promoptItemKey;
   const Dialog(
       {Key? key,
       this.brightness,
@@ -24,7 +32,14 @@ class Dialog extends StatefulWidget {
       this.layout = dialogLayout.row,
       this.buttons,
       this.content,
-      this.width})
+      this.width,
+      this.promopt = false,
+      this.validatePattern,
+      this.patternDescript,
+      this.placeholder,
+      this.promoptItemKey,
+      this.fieldKey,
+      this.fieldLabel})
       : super(key: key);
 
   @override
@@ -74,6 +89,30 @@ class _DialogState extends State<Dialog> {
             height: 1.2,
             fontSize: sz(theme.size.tertiary),
             color: theme.labelPrimaryColor),
+      ));
+    }
+
+    if (widget.promopt) {
+      _children.add(Material(
+        borderRadius: BorderRadius.circular(sz(theme.size.fieldBorderRadius)),
+        color: theme.backgroundSecondaryColor,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.nonOpaqueSeparatorColor),
+            borderRadius:
+                BorderRadius.circular(sz(theme.size.fieldBorderRadius)),
+          ),
+          child: InputItem(
+            key: widget.promoptItemKey,
+            brightness: widget.brightness,
+            validatePattern: widget.validatePattern,
+            patternDescript: widget.patternDescript,
+            placeholder: widget.placeholder,
+            fieldKey: widget.fieldKey,
+            fieldLabel: widget.fieldLabel,
+          ),
+        ),
       ));
     }
 
@@ -201,29 +240,31 @@ class _DialogState extends State<Dialog> {
   Widget build(BuildContext context) {
     theme = widget.brightness == null
         ? LeouiTheme.of(context)
-        : LeouiThemeData(brightness: widget.brightness);
+        : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
 
     double _width = widget.width ?? theme.size.dialogWidth;
     List<Widget> _children = [];
     if (widget.slot != null) _children.add(widget.slot!);
-    if (widget.title != null || widget.icon != null || widget.content != null)
-      _children.add(_buildBody(theme));
+    if (widget.title != null ||
+        widget.icon != null ||
+        widget.content != null ||
+        widget.promopt) _children.add(_buildBody(theme));
     if (widget.buttons != null) {
       _children.add(_buildButtons());
     }
-    return DecoratedBox(
-      decoration: BoxDecoration(
-          color: theme.dialogBackgroundColor,
-          boxShadow: theme.boxShadow,
-          borderRadius: BorderRadius.circular(sz(6))),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(sz(6)),
-        child: Container(
-          width: _width,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _children,
-          ),
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius)),
+      child: Container(
+        width: _width,
+        decoration: BoxDecoration(
+            color: theme.dialogBackgroundColor,
+            boxShadow: theme.boxShadow,
+            borderRadius:
+                BorderRadius.circular(sz(theme.size.cardBorderRadius))),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: _children,
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui_example/routes.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: 'dialog',
+          initialRoute: 'popover',
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

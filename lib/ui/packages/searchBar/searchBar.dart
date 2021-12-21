@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/ui/index.dart';
-import 'package:leoui/ui/packages/inputItem/inputItem.dart';
-import 'package:leoui/utils/index.dart';
 
 class SearchBar extends StatefulWidget {
   final String? placeholder;
@@ -37,9 +33,9 @@ class _SearchBarState extends State<SearchBar>
         AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _animation = Tween<double>(begin: 0, end: 1)
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn))
-          ..addListener(() {
-            setState(() {});
-          });
+      ..addListener(() {
+        setState(() {});
+      });
     keywords = widget.defaultkeywords ?? '';
     if (keywords.isNotEmpty) {
       _controller.value = 1;
@@ -57,7 +53,7 @@ class _SearchBarState extends State<SearchBar>
   Widget build(BuildContext context) {
     LeouiThemeData theme = widget.brightness == null
         ? LeouiTheme.of(context)
-        : LeouiThemeData(brightness: widget.brightness);
+        : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
     return Container(
       height: sz(theme.size.itemExtent),
       child: Row(

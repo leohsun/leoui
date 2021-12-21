@@ -1,11 +1,11 @@
 library leo_ui.button;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:leoui/config/index.dart';
 import 'package:leoui/ui/packages/button/configs.dart';
-import 'package:leoui/utils/size.dart';
+import 'package:leoui/utils/index.dart';
+
+const double ColorChangeLightneessFactor = 40;
 
 class Button extends StatefulWidget {
   final ButtonType type;
@@ -92,7 +92,11 @@ class _ButtonState extends State<Button> {
     Border? _border = widget.border != null
         ? widget.border
         : widget.type == ButtonType.secondary && widget.inGroup == false
-            ? Border.all(width: 1, color: fontColor)
+            ? Border.all(
+                width: 1,
+                color: widget.disabled
+                    ? lighten(fontColor, ColorChangeLightneessFactor)
+                    : fontColor)
             : null;
 
     List<Widget> children = [
@@ -101,7 +105,9 @@ class _ButtonState extends State<Button> {
           widget.data,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            color: fontColor,
+            color: widget.disabled
+                ? lighten(fontColor, ColorChangeLightneessFactor)
+                : fontColor,
             fontSize: size['fontSize'],
           ),
         ),
@@ -114,7 +120,9 @@ class _ButtonState extends State<Button> {
           height: size['fontSize'],
           width: size['fontSize'],
           child: CircularProgressIndicator(
-            color: fontColor,
+            color: widget.disabled
+                ? lighten(fontColor, ColorChangeLightneessFactor)
+                : fontColor,
             strokeWidth: 1,
           ),
         ),
@@ -125,35 +133,34 @@ class _ButtonState extends State<Button> {
     }
 
     double _maxWidth = widget.maxWidth ?? SizeTool.deviceWidth;
-
-    return Opacity(
-      opacity: widget.disabled ? 0.3 : 1,
-      child: Material(
-        color: backgroundColor,
-        elevation: widget.inGroup ? 0 : 4,
-        borderRadius: borderRadius,
-        child: InkWell(
-            highlightColor: Colors.transparent,
-            borderRadius: borderRadius,
-            onTap: widget.disabled ? null : widget.onTap,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: borderRadius,
-                border: _border,
+    return Material(
+      color: widget.disabled
+          ? lighten(backgroundColor, ColorChangeLightneessFactor)
+          : backgroundColor,
+      elevation: widget.inGroup ? 0 : 4,
+      borderRadius: borderRadius,
+      child: InkWell(
+          highlightColor: Colors.transparent,
+          borderRadius: borderRadius,
+          splashColor: darken(backgroundColor, ColorChangeLightneessFactor / 4),
+          onTap: widget.disabled ? null : widget.onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: borderRadius,
+              border: _border,
+            ),
+            constraints: BoxConstraints(
+                minHeight: size['height'], maxWidth: _maxWidth - padding),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: padding),
+              child: Row(
+                mainAxisSize: mainAxisSize,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: children,
               ),
-              constraints: BoxConstraints(
-                  minHeight: size['height'], maxWidth: _maxWidth - padding),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding),
-                child: Row(
-                  mainAxisSize: mainAxisSize,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: children,
-                ),
-              ),
-            )),
-      ),
+            ),
+          )),
     );
   }
 }

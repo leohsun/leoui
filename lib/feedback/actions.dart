@@ -433,19 +433,21 @@ Future showConfirm(
   List<DialogButton> buttons = [
     DialogButton(
         handler: (ctx) {
-          modal?.close('cancel');
+          modal?.close(false);
           if (onCancel != null) onCancel();
         },
-        color: LeouiThemeData(brightness: brightness).labelPrimaryColor,
-        text: LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
+        color: LeouiTheme.of(LeoFeedback.currentContext!).labelPrimaryColor,
+        text: cancelText ??
+            LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
     DialogButton(
         handler: (ctx) {
-          modal?.close('confirm');
+          modal?.close(true);
           if (onConfirm != null) onConfirm();
         },
         bold: true,
-        color: LeouiThemeData(brightness: brightness).userAccentColor,
-        text: LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
+        color: LeouiTheme.of(LeoFeedback.currentContext!).userAccentColor,
+        text: confirmText ??
+            LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
   ];
 
   modal = Modal(
@@ -454,6 +456,68 @@ Future showConfirm(
     content: content,
     brightness: brightness,
     buttons: buttons,
+  ));
+
+  return showModal(modal: modal);
+}
+
+Future showPrompt({
+  LeouiBrightness? brightness, //主题
+  String? title, //窗口标题
+  String? content, //正文内容
+  String? confirmText, // 确定按钮文本
+  String? cancelText, // 取消按钮文本
+  RegExp? validatePattern, //检验正则
+  String? patternDescript,
+  String? fieldKey, // 用于Field导出数据的key --> {'username':'kim'}
+  String? fieldLabel, // 用于校验输入提示 -->'(用户名)不能为空'
+}) {
+  assert(validatePattern == null || (fieldKey != null && fieldLabel != null),
+      'when validatePattern is not null then fieldKey and fieldLable must be provided');
+  Modal? modal;
+  GlobalKey<InputItemState> inputKey = GlobalKey(debugLabel: 'promopt__input');
+
+  LeouiThemeData theme = brightness != null
+      ? LeouiTheme.of(LeoFeedback.currentContext!)
+          .copyWith(brightness: brightness)
+      : LeouiTheme.of(LeoFeedback.currentContext!);
+
+  List<DialogButton> buttons = [
+    DialogButton(
+        handler: (ctx) {
+          modal?.close(null);
+        },
+        color: theme.labelPrimaryColor,
+        text: cancelText ??
+            LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
+    DialogButton(
+        handler: (ctx) {
+          String hintText = inputKey.currentState!.validate();
+          if (hintText.isNotEmpty) {
+            showToast(hintText, type: ToastType.warning);
+          } else {
+            Map? data = inputKey.currentState!.obtainData();
+            modal?.close(data);
+          }
+        },
+        bold: true,
+        color: LeouiTheme.of(LeoFeedback.currentContext!).userAccentColor,
+        text: confirmText ??
+            LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
+  ];
+
+  modal = Modal(
+      child: Dialog(
+    title: title,
+    content: content,
+    brightness: brightness,
+    promopt: true,
+    buttons: buttons,
+    promoptItemKey: inputKey,
+    validatePattern: validatePattern,
+    patternDescript: patternDescript,
+    fieldKey: fieldKey,
+    fieldLabel: fieldLabel,
   ));
 
   return showModal(modal: modal);

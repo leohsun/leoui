@@ -19,6 +19,27 @@ Color hex(String color) {
   return Color(0xffffff);
 }
 
+Color darken(Color color, double amount) {
+  assert(amount >= 0 && amount <= 100);
+  double factor = 1 - amount / 100;
+
+  return Color.fromARGB(
+      color.alpha,
+      (color.red * factor).round().clamp(0, 255),
+      (color.green * factor).round().clamp(0, 255),
+      (color.blue * factor).round().clamp(0, 255));
+}
+
+Color lighten(Color color, double amount) {
+  assert(amount >= 0 && amount <= 100);
+  double factor = 1 + amount / 100;
+  return Color.fromARGB(
+      color.alpha,
+      (color.red * factor).round().clamp(0, 255),
+      (color.green * factor).round().clamp(0, 255),
+      (color.blue * factor).round().clamp(0, 255));
+}
+
 class DelayTween extends Tween<double> {
   DelayTween({required double begin, required double end, this.delay = 0.0})
       : super(begin: begin, end: end);

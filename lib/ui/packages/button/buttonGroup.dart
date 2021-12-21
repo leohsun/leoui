@@ -176,25 +176,8 @@ class ButtonGroupState extends State<ButtonGroup> {
   }
 
   @override
-  void initState() {
-    // assert(() {
-    //   bool isAllChildrenAreButton = false;
-    //   widget.children.forEach((element) {
-    //     isAllChildrenAreButton = element.runtimeType == Button;
-    //   });
-    //   if (!isAllChildrenAreButton) {
-    //     throw 'each child of children property must be \'Button\'';
-    //   }
-    //   return true;
-    // }());
-
-    _assembleChildrenList();
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    _assembleChildrenList();
     if (onlyTwo && widget.type == ButtonType.secondary) {
       return DecoratedBox(
         decoration: BoxDecoration(
