@@ -1,9 +1,7 @@
 library leo_ui.button;
 
 import 'package:flutter/material.dart';
-import 'package:leoui/config/index.dart';
-import 'package:leoui/ui/packages/button/configs.dart';
-import 'package:leoui/utils/index.dart';
+import 'package:leoui/leoui.dart';
 
 const double ColorChangeLightneessFactor = 40;
 
@@ -137,7 +135,7 @@ class _ButtonState extends State<Button> {
       color: widget.disabled
           ? lighten(backgroundColor, ColorChangeLightneessFactor)
           : backgroundColor,
-      elevation: widget.inGroup ? 0 : 4,
+      elevation: LeouiTheme.of(LeoFeedback.currentContext!).size.itemElevation,
       borderRadius: borderRadius,
       child: InkWell(
           highlightColor: Colors.transparent,

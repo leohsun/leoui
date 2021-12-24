@@ -1,12 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:leoui/config/index.dart';
-import 'package:leoui/config/theme.dart';
 import 'package:leoui/feedback/index.dart';
 import 'package:leoui/ui/packages/scalableText/scalableText.dart';
 import 'package:leoui/utils/index.dart';
-import 'package:leoui/utils/size.dart';
 
 class TabPicker extends StatefulWidget {
   final List<List> dataList;

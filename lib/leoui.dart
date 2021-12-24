@@ -1,11 +1,7 @@
 library leoui;
 
 import 'dart:io' show Platform;
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:leoui/config/index.dart';
 import 'package:leoui/utils/index.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

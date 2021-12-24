@@ -111,6 +111,7 @@ class _DialogState extends State<Dialog> {
             placeholder: widget.placeholder,
             fieldKey: widget.fieldKey,
             fieldLabel: widget.fieldLabel,
+            focus: true,
           ),
         ),
       ));

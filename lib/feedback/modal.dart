@@ -352,10 +352,24 @@ class _ModalWidgetState extends State<_ModalWidget>
                       },
                       onVerticalDragUpdate: (DragUpdateDetails details) {
                         if (!isTop && !isBottom) return;
-                        setState(() {
-                          if (isTop) _top += details.delta.dy;
-                          if (isBottom) _bottom = _bottom! - details.delta.dy;
-                        });
+
+                        if (isTop) {
+                          double dragTop = _top + details.delta.dy;
+                          if (dragTop < 0) {
+                            setState(() {
+                              _top = dragTop;
+                            });
+                          }
+                        }
+
+                        if (isBottom) {
+                          double dragBottom = _bottom! - details.delta.dy;
+                          if (dragBottom < 0) {
+                            setState(() {
+                              _bottom = dragBottom;
+                            });
+                          }
+                        }
                       },
                       onVerticalDragEnd: (_) {
                         if (!isTop && !isBottom) return;
@@ -399,10 +413,28 @@ class _ModalWidgetState extends State<_ModalWidget>
                       },
                       onHorizontalDragUpdate: (DragUpdateDetails details) {
                         if (!isLeft && !isRight) return;
-                        setState(() {
-                          if (isLeft) _left = _left! + details.delta.dx;
-                          if (isRight) _right = _right! - details.delta.dx;
-                        });
+                        // setState(() {
+                        //   if (isLeft) _left = _left! + details.delta.dx;
+                        //   if (isRight) _right = _right! - details.delta.dx;
+                        // });
+
+                        if (isLeft) {
+                          double dragLeft = _left! + details.delta.dx;
+                          if (dragLeft > 0) {
+                            setState(() {
+                              _left = dragLeft;
+                            });
+                          }
+                        }
+
+                        if (isRight) {
+                          double dragRight = _right! - details.delta.dx;
+                          if (dragRight < 0) {
+                            setState(() {
+                              _right = dragRight;
+                            });
+                          }
+                        }
                       },
                       onHorizontalDragEnd: (_) {
                         if (!isLeft && !isRight) return;

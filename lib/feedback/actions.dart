@@ -399,6 +399,7 @@ Future showAlert(
     VoidCallback? onConfirm // 点击确定后回调函数
     }) {
   Modal? modal;
+
   modal = Modal(
       child: Dialog(
     title: title ?? LeouiLocalization.of(LeoFeedback.currentContext!).warning,
@@ -430,13 +431,17 @@ Future showConfirm(
     }) {
   Modal? modal;
 
+  LeouiThemeData theme = brightness != null
+      ? LeouiTheme.of(LeoFeedback.currentContext!)
+          .copyWith(brightness: brightness)
+      : LeouiTheme.of(LeoFeedback.currentContext!);
   List<DialogButton> buttons = [
     DialogButton(
         handler: (ctx) {
           modal?.close(false);
           if (onCancel != null) onCancel();
         },
-        color: LeouiTheme.of(LeoFeedback.currentContext!).labelPrimaryColor,
+        color: theme.labelPrimaryColor,
         text: cancelText ??
             LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
     DialogButton(
@@ -445,7 +450,7 @@ Future showConfirm(
           if (onConfirm != null) onConfirm();
         },
         bold: true,
-        color: LeouiTheme.of(LeoFeedback.currentContext!).userAccentColor,
+        color: theme.userAccentColor,
         text: confirmText ??
             LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
   ];

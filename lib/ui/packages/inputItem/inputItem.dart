@@ -32,37 +32,39 @@ class InputItem extends StatefulWidget implements ListItem {
   final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
   final LeouiBrightness? brightness; // 主题 dark 、light
   final double? fontSize;
+  final bool focus; //获取焦点
 
-  const InputItem({
-    Key? key,
-    this.title,
-    this.icon,
-    this.leading,
-    this.content,
-    this.defaultValue,
-    this.addon,
-    this.placeholder,
-    this.disabled = false,
-    this.verticalPadding,
-    this.solid = true,
-    this.inputType = TextInputType.text,
-    this.inputAction,
-    this.clearable = true,
-    this.readonly = false,
-    this.textAlign = TextAlign.left,
-    this.obscureText = false,
-    this.onChanged,
-    this.onFocus,
-    this.onBlur,
-    this.onSubmit,
-    this.validatePattern,
-    this.maxLength,
-    this.fieldKey,
-    this.fieldLabel,
-    this.patternDescript,
-    this.brightness,
-    this.fontSize,
-  })  : assert(
+  const InputItem(
+      {Key? key,
+      this.title,
+      this.icon,
+      this.leading,
+      this.content,
+      this.defaultValue,
+      this.addon,
+      this.placeholder,
+      this.disabled = false,
+      this.verticalPadding,
+      this.solid = true,
+      this.inputType = TextInputType.text,
+      this.inputAction,
+      this.clearable = true,
+      this.readonly = false,
+      this.textAlign = TextAlign.left,
+      this.obscureText = false,
+      this.onChanged,
+      this.onFocus,
+      this.onBlur,
+      this.onSubmit,
+      this.validatePattern,
+      this.maxLength,
+      this.fieldKey,
+      this.fieldLabel,
+      this.patternDescript,
+      this.brightness,
+      this.fontSize,
+      this.focus = false})
+      : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
             'when validatePattern is not null then fieldKey and fieldLable must be provided'),
         assert(leading == null || (title == null && icon == null),
@@ -121,6 +123,10 @@ class InputItemState extends State<InputItem> implements ListItemState {
       _controller.value = TextEditingValue(text: widget.defaultValue!);
       value = widget.defaultValue!;
       showCloseButton = value.isNotEmpty;
+    }
+
+    if (widget.focus) {
+      focusNode.requestFocus();
     }
 
     focusNode.addListener(() {

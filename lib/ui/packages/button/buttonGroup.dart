@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:leoui/config/index.dart';
+import 'package:leoui/feedback/index.dart';
 import 'package:leoui/ui/packages/button/configs.dart';
 import 'package:leoui/utils/size.dart';
 
@@ -160,6 +160,21 @@ class ButtonGroupState extends State<ButtonGroup> {
                 borderRadius: _borderRadius));
       }
       tmp.add(btn);
+      if (widget.type == ButtonType.primary &&
+          i != widget.children.length - 1) {
+        tmp.add(Container(
+          height: widget.size == ButtonSize.nomarl
+              ? sz(LeouiTheme.of(LeoFeedback.currentContext!)
+                  .size
+                  .buttonNormalHeight)
+              : sz(LeouiTheme.of(LeoFeedback.currentContext!)
+                  .size
+                  .buttonSmallHeight),
+          width: 0.3,
+          color: LeouiTheme.of(LeoFeedback.currentContext!)
+              .nonOpaqueSeparatorColor,
+        ));
+      }
     }
 
     if (onlyTwo && widget.type == ButtonType.secondary) {

@@ -14,6 +14,10 @@ class LeouiSize {
   final double itemExtent;
   final double itemElevation;
   final double dialogWidth;
+  final double buttonNormalMinWidth;
+  final double buttonNormalHeight;
+  final double buttonSmallMinWidth;
+  final double buttonSmallHeight;
   const LeouiSize(
       {this.title = 17,
       this.content = 17,
@@ -25,7 +29,11 @@ class LeouiSize {
       this.tab = 10,
       this.itemExtent = 40,
       this.dialogWidth = 300,
-      this.itemElevation = 4});
+      this.itemElevation = 4,
+      this.buttonNormalMinWidth = 120,
+      this.buttonNormalHeight = 40,
+      this.buttonSmallMinWidth = 100,
+      this.buttonSmallHeight = 30});
 }
 
 class LeouiThemeData {

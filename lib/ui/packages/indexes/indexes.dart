@@ -2,11 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:leoui/config/index.dart';
-import 'package:leoui/config/theme.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/ui/index.dart';
-import 'package:leoui/utils/index.dart';
 
 class Indexes extends StatefulWidget {
   final List<Map> dataList;

@@ -10,13 +10,17 @@ enum ButtonSize { nomarl, small }
 List<Map<String, double>> sizeList = [
   {
     'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!).size.secondary),
-    'minWidth': sz(120),
-    'height': sz(40)
+    'minWidth': sz(
+        LeouiTheme.of(LeoFeedback.currentContext!).size.buttonNormalMinWidth),
+    'height':
+        sz(LeouiTheme.of(LeoFeedback.currentContext!).size.buttonNormalHeight),
   },
   {
     'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!).size.tertiary),
-    'minWidth': sz(100),
-    'height': sz(30)
+    'minWidth':
+        sz(LeouiTheme.of(LeoFeedback.currentContext!).size.buttonSmallMinWidth),
+    'height':
+        sz(LeouiTheme.of(LeoFeedback.currentContext!).size.buttonSmallHeight)
   }
 ];
 
