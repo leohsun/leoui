@@ -226,7 +226,31 @@ class _ButtonPageState extends State<ButtonPage> {
                             'last',
                             onTap: () {},
                           )
-                        ])
+                        ]),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ButtonGroup(children: [
+                      Button(
+                        '哈哈',
+                        onTap: () {},
+                      ),
+                      Button(
+                        '嘻嘻',
+                        onTap: () {},
+                        color: Colors.red,
+                      ),
+                      Button(
+                        '嘿嘿',
+                        onTap: () {},
+                        color: Colors.blue,
+                      ),
+                      Button(
+                        '嘿嘿',
+                        onTap: () {},
+                        color: Colors.orange,
+                      )
+                    ]),
                   ],
                 ),
               ),
