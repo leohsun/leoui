@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 
-class LoadingPage extends StatefulWidget {
-  const LoadingPage({Key? key}) : super(key: key);
+class PromptPage extends StatefulWidget {
+  const PromptPage({Key? key}) : super(key: key);
 
   @override
-  _LoadingPageState createState() => _LoadingPageState();
+  _PromptPageState createState() => _PromptPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage> {
+class _PromptPageState extends State<PromptPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +18,7 @@ class _LoadingPageState extends State<LoadingPage> {
                 Navigator.of(context).pop();
               },
               icon: Icon(Icons.arrow_back_ios_new_rounded)),
-          title: Text('Loading-加载中...'),
+          title: Text('Prompt-简易输入框'),
         ),
         body: SafeArea(
           child: Padding(
@@ -34,18 +34,25 @@ class _LoadingPageState extends State<LoadingPage> {
                     ButtonGroup(children: [
                       Button(
                         'dark',
-                        onTap: () {
-                          showLoading(
-                              duration: Duration(seconds: 3), closable: false);
+                        onTap: () async {
+                          Map? resp = await showPrompt(
+                              fieldKey: 'input',
+                              brightness: LeouiBrightness.dark,
+                              title: '请输入备注');
+                          if (resp != null) {
+                            showToast('备注: ${resp['input']}');
+                          }
                         },
                       ),
                       Button(
                         'light',
                         color: LeoColors.warn,
-                        onTap: () {
-                          showLoading(
-                              duration: Duration(seconds: 3),
-                              brightness: LeouiBrightness.light);
+                        onTap: () async {
+                          Map? resp = await showPrompt(
+                              fieldKey: 'input', title: '请输入备注');
+                          if (resp != null) {
+                            showToast('备注: ${resp['input']}');
+                          }
                         },
                       )
                     ]),
@@ -53,21 +60,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       height: 20,
                     ),
                     ListTile(
-                      title: Text('title'),
-                    ),
-                    Button(
-                      'dark',
-                      full: true,
-                      onTap: () {
-                        showLoading(title: '正在保存...', closable: true);
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    ListTile(
-                      title: Text('手动关闭loading'),
-                      subtitle: Text('调用函数 hideLoading()'),
+                      title: Text('其他用法同InputItem,可检验输入'),
                     ),
                   ]),
             ),

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart' hide Dialog, showDialog;
-import 'package:flutter/widgets.dart';
-import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/ui/index.dart';
 
 class DialogPage extends StatefulWidget {
   const DialogPage({Key? key}) : super(key: key);

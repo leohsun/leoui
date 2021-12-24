@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart' hide Dialog, showDialog;
-import 'package:leoui/config/index.dart';
 import 'package:leoui/leoui.dart';
 
 class InputItemPage extends StatefulWidget {

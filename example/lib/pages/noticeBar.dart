@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/ui/index.dart';
-import 'package:leoui/utils/index.dart';
 
 class NoticeBarPage extends StatelessWidget {
   const NoticeBarPage({Key? key}) : super(key: key);

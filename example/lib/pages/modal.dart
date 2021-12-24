@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/utils/index.dart';
 
 class ModalPage extends StatefulWidget {
   const ModalPage({Key? key}) : super(key: key);

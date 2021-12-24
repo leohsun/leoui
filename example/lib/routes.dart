@@ -8,6 +8,7 @@ import 'package:leoui_example/pages/loading.dart';
 import 'package:leoui_example/pages/message.dart';
 import 'package:leoui_example/pages/noticeBar.dart';
 import 'package:leoui_example/pages/popover.dart';
+import 'package:leoui_example/pages/prompt.dart';
 import 'package:leoui_example/pages/scalable.dart';
 import 'package:leoui_example/pages/searchBar.dart';
 import 'package:leoui_example/pages/selector.dart';
@@ -27,6 +28,7 @@ Map<String, WidgetBuilder> routes = {
   'modal': (BuildContext context) => ModalPage(),
   'loading': (BuildContext context) => LoadingPage(),
   'dialog': (BuildContext context) => DialogPage(),
+  'prompt': (BuildContext context) => PromptPage(),
   'popover': (BuildContext context) => PopoverPage(),
   'skeleton': (BuildContext context) => SkeletonPage(),
   'field': (BuildContext context) => FieldPage(),

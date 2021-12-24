@@ -168,6 +168,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Container(height: 1, color: Colors.grey.shade100),
                     ListTile(
+                      title: Text('Prompt - 输入框'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('prompt');
+                      },
+                    ),
+                    Container(height: 1, color: Colors.grey.shade100),
+                    ListTile(
                       title: Text('Popover - 弹出框'),
                       trailing: Icon(Icons.arrow_forward_ios_rounded),
                       onTap: () {
