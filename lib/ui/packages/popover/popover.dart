@@ -1,13 +1,15 @@
-library leo_ui.popover1;
+library leo_ui.popover;
 
 import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 
 enum PopoverPlacement { top, bottom, left, right }
-
-const double Gap = 10;
+enum PopoverTriggerType { press, lonPress, property }
+const double Gap = 4;
 const double Translate = 10;
+const double ArrowMaxLength = 20;
+const double ArrowMinLength = 8;
 
 class PopoverPosition {
   final bool canLeft;
@@ -39,50 +41,290 @@ class PopoverAction {
       {required this.text, this.icon, this.disabled = false, this.onPress});
 }
 
+class ArrowPainter extends CustomPainter {
+  final PopoverPlacement placement;
+  final LeouiThemeData theme;
+  final Color? color;
+
+  ArrowPainter({required this.placement, required this.theme, this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint pathPaint = new Paint();
+    pathPaint.strokeWidth = 2.0;
+    pathPaint.color = color ?? theme.backgroundPrimaryColor;
+    pathPaint.style = PaintingStyle.fill;
+
+    Path path = new Path();
+    switch (placement) {
+      case PopoverPlacement.top:
+        path.moveTo(0, 0);
+        path.lineTo(size.width, 0);
+        path.lineTo(size.width / 2, size.height);
+        break;
+      case PopoverPlacement.bottom:
+        path.moveTo(0, size.height);
+        path.lineTo(size.width / 2, 0);
+        path.lineTo(size.width, size.height);
+        break;
+      case PopoverPlacement.left:
+        path.lineTo(size.width, size.height / 2);
+        path.lineTo(0, size.height);
+        break;
+      case PopoverPlacement.right:
+        path.moveTo(size.width, 0);
+        path.lineTo(0, size.height / 2);
+        path.lineTo(size.width, size.height);
+        break;
+    }
+
+    canvas.drawShadow(
+        path,
+        color != null ? darken(color!, 60) : theme.boxShadow.first.color,
+        theme.size.itemElevation,
+        true);
+    canvas.drawPath(path, pathPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class PopoverWidget extends StatelessWidget {
   final String? content;
+  final List<PopoverAction>? actions;
+  final WidgetBuilder? customPopoverWidgetBuilder;
   final LeouiThemeData theme;
-  const PopoverWidget({Key? key, this.content, required this.theme})
+  final bool? showArrow;
+  final PopoverPlacement? placement;
+  const PopoverWidget(
+      {Key? key,
+      this.content,
+      required this.theme,
+      this.showArrow = true,
+      this.actions,
+      this.customPopoverWidgetBuilder,
+      this.placement = PopoverPlacement.left})
       : super(key: key);
+
+  Widget buildAction(PopoverAction action, BuildContext ctx,
+      [bool border = false]) {
+    VoidCallback? _onPress;
+
+    if (!action.disabled && action.onPress != null) {
+      _onPress = () {
+        PopoverScope.of(ctx)!.close();
+        action.onPress!();
+      };
+    }
+
+    return buildButtonWidget(
+      onPress: _onPress,
+      child: Opacity(
+        opacity: action.disabled ? 0.4 : 1,
+        child: Container(
+          constraints: BoxConstraints(
+              minHeight: theme.size.itemExtent,
+              maxWidth: SizeTool.deviceWidth,
+              minWidth: sz(theme.size.buttonSmallMinWidth)),
+          decoration: BoxDecoration(
+              border: border
+                  ? Border(
+                      bottom: BorderSide(
+                          width: 1, color: theme.nonOpaqueSeparatorColor))
+                  : null),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+            child: DefaultTextIconStyle(
+              color: theme.labelPrimaryColor,
+              size: theme.size.title,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...(action.icon != null
+                      ? [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                right: sz(theme.size.title / 2)),
+                            child: Icon(action.icon),
+                          ),
+                          Text(action.text)
+                        ]
+                      : [Text(action.text)])
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildActionPopoverWidget(BuildContext ctx) {
+    List<Widget> _children = [];
+    int length = actions!.length;
+    forEachWithIndex(actions!, (action, index) {
+      bool border = index != length - 1;
+      _children.add(buildAction(action, ctx, border));
+    });
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius / 2)),
+      child: Column(
+        children: _children,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    late Widget _child;
+    if (content != null) {
+      _child = Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+          child: DefaultTextIconStyle(
+              color: theme.labelPrimaryColor, child: Text(content!)),
+        ),
+      );
+    } else if (customPopoverWidgetBuilder != null) {
+      _child = Material(
+        child: ConstrainedBox(
+            constraints: BoxConstraints(
+                minHeight: ArrowMaxLength, minWidth: ArrowMaxLength),
+            child: customPopoverWidgetBuilder!(context)),
+      );
+    } else {
+      // action here
+      _child = buildActionPopoverWidget(context);
+    }
+
     return Container(
       decoration: BoxDecoration(
-          color: theme.backgroundPrimaryColor,
-          boxShadow: theme.boxShadow,
-          borderRadius: BorderRadius.circular(theme.size.cardBorderRadius)),
-      padding: EdgeInsets.all(sz(theme.size.title / 2)),
-      child: DefaultTextIconStyle(
-          color: theme.labelPrimaryColor, child: Text(content!)),
+        color: theme.backgroundPrimaryColor,
+        boxShadow: theme.boxShadow,
+        borderRadius:
+            BorderRadius.circular(sz(theme.size.cardBorderRadius / 2)),
+      ),
+      constraints: BoxConstraints(minHeight: theme.size.itemExtent),
+      child: _child,
     );
   }
+}
+
+class PopoverScope extends InheritedWidget {
+  final Widget child;
+  final OverlayEntry popoverEntry;
+  final PopoverTriggerType triggerType;
+  final bool? show;
+  void close([data]) async {
+    if (triggerType != PopoverTriggerType.property) {
+      popoverEntry.remove();
+    }
+  }
+
+  PopoverScope(
+      {required this.child,
+      required this.popoverEntry,
+      this.show,
+      required this.triggerType})
+      : super(child: child);
+
+  static PopoverScope? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<PopoverScope>();
+  }
+
+  @override
+  bool updateShouldNotify(covariant PopoverScope oldWidget) =>
+      show != oldWidget.show;
 }
 
 class Popover extends StatefulWidget {
   final Widget child;
   final String? content;
   final LeouiBrightness? brightness;
-  final PopoverAction? actions;
+  final List<PopoverAction>? actions;
   final PopoverPlacement? placement;
+  final bool showArrow;
+  final PopoverTriggerType triggerType;
+  final bool? show;
+  final WidgetBuilder? customPopoverWidgetBuilder;
+  final Color? arrowColor;
+  final double? gap;
 
   const Popover(
       {Key? key,
       required Widget child,
       this.brightness,
       this.placement = PopoverPlacement.left,
-      required this.content})
-      : this.child = child,
+      this.showArrow = true,
+      PopoverTriggerType? triggerType,
+      this.show,
+      required this.content,
+      this.arrowColor,
+      this.gap = Gap})
+      : assert(
+            (triggerType != PopoverTriggerType.property && show == null) ||
+                (show != null &&
+                    (triggerType == PopoverTriggerType.property ||
+                        triggerType == null)),
+            'When triggerType equal to PopoverTriggerType.property then show must be provided'),
+        this.triggerType = triggerType ??
+            (show != null
+                ? PopoverTriggerType.property
+                : PopoverTriggerType.press),
+        this.child = child,
         this.actions = null,
+        this.customPopoverWidgetBuilder = null,
         super(key: key);
 
   const Popover.menu(
       {Key? key,
       required this.child,
-      this.brightness = LeouiBrightness.light,
+      this.brightness,
       required this.actions,
-      this.placement = PopoverPlacement.right})
-      : this.content = null,
+      this.showArrow = true,
+      this.placement = PopoverPlacement.right,
+      PopoverTriggerType? triggerType,
+      this.show,
+      this.arrowColor,
+      this.gap = Gap})
+      : assert(
+            (triggerType != PopoverTriggerType.property && show == null) ||
+                (show != null &&
+                    (triggerType == PopoverTriggerType.property ||
+                        triggerType == null)),
+            'When triggerType equal to PopoverTriggerType.property then show must be provided'),
+        this.triggerType = triggerType ??
+            (show != null
+                ? PopoverTriggerType.property
+                : PopoverTriggerType.press),
+        this.content = null,
+        this.customPopoverWidgetBuilder = null,
+        super(key: key);
+  const Popover.customize(
+      {Key? key,
+      required this.child,
+      this.brightness,
+      this.showArrow = true,
+      this.placement = PopoverPlacement.right,
+      PopoverTriggerType? triggerType,
+      this.show,
+      required this.customPopoverWidgetBuilder,
+      this.arrowColor,
+      this.gap = Gap})
+      : assert(
+            (triggerType != PopoverTriggerType.property && show == null) ||
+                (show != null &&
+                    (triggerType == PopoverTriggerType.property ||
+                        triggerType == null)),
+            'When triggerType equal to PopoverTriggerType.property then show must be provided'),
+        this.triggerType = triggerType ??
+            (show != null
+                ? PopoverTriggerType.property
+                : PopoverTriggerType.press),
+        this.actions = null,
+        this.content = null,
         super(key: key);
 
   @override
@@ -93,7 +335,7 @@ class _PopoverState extends State<Popover> {
   Size size = SizeTool.deviceSize;
   GlobalKey triggerWidget = GlobalKey(debugLabel: 'triggerWidget');
   GlobalKey popoverWidgetKey = GlobalKey(debugLabel: 'Key');
-  late OverlayEntry _overlayEntry;
+  OverlayEntry? _overlayEntry;
   PopoverPlacement? computedPlacement;
 
   PopoverPosition calcPosition() {
@@ -107,17 +349,17 @@ class _PopoverState extends State<Popover> {
         (popoverWidgetKey.currentContext!.findRenderObject() as RenderBox);
     Size popoverWidgetSize = popoverWidgetRenderbox.size;
 
-    final double leftMaxGap = triggerWidgetOffset.dx - Gap;
+    final double leftMaxGap = triggerWidgetOffset.dx - widget.gap!;
     final double topMaxGap =
-        triggerWidgetOffset.dy - Gap - SizeTool.devicePadding.top;
+        triggerWidgetOffset.dy - widget.gap! - SizeTool.devicePadding.top;
     final double rightMaxGap = SizeTool.deviceWidth -
         triggerWidgetOffset.dx -
         triggerWidgetSize.width -
-        Gap;
+        widget.gap!;
     final double bottomMaxGap = SizeTool.deviceHeight -
         triggerWidgetOffset.dy -
         triggerWidgetSize.height -
-        Gap -
+        widget.gap! -
         SizeTool.devicePadding.bottom;
 
     return PopoverPosition(
@@ -164,11 +406,12 @@ class _PopoverState extends State<Popover> {
     }
   }
 
-  OverlayEntry buildOverlay(Offset offset) {
+  OverlayEntry buildOverlay() {
     double? top;
     double? bottom;
     double? left;
     double? right;
+
     LeouiThemeData theme = widget.brightness != null
         ? LeouiTheme.of(context).copyWith(brightness: widget.brightness)
         : LeouiTheme.of(context);
@@ -190,102 +433,339 @@ class _PopoverState extends State<Popover> {
 
     switch (computedPlacement!) {
       case PopoverPlacement.top:
-        double exceptLeft = triggerWidgetOffset.dx -
-            (triggerWidgetSize.height - popoverWidgetSize.height).abs() / 2;
+        double exceptLeft = triggerWidgetOffset.dx;
         bool rightOverflow =
             exceptLeft + popoverWidgetSize.width > SizeTool.deviceWidth;
 
         if (rightOverflow) {
-          right = SizeTool.deviceWidth -
-              triggerWidgetOffset.dx -
-              triggerWidgetSize.width;
+          left = (SizeTool.deviceWidth - popoverWidgetSize.width) / 2;
         } else {
           left = exceptLeft;
         }
 
-        top = triggerWidgetOffset.dy - popoverWidgetSize.height - Gap;
+        top = triggerWidgetOffset.dy - popoverWidgetSize.height - widget.gap!;
+
+        if (widget.showArrow) {
+          top -= ArrowMinLength;
+        }
 
         break;
       case PopoverPlacement.bottom:
-        top = triggerWidgetOffset.dy + triggerWidgetSize.height + Gap;
-        left = triggerWidgetOffset.dx -
-            (triggerWidgetSize.height - popoverWidgetSize.height).abs() / 2;
+        double exceptLeft = triggerWidgetOffset.dx;
+        bool rightOverflow =
+            exceptLeft + popoverWidgetSize.width > SizeTool.deviceWidth;
+
+        if (rightOverflow) {
+          left = (SizeTool.deviceWidth - popoverWidgetSize.width) / 2;
+        } else {
+          left = exceptLeft;
+        }
+
+        top = triggerWidgetOffset.dy + triggerWidgetSize.height + widget.gap!;
+
         break;
       case PopoverPlacement.left:
         top = triggerWidgetOffset.dy;
-        left = triggerWidgetOffset.dx - popoverWidgetSize.width - Gap;
+        left = triggerWidgetOffset.dx - popoverWidgetSize.width - widget.gap!;
+        if (widget.showArrow) {
+          left -= ArrowMinLength;
+        }
 
         break;
       case PopoverPlacement.right:
         top = triggerWidgetOffset.dy;
-        left = triggerWidgetOffset.dx + triggerWidgetSize.width + Gap;
+        left = triggerWidgetOffset.dx + triggerWidgetSize.width + widget.gap!;
         break;
     }
+    late OverlayEntry popoverEntry;
 
-    return OverlayEntry(builder: (BuildContext ctx) {
-      return Stack(
-        children: [
-          GestureDetector(
-            onTap: _remove,
-            child: Container(
-              color: Colors.transparent,
-            ),
+    popoverEntry = OverlayEntry(builder: (BuildContext ctx) {
+      List<Widget> _children = [
+        Positioned(
+          top: top,
+          left: left,
+          right: right,
+          bottom: bottom,
+          child: TweenAnimationBuilder(
+            duration: Duration(milliseconds: 300),
+            tween: Tween<double>(begin: 0, end: 1),
+            curve: Curves.easeInOutCubic,
+            builder: (context, double size, _) {
+              late Matrix4 _transform;
+              switch (computedPlacement!) {
+                case PopoverPlacement.top:
+                  _transform = Matrix4.identity()
+                    ..translate(0.0, Translate - size * Translate, 0.0);
+                  break;
+                case PopoverPlacement.bottom:
+                  _transform = Matrix4.identity()
+                    ..translate(0.0, size * Translate - Translate, 0.0);
+                  break;
+                case PopoverPlacement.left:
+                  _transform = Matrix4.identity()
+                    ..translate(Translate - size * Translate, 0.0, 0);
+                  break;
+                case PopoverPlacement.right:
+                  _transform = Matrix4.identity()
+                    ..translate(size * Translate - Translate, 0.0, 0);
+                  break;
+              }
+
+              late Widget _child;
+
+              switch (computedPlacement!) {
+                case PopoverPlacement.top:
+                  _child = widget.showArrow
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PopoverWidget(
+                              showArrow: widget.showArrow,
+                              placement: computedPlacement!,
+                              theme: theme,
+                              content: widget.content,
+                              actions: widget.actions,
+                              customPopoverWidgetBuilder:
+                                  widget.customPopoverWidgetBuilder,
+                            ),
+                            Transform.translate(
+                              offset: Offset(triggerWidgetOffset.dx, 0),
+                              child: SizedBox(
+                                width: ArrowMaxLength,
+                                height: ArrowMinLength,
+                                child: CustomPaint(
+                                  painter: ArrowPainter(
+                                      color: widget.arrowColor,
+                                      placement: PopoverPlacement.top,
+                                      theme: theme),
+                                ),
+                              ),
+                            )
+                          ],
+                        )
+                      : PopoverWidget(
+                          showArrow: widget.showArrow,
+                          placement: computedPlacement,
+                          theme: theme,
+                          content: widget.content!,
+                          actions: widget.actions,
+                          customPopoverWidgetBuilder:
+                              widget.customPopoverWidgetBuilder,
+                        );
+                  break;
+                case PopoverPlacement.bottom:
+                  _child = widget.showArrow
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Transform.translate(
+                              offset: Offset(
+                                  triggerWidgetOffset.dx -
+                                      left! +
+                                      triggerWidgetSize.width / 2 -
+                                      ArrowMaxLength / 2,
+                                  0),
+                              child: SizedBox(
+                                width: ArrowMaxLength,
+                                height: ArrowMinLength,
+                                child: CustomPaint(
+                                  painter: ArrowPainter(
+                                      placement: PopoverPlacement.bottom,
+                                      color: widget.arrowColor,
+                                      theme: theme),
+                                ),
+                              ),
+                            ),
+                            PopoverWidget(
+                              showArrow: widget.showArrow,
+                              placement: computedPlacement!,
+                              theme: theme,
+                              content: widget.content,
+                              actions: widget.actions,
+                              customPopoverWidgetBuilder:
+                                  widget.customPopoverWidgetBuilder,
+                            ),
+                          ],
+                        )
+                      : PopoverWidget(
+                          showArrow: widget.showArrow,
+                          placement: computedPlacement!,
+                          theme: theme,
+                          content: widget.content,
+                          actions: widget.actions,
+                          customPopoverWidgetBuilder:
+                              widget.customPopoverWidgetBuilder,
+                        );
+                  break;
+                case PopoverPlacement.left:
+                  _child = widget.showArrow
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PopoverWidget(
+                              showArrow: widget.showArrow,
+                              placement: computedPlacement!,
+                              theme: theme,
+                              content: widget.content,
+                              actions: widget.actions,
+                              customPopoverWidgetBuilder:
+                                  widget.customPopoverWidgetBuilder,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top:
+                                      (theme.size.itemExtent - ArrowMaxLength) /
+                                          2),
+                              child: SizedBox(
+                                width: ArrowMinLength,
+                                height: ArrowMaxLength,
+                                child: CustomPaint(
+                                  painter: ArrowPainter(
+                                      placement: PopoverPlacement.left,
+                                      color: widget.arrowColor,
+                                      theme: theme),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : PopoverWidget(
+                          showArrow: widget.showArrow,
+                          placement: computedPlacement!,
+                          theme: theme,
+                          content: widget.content,
+                          actions: widget.actions,
+                          customPopoverWidgetBuilder:
+                              widget.customPopoverWidgetBuilder,
+                        );
+                  break;
+                case PopoverPlacement.right:
+                  _child = widget.showArrow
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top:
+                                      (theme.size.itemExtent - ArrowMaxLength) /
+                                          2),
+                              child: SizedBox(
+                                width: ArrowMinLength,
+                                height: ArrowMaxLength,
+                                child: CustomPaint(
+                                  painter: ArrowPainter(
+                                      placement: PopoverPlacement.right,
+                                      color: widget.arrowColor,
+                                      theme: theme),
+                                ),
+                              ),
+                            ),
+                            PopoverWidget(
+                              showArrow: widget.showArrow,
+                              placement: computedPlacement,
+                              theme: theme,
+                              content: widget.content,
+                              actions: widget.actions,
+                              customPopoverWidgetBuilder:
+                                  widget.customPopoverWidgetBuilder,
+                            ),
+                          ],
+                        )
+                      : PopoverWidget(
+                          showArrow: widget.showArrow,
+                          placement: computedPlacement,
+                          theme: theme,
+                          content: widget.content,
+                          actions: widget.actions,
+                          customPopoverWidgetBuilder:
+                              widget.customPopoverWidgetBuilder,
+                        );
+                  break;
+              }
+
+              return Opacity(
+                opacity: size,
+                child: Transform(
+                  transform: _transform,
+                  child: _child,
+                ),
+              );
+            },
           ),
-          Positioned(
-            top: top,
-            left: left,
-            right: right,
-            bottom: bottom,
-            child: TweenAnimationBuilder(
-              duration: Duration(milliseconds: 300),
-              tween: Tween<double>(begin: 0, end: 1),
-              curve: Curves.easeInOutCubic,
-              builder: (context, double size, _) {
-                late Matrix4 _transform;
-                switch (computedPlacement!) {
-                  case PopoverPlacement.top:
-                    _transform = Matrix4.identity()
-                      ..translate(0.0, Translate - size * Translate, 0.0);
-                    break;
-                  case PopoverPlacement.bottom:
-                    _transform = Matrix4.identity()
-                      ..translate(0.0, size * Translate - Translate, 0.0);
-                    break;
-                  case PopoverPlacement.left:
-                    _transform = Matrix4.identity()
-                      ..translate(Translate - size * Translate, 0.0, 0);
-                    break;
-                  case PopoverPlacement.right:
-                    _transform = Matrix4.identity()
-                      ..translate(size * Translate - Translate, 0.0, 0);
-                    break;
-                }
+        )
+      ];
 
-                return Opacity(
-                  opacity: size,
-                  child: Transform(
-                    transform: _transform,
-                    child: PopoverWidget(
-                      theme: theme,
-                      content: widget.content!,
-                    ),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
+      if (widget.triggerType != PopoverTriggerType.property) {
+        _children.insert(
+            0,
+            GestureDetector(
+              onTap: _remove,
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ));
+      }
+      return PopoverScope(
+        popoverEntry: popoverEntry,
+        show: widget.show,
+        triggerType: widget.triggerType,
+        child: Stack(
+          children: _children,
+        ),
       );
     });
+
+    return popoverEntry;
   }
 
   void _onTapDown(TapDownDetails details) {
-    _overlayEntry = buildOverlay(details.globalPosition);
-    Overlay.of(context)!.insert(_overlayEntry);
+    if (widget.triggerType == PopoverTriggerType.press) {
+      _overlayEntry = buildOverlay();
+      Overlay.of(context)!.insert(_overlayEntry!);
+    }
+  }
+
+  void _onLongPress() {
+    if (widget.triggerType == PopoverTriggerType.lonPress) {
+      _overlayEntry = buildOverlay();
+      Overlay.of(context)!.insert(_overlayEntry!);
+    }
   }
 
   void _remove() {
-    _overlayEntry.remove();
+    if (_overlayEntry != null) {
+      _overlayEntry!.remove();
+    }
+  }
+
+  @override
+  void initState() {
+    if (widget.show == true) {
+      //show can be null or bool so do this
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        _overlayEntry = buildOverlay();
+        Overlay.of(context)!.insert(_overlayEntry!);
+      });
+    }
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant Popover oldWidget) {
+    if (widget.show != oldWidget.show) {
+      if (widget.show == true) {
+        //show can be null or bool so do this
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          _overlayEntry = buildOverlay();
+          Overlay.of(context)!.insert(_overlayEntry!);
+        });
+      } else if (widget.show == false) {
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          _remove();
+        });
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -293,6 +773,7 @@ class _PopoverState extends State<Popover> {
     LeouiThemeData theme = LeouiTheme.of(context);
     return GestureDetector(
         onTapDown: _onTapDown,
+        onLongPress: _onLongPress,
         key: triggerWidget,
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -304,6 +785,8 @@ class _PopoverState extends State<Popover> {
                 theme: theme,
                 key: popoverWidgetKey,
                 content: widget.content,
+                actions: widget.actions,
+                customPopoverWidgetBuilder: widget.customPopoverWidgetBuilder,
               ),
             ),
           ],

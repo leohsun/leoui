@@ -135,7 +135,9 @@ class _ButtonState extends State<Button> {
       color: widget.disabled
           ? lighten(backgroundColor, ColorChangeLightneessFactor)
           : backgroundColor,
-      elevation: LeouiTheme.of(LeoFeedback.currentContext!).size.itemElevation,
+      elevation: widget.inGroup
+          ? 0
+          : LeouiTheme.of(LeoFeedback.currentContext!).size.itemElevation,
       borderRadius: borderRadius,
       child: InkWell(
           highlightColor: Colors.transparent,

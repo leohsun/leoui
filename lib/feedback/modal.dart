@@ -413,14 +413,9 @@ class _ModalWidgetState extends State<_ModalWidget>
                       },
                       onHorizontalDragUpdate: (DragUpdateDetails details) {
                         if (!isLeft && !isRight) return;
-                        // setState(() {
-                        //   if (isLeft) _left = _left! + details.delta.dx;
-                        //   if (isRight) _right = _right! - details.delta.dx;
-                        // });
-
                         if (isLeft) {
                           double dragLeft = _left! + details.delta.dx;
-                          if (dragLeft > 0) {
+                          if (dragLeft < 0) {
                             setState(() {
                               _left = dragLeft;
                             });

@@ -238,17 +238,17 @@ class _ButtonPageState extends State<ButtonPage> {
                       Button(
                         '嘻嘻',
                         onTap: () {},
-                        color: Colors.red,
+                        // color: Colors.red,
                       ),
                       Button(
                         '嘿嘿',
                         onTap: () {},
-                        color: Colors.blue,
+                        // color: Colors.blue,
                       ),
                       Button(
                         '嘿嘿',
                         onTap: () {},
-                        color: Colors.orange,
+                        // color: Colors.orange,
                       )
                     ]),
                   ],

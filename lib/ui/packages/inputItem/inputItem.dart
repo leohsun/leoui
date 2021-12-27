@@ -228,20 +228,22 @@ class InputItemState extends State<InputItem> implements ListItemState {
             : theme.labelPrimaryColor,
         fontWeight: FontWeight.w500,
         fontSize:
-            widget.fontSize != null ? widget.fontSize! : sz(theme.size.content),
+            widget.fontSize != null ? widget.fontSize! : sz(theme.size.title),
       ),
     )));
 
     if (widget.clearable && showCloseButton) {
       rowChildren.add(Padding(
-        padding: EdgeInsets.only(left: sz(5)),
+        padding: EdgeInsets.only(left: 0),
         child: GestureDetector(
           child: Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: widget.fontSize != null
-                    ? widget.fontSize! / 2
-                    : sz(theme.size.title / 2)),
-            height: sz(theme.size.itemExtent),
+            padding: EdgeInsets.only(
+                left: widget.fontSize != null
+                    ? widget.fontSize! / 4
+                    : sz(theme.size.title / 4)),
+            height: widget.fontSize != null
+                ? sz(widget.fontSize! * 2.588)
+                : sz(theme.size.title * 2.588),
             child: Icon(
               Icons.cancel,
               size: widget.fontSize != null
@@ -263,14 +265,17 @@ class InputItemState extends State<InputItem> implements ListItemState {
           child: widget.addon,
           size: widget.fontSize != null
               ? widget.fontSize! - 2
-              : sz(theme.size.secondary),
+              : sz(theme.size.title),
         ),
       ));
     }
 
     Field.of(context)?.add(this);
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
+      constraints: BoxConstraints(
+          minHeight: widget.fontSize != null
+              ? sz(widget.fontSize! * 2.588)
+              : sz(theme.size.title * 2.588)),
       child: Row(
         children: rowChildren,
       ),

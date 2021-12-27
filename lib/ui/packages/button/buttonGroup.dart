@@ -48,6 +48,8 @@ class ButtonGroupState extends State<ButtonGroup> {
 
   late bool onlyTwo = widget.children.length == 2;
 
+  BorderRadius? groupBorderRadius;
+
   late double maxWidth =
       MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width /
           widget.children.length;
@@ -84,6 +86,7 @@ class ButtonGroupState extends State<ButtonGroup> {
                         _buttonProperties.color ??
                         LeoColors.primary)
             : null;
+        groupBorderRadius = BorderRadius.all(_borderRadius.topLeft);
       } else if (i == widget.children.length - 1) {
         _borderRadius = widget.circle
             ? BorderRadius.only(
@@ -209,9 +212,15 @@ class ButtonGroupState extends State<ButtonGroup> {
         ),
       );
     }
-    return Row(
-      mainAxisSize: widget.full ? MainAxisSize.max : MainAxisSize.min,
-      children: _children,
+    LeouiThemeData theme = LeouiTheme.of(context);
+    return PhysicalModel(
+      elevation: theme.size.itemElevation,
+      borderRadius: groupBorderRadius,
+      color: Colors.transparent,
+      child: Row(
+        mainAxisSize: widget.full ? MainAxisSize.max : MainAxisSize.min,
+        children: _children,
+      ),
     );
   }
 }

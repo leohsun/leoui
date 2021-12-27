@@ -47,8 +47,6 @@ class Dialog extends StatefulWidget {
 }
 
 class _DialogState extends State<Dialog> {
-  double _buttonHeight = sz(50);
-
   late Color labelPrimaryColor;
   late LeouiThemeData theme;
 
@@ -97,7 +95,7 @@ class _DialogState extends State<Dialog> {
         borderRadius: BorderRadius.circular(sz(theme.size.fieldBorderRadius)),
         color: theme.backgroundSecondaryColor,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+          padding: EdgeInsets.symmetric(horizontal: sz(4)),
           decoration: BoxDecoration(
             border: Border.all(color: theme.nonOpaqueSeparatorColor),
             borderRadius:
@@ -112,13 +110,14 @@ class _DialogState extends State<Dialog> {
             fieldKey: widget.fieldKey,
             fieldLabel: widget.fieldLabel,
             focus: true,
+            fontSize: theme.size.tertiary,
           ),
         ),
       ));
     }
 
     return Padding(
-      padding: EdgeInsets.all(sz(26)),
+      padding: EdgeInsets.all(sz(23)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: _children,
@@ -126,9 +125,9 @@ class _DialogState extends State<Dialog> {
     );
   }
 
-  Widget _buildButtons() {
+  Widget _buildButtons(LeouiThemeData theme) {
     List<Widget> _children = widget.buttons!.map((DialogButton config) {
-      return _buildButton(config);
+      return _buildButton(config, theme);
     }).toList();
 
     List<Widget> _chilrenWithDividerIn = [];
@@ -138,7 +137,7 @@ class _DialogState extends State<Dialog> {
       _chilrenWithDividerIn.add(_children[i]);
       if (i < count) {
         _chilrenWithDividerIn.add(Container(
-          height: isRow ? _buttonHeight : 1,
+          height: isRow ? sz(theme.size.buttonNormalHeight) : 1,
           width: isRow ? 1 : null,
           color: theme.nonOpaqueSeparatorColor,
         ));
@@ -161,7 +160,7 @@ class _DialogState extends State<Dialog> {
             border: Border(
                 top: BorderSide(
                     width: 1, color: theme.nonOpaqueSeparatorColor))),
-        height: _children.length * _buttonHeight,
+        height: _children.length * sz(theme.size.buttonNormalHeight),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _chilrenWithDividerIn,
@@ -170,8 +169,7 @@ class _DialogState extends State<Dialog> {
     }
   }
 
-  Widget _buildButton(DialogButton button) {
-    LeouiThemeData theme = LeouiTheme.of(context);
+  Widget _buildButton(DialogButton button, LeouiThemeData theme) {
     Color color = button.color ?? theme.userAccentColor;
     List<Widget> _children = [
       Flexible(
@@ -223,7 +221,7 @@ class _DialogState extends State<Dialog> {
         },
         splashColor: theme.fillPrimaryColor,
         child: Container(
-          height: _buttonHeight,
+          height: sz(theme.size.buttonNormalHeight),
           padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -251,7 +249,7 @@ class _DialogState extends State<Dialog> {
         widget.content != null ||
         widget.promopt) _children.add(_buildBody(theme));
     if (widget.buttons != null) {
-      _children.add(_buildButtons());
+      _children.add(_buildButtons(theme));
     }
 
     return ClipRRect(

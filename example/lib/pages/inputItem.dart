@@ -99,10 +99,10 @@ class _InputItemPageState extends State<InputItemPage> {
                       ),
                       key: field,
                       trailing: ButtonGroup(
+                        size: ButtonSize.small,
                         children: [
                           Button(
                             'add',
-                            size: ButtonSize.small,
                             onTap: () {
                               _children.add(
                                 InputItem(
@@ -127,8 +127,6 @@ class _InputItemPageState extends State<InputItemPage> {
                           ),
                           Button(
                             'remove',
-                            size: ButtonSize.small,
-                            color: LeoColors.warn,
                             onTap: () {
                               setState(() {
                                 _children.removeLast();

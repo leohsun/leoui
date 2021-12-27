@@ -95,3 +95,9 @@ List<T> mapWithIndex<T>(List data, cb(element, int index)) {
   }
   return result;
 }
+
+void forEachWithIndex<T>(List data, cb(element, int index)) {
+  for (int i = 0; i < data.length; i++) {
+    cb(data[i], i);
+  }
+}

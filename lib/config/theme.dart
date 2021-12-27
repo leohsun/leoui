@@ -24,14 +24,14 @@ class LeouiSize {
       this.secondary = 15,
       this.tertiary = 13,
       this.formControls = 17,
-      this.cardBorderRadius = 9,
+      this.cardBorderRadius = 14,
       this.fieldBorderRadius = 4,
       this.tab = 10,
       this.itemExtent = 40,
-      this.dialogWidth = 300,
+      this.dialogWidth = 270,
       this.itemElevation = 4,
       this.buttonNormalMinWidth = 120,
-      this.buttonNormalHeight = 40,
+      this.buttonNormalHeight = 44,
       this.buttonSmallMinWidth = 100,
       this.buttonSmallHeight = 30});
 }
