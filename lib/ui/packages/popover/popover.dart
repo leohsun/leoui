@@ -50,39 +50,37 @@ class ArrowPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    Color _color = color ?? theme.dialogBackgroundColor;
     Paint pathPaint = new Paint();
-    pathPaint.strokeWidth = 2.0;
-    pathPaint.color = color ?? theme.backgroundPrimaryColor;
+    pathPaint.strokeWidth = 2;
+    pathPaint.color = darken(_color, 0);
     pathPaint.style = PaintingStyle.fill;
 
     Path path = new Path();
+    double delta = 0; //to clear the gap between popoverWidget and arrow
     switch (placement) {
       case PopoverPlacement.top:
-        path.moveTo(0, 0);
-        path.lineTo(size.width, 0);
+        path.moveTo(-delta, -delta);
+        path.lineTo(size.width, -delta);
         path.lineTo(size.width / 2, size.height);
         break;
       case PopoverPlacement.bottom:
-        path.moveTo(0, size.height);
-        path.lineTo(size.width / 2, 0);
+        path.moveTo(-delta, size.height + delta);
+        path.lineTo(size.width / 2, -delta);
         path.lineTo(size.width, size.height);
         break;
       case PopoverPlacement.left:
+        path.moveTo(-delta, -delta);
         path.lineTo(size.width, size.height / 2);
-        path.lineTo(0, size.height);
+        path.lineTo(-delta, size.height + delta);
         break;
       case PopoverPlacement.right:
-        path.moveTo(size.width, 0);
+        path.moveTo(size.width + delta, -delta);
         path.lineTo(0, size.height / 2);
-        path.lineTo(size.width, size.height);
+        path.lineTo(size.width + delta, size.height + delta);
         break;
     }
-
-    canvas.drawShadow(
-        path,
-        color != null ? darken(color!, 60) : theme.boxShadow.first.color,
-        theme.size.itemElevation,
-        true);
+    canvas.drawShadow(path, _color, 1, _color.alpha == 255);
     canvas.drawPath(path, pathPaint);
   }
 
@@ -201,7 +199,7 @@ class PopoverWidget extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.backgroundPrimaryColor,
+        color: theme.dialogBackgroundColor,
         boxShadow: theme.boxShadow,
         borderRadius:
             BorderRadius.circular(sz(theme.size.cardBorderRadius / 2)),
@@ -601,6 +599,7 @@ class _PopoverState extends State<Popover> {
                   _child = widget.showArrow
                       ? Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             PopoverWidget(
                               showArrow: widget.showArrow,

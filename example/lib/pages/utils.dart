@@ -109,6 +109,44 @@ class _UtilsPageState extends State<UtilsPage> {
                     ),
                   ],
                 )),
+            ListTile(
+              title: Text(
+                  '5、darken(Colors.red, 50) \n      lighten(Colors.red, 50)'),
+              subtitle: Text('处理颜色'),
+            ),
+            Container(
+                padding: EdgeInsets.all(12),
+                margin: EdgeInsets.only(bottom: 20),
+                width: SizeTool.deviceWidth,
+                color: LeouiTheme.of(context).fillTertiaryColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Text('红色-加深50%'),
+                          color: darken(Colors.red, 50),
+                          width: 100,
+                          height: 50,
+                        ),
+                        Container(
+                          child: Text('红色'),
+                          color: Colors.red,
+                          width: 100,
+                          height: 50,
+                        ),
+                        Container(
+                          child: Text('红色-减轻50%'),
+                          color: lighten(Colors.red, 50),
+                          width: 100,
+                          height: 50,
+                        ),
+                      ],
+                    )
+                  ],
+                )),
           ],
         ),
       ),

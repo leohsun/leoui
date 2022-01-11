@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:leoui_example/pages/button.dart';
+import 'package:leoui_example/pages/colorPicker.dart';
 import 'package:leoui_example/pages/dialog.dart';
+import 'package:leoui_example/pages/drawingBoard.dart';
 import 'package:leoui_example/pages/field.dart';
 import 'package:leoui_example/pages/indexes.dart';
 import 'package:leoui_example/pages/inputItem.dart';
@@ -39,4 +41,6 @@ Map<String, WidgetBuilder> routes = {
   'utils': (BuildContext context) => UtilsPage(),
   'searchBar': (BuildContext context) => SearchBarPage(),
   'indexes': (BuildContext context) => IndexesPage(),
+  'drawingBoard': (BuildContext context) => DrawingBoardPage(),
+  'colorPicker': (BuildContext context) => ColorPickerPage(),
 };

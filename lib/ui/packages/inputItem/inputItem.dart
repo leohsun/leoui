@@ -33,6 +33,7 @@ class InputItem extends StatefulWidget implements ListItem {
   final LeouiBrightness? brightness; // 主题 dark 、light
   final double? fontSize;
   final bool focus; //获取焦点
+  final int? maxLines;
 
   const InputItem(
       {Key? key,
@@ -63,6 +64,7 @@ class InputItem extends StatefulWidget implements ListItem {
       this.patternDescript,
       this.brightness,
       this.fontSize,
+      this.maxLines = 1,
       this.focus = false})
       : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
@@ -200,6 +202,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
       onSubmitted: widget.onSubmit,
       textAlign: widget.textAlign,
       obscureText: widget.obscureText,
+      maxLines: widget.maxLines,
       onChanged: (String input) {
         value = input;
         if (showCloseButton != input.isNotEmpty) {

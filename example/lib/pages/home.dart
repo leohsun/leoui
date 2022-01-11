@@ -198,6 +198,21 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                     ),
                     Container(height: 1, color: Colors.grey.shade100),
+                    ListTile(
+                      title: Text('DrawingBoard - 画板'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('drawingBoard');
+                      },
+                    ),
+                    Container(height: 1, color: Colors.grey.shade100),
+                    ListTile(
+                      title: Text('ColorPicker - 颜色拾取器'),
+                      trailing: Icon(Icons.arrow_forward_ios_rounded),
+                      onTap: () {
+                        Navigator.of(context).pushNamed('colorPicker');
+                      },
+                    ),
                   ]),
             ],
           ),

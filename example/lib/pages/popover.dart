@@ -26,7 +26,6 @@ class _PopoverPageState extends State<PopoverPage> {
           child: SingleChildScrollView(
             child: Container(
               height: SizeTool.deviceHeight * 2,
-              color: Colors.grey.shade200,
               width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -195,6 +194,7 @@ class _PopoverPageState extends State<PopoverPage> {
                           Popover.customize(
                             placement: PopoverPlacement.top,
                             child: Button('hello top'),
+                            arrowColor: Colors.white,
                             customPopoverWidgetBuilder: (context) => Row(
                               children: [
                                 IconButton(
@@ -301,7 +301,7 @@ class _PopoverPageState extends State<PopoverPage> {
                             ),
                             show: _show,
                             arrowColor: Colors.orange,
-                            showArrow: false,
+                            // showArrow: false,
                             customPopoverWidgetBuilder: (context) => Container(
                               color: Colors.orange,
                               child: Row(

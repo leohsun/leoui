@@ -15,12 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Leoui(
         child: MaterialApp(
-          title: 'leui demo',
+          title: 'leoui demo',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: 'popover',
+          initialRoute: 'colorPicker',
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
