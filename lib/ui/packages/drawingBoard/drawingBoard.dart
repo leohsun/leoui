@@ -12,7 +12,12 @@ class DrawingPoint {
 class DrawingBoard extends StatefulWidget {
   final double skokeWidth;
   final Color color;
-  const DrawingBoard({Key? key, this.skokeWidth = 5, this.color = Colors.black})
+  final bool disable;
+  const DrawingBoard(
+      {Key? key,
+      this.skokeWidth = 5,
+      this.color = Colors.black,
+      this.disable = false})
       : super(key: key);
 
   @override
@@ -20,29 +25,27 @@ class DrawingBoard extends StatefulWidget {
 }
 
 class DrawingBoardState extends State<DrawingBoard> {
-  List<DrawingPoint?> drawingPoints = [];
+  List<DrawingPoint?> _drawingPoints = [];
 
-  final PictureRecorder recorder = PictureRecorder();
-  late final Canvas canvasWithRecoder;
-  late Size boardSize;
-  late double stokeWidth;
-  late Color pointColor;
+  late Size _boardSize;
+  late double _stokeWidth;
+  late Color _pointColor;
 
   @override
   void initState() {
-    stokeWidth = widget.skokeWidth;
-    pointColor = widget.color;
+    _stokeWidth = widget.skokeWidth;
+    _pointColor = widget.color;
     super.initState();
   }
 
   Future<MemoryImage> generateImage() async {
-    PictureRecorder recorder = PictureRecorder();
+    PictureRecorder _recorder = PictureRecorder();
     Canvas mirrorCanvas = Canvas(
-        recorder, Rect.fromLTWH(0, 0, boardSize.width, boardSize.height));
+        _recorder, Rect.fromLTWH(0, 0, _boardSize.width, _boardSize.height));
 
-    for (int i = 0; i < drawingPoints.length - 1; i++) {
-      DrawingPoint? current = drawingPoints[i];
-      DrawingPoint? next = drawingPoints[i + 1];
+    for (int i = 0; i < _drawingPoints.length - 1; i++) {
+      DrawingPoint? current = _drawingPoints[i];
+      DrawingPoint? next = _drawingPoints[i + 1];
 
       if (current != null) {
         if (next != null) {
@@ -53,26 +56,33 @@ class DrawingBoardState extends State<DrawingBoard> {
         }
       }
     }
-    Picture picture = recorder.endRecording();
+    Picture picture = _recorder.endRecording();
 
-    final img =
-        await picture.toImage(boardSize.width.ceil(), boardSize.height.ceil());
+    final img = await picture.toImage(
+        _boardSize.width.ceil(), _boardSize.height.ceil());
     final byteData = await img.toByteData(format: ImageByteFormat.png);
     final pngBytes = byteData!.buffer.asUint8List();
     return MemoryImage(pngBytes);
   }
 
-  void addNewPoint([offset]) {
+  void clear() {
+    setState(() {
+      _drawingPoints = [];
+    });
+  }
+
+  void _addNewPoint([offset]) {
+    if (widget.disable) return;
     setState(() {
       if (offset != null) {
-        drawingPoints.add(DrawingPoint(
+        _drawingPoints.add(DrawingPoint(
             offset,
             Paint()
-              ..strokeWidth = stokeWidth
+              ..strokeWidth = _stokeWidth
               ..strokeCap = StrokeCap.round
-              ..color = pointColor));
+              ..color = _pointColor));
       } else {
-        drawingPoints.add(null);
+        _drawingPoints.add(null);
       }
     });
   }
@@ -85,20 +95,20 @@ class DrawingBoardState extends State<DrawingBoard> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (ctx, constrs) {
-      boardSize = Size(constrs.maxWidth, constrs.maxHeight);
+      _boardSize = Size(constrs.maxWidth, constrs.maxHeight);
       return GestureDetector(
         onPanDown: (details) {
-          addNewPoint(details.localPosition);
+          _addNewPoint(details.localPosition);
         },
         onPanUpdate: (details) {
-          addNewPoint(details.localPosition);
+          _addNewPoint(details.localPosition);
         },
         onPanEnd: (details) {
-          addNewPoint();
+          _addNewPoint();
         },
         child: CustomPaint(
           size: Size(constrs.maxWidth, constrs.maxHeight),
-          painter: DrawingPinter(drawingPoints: drawingPoints),
+          painter: DrawingPinter(drawingPoints: _drawingPoints),
         ),
       );
     });
