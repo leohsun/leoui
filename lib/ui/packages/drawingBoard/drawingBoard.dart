@@ -38,7 +38,8 @@ class DrawingBoardState extends State<DrawingBoard> {
     super.initState();
   }
 
-  Future<MemoryImage> generateImage() async {
+  Future<MemoryImage?> generateImage() async {
+    if(_drawingPoints.length ==0) return null;
     PictureRecorder _recorder = PictureRecorder();
     Canvas mirrorCanvas = Canvas(
         _recorder, Rect.fromLTWH(0, 0, _boardSize.width, _boardSize.height));
