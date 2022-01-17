@@ -9,15 +9,24 @@ class DrawingPoint {
   DrawingPoint(this.offset, this.paint);
 }
 
+class DrawingPayload {
+  final MemoryImage image;
+  final List<DrawingPoint?> drawingPoints;
+
+  DrawingPayload(this.image, this.drawingPoints);
+}
+
 class DrawingBoard extends StatefulWidget {
   final double skokeWidth;
   final Color color;
   final bool disable;
+  final List<DrawingPoint?>? drawingPoints;
   const DrawingBoard(
       {Key? key,
       this.skokeWidth = 5,
       this.color = Colors.black,
-      this.disable = false})
+      this.disable = false,
+      this.drawingPoints})
       : super(key: key);
 
   @override
@@ -25,7 +34,7 @@ class DrawingBoard extends StatefulWidget {
 }
 
 class DrawingBoardState extends State<DrawingBoard> {
-  List<DrawingPoint?> _drawingPoints = [];
+  late List<DrawingPoint?> _drawingPoints;
 
   late Size _boardSize;
   late double _stokeWidth;
@@ -35,11 +44,12 @@ class DrawingBoardState extends State<DrawingBoard> {
   void initState() {
     _stokeWidth = widget.skokeWidth;
     _pointColor = widget.color;
+    _drawingPoints = widget.drawingPoints ?? [];
     super.initState();
   }
 
-  Future<MemoryImage?> generateImage() async {
-    if(_drawingPoints.length ==0) return null;
+  Future<DrawingPayload?> getPayload() async {
+    if (_drawingPoints.length == 0) return null;
     PictureRecorder _recorder = PictureRecorder();
     Canvas mirrorCanvas = Canvas(
         _recorder, Rect.fromLTWH(0, 0, _boardSize.width, _boardSize.height));
@@ -63,7 +73,7 @@ class DrawingBoardState extends State<DrawingBoard> {
         _boardSize.width.ceil(), _boardSize.height.ceil());
     final byteData = await img.toByteData(format: ImageByteFormat.png);
     final pngBytes = byteData!.buffer.asUint8List();
-    return MemoryImage(pngBytes);
+    return DrawingPayload(MemoryImage(pngBytes), _drawingPoints);
   }
 
   void clear() {

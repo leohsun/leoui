@@ -33,11 +33,12 @@ class _DrawingBoardPageState extends State<DrawingBoardPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.image),
         onPressed: () async {
-          MemoryImage drawingImage =
-              await drawingBoard.currentState!.generateImage();
-          print(drawingImage);
+          DrawingPayload? drawingPayload =
+              await drawingBoard.currentState!.getPayload();
 
-          showLeoDialog(slot: Image(image: drawingImage));
+          if (drawingPayload != null) {
+            showLeoDialog(slot: Image(image: drawingPayload.image));
+          }
         },
       ),
     );
