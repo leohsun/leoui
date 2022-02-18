@@ -5,16 +5,27 @@ import 'package:flutter/material.dart';
 Color hex(String color) {
   String _color = color.trim();
   if (_color.startsWith('#')) {
-    if (_color.length == 7) {
-      return Color(int.parse('0xff${_color.replaceFirst(RegExp(r'#'), '')}'));
+    _color = _color.replaceFirst('#', '');
+    print(_color);
+    if (_color.length == 3) {
+      // #ff0 3-digit
+      String sixDigit =
+          _color.splitMapJoin(RegExp(r'.'), onMatch: (m) => '${m[0]}${m[0]}');
+      return Color(int.parse('0xff$sixDigit'));
     }
 
-    if (_color.length == 9) {
+    if (_color.length == 6) {
+      return Color(int.parse('0xff$_color'));
+    }
+
+    if (_color.length == 8) {
       String opacity = _color.substring(7);
       String rgb = _color.substring(1, 7);
       return Color(int.parse('0x$opacity$rgb'));
     }
   }
+
+  print('the [color] property should starts with "#"');
 
   return Color(0xffffff);
 }
@@ -60,10 +71,11 @@ Widget buildButtonWidget(
     Color? splashColor,
     Color? color}) {
   Color _color = color ?? Colors.transparent;
+  Color _splashColor = splashColor ?? lighten(_color, 80);
   return Material(
     color: _color,
     child: InkWell(
-      splashColor: splashColor,
+      splashColor: _splashColor,
       highlightColor: Colors.transparent,
       borderRadius: borderRadius,
       child: child,

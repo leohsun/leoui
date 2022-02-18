@@ -3,16 +3,14 @@ import 'package:leoui/config/index.dart';
 import 'package:leoui/ui/index.dart';
 import 'package:leoui/utils/index.dart';
 
-enum dialogLayout { row, column }
-
-enum dialogType { alert, confirm, successed, fialed }
+enum DialogLayout { row, column }
 
 class Dialog extends StatefulWidget {
   final LeouiBrightness? brightness;
   final String? title; //窗口标题
   final String? content; //正文内容
   final IconData? icon; //Icon组件图标名称
-  final dialogLayout layout; //底部按钮组布局方式, row, column
+  final DialogLayout layout; //底部按钮组布局方式, row, column
   final List<DialogButton>? buttons; //底部操作按钮组
   final Widget? slot; // 插槽内容
   final double? width;
@@ -29,7 +27,7 @@ class Dialog extends StatefulWidget {
       this.title,
       this.icon,
       this.slot,
-      this.layout = dialogLayout.row,
+      this.layout = DialogLayout.row,
       this.buttons,
       this.content,
       this.width,
@@ -132,7 +130,7 @@ class _DialogState extends State<Dialog> {
 
     List<Widget> _chilrenWithDividerIn = [];
     int count = _children.length - 1;
-    bool isRow = widget.layout == dialogLayout.row;
+    bool isRow = widget.layout == DialogLayout.row;
     for (int i = 0; i <= count; i++) {
       _chilrenWithDividerIn.add(_children[i]);
       if (i < count) {
@@ -144,7 +142,7 @@ class _DialogState extends State<Dialog> {
       }
     }
 
-    if (widget.layout == dialogLayout.row) {
+    if (widget.layout == DialogLayout.row) {
       return DecoratedBox(
         decoration: BoxDecoration(
             border: Border(
@@ -225,7 +223,7 @@ class _DialogState extends State<Dialog> {
           padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: widget.layout == dialogLayout.row
+            mainAxisSize: widget.layout == DialogLayout.row
                 ? MainAxisSize.min
                 : MainAxisSize.max,
             children: _children,

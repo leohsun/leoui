@@ -22,6 +22,7 @@ class PopoverPosition {
     if (canTop) return PopoverPlacement.top;
     if (canRight) return PopoverPlacement.right;
     if (canRight) return PopoverPlacement.right;
+    return null;
   }
 
   PopoverPosition(

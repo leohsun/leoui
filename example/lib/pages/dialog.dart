@@ -137,7 +137,7 @@ class _DialogPageState extends State<DialogPage> {
                                 '阆（làng）中古城，是国家AAAAA级旅游景区，千年古县，中国春节文化之乡，中国四大古城之一。',
                             icon: Icons.explore,
                             brightness: LeouiBrightness.dark,
-                            layout: dialogLayout.column,
+                            layout: DialogLayout.column,
                             buttons: [
                               DialogButton(
                                   text: '好的',
@@ -165,7 +165,7 @@ class _DialogPageState extends State<DialogPage> {
                           '阆（làng）中古城，是国家AAAAA级旅游景区，千年古县，中国春节文化之乡，中国四大古城之一。',
                       icon: Icons.explore,
                       brightness: LeouiBrightness.dark,
-                      layout: dialogLayout.column,
+                      layout: DialogLayout.column,
                       buttons: [
                         DialogButton(
                             text: '订票',

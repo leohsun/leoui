@@ -92,7 +92,8 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
         ),
         AnimatedSize(
             duration: Duration(milliseconds: 200),
-            vsync: this,
+            // ignore: deprecated_member_use
+            vsync: this, // to adapt v2.2.3, remove later
             child: Container(
               color: Colors.white,
               width: double.infinity,

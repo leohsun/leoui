@@ -107,7 +107,7 @@ Future showLeoDialog(
     String? title, //窗口标题
     String? content, //正文内容
     IconData? icon, //Icon组件图标名称
-    dialogLayout layout = dialogLayout.column, //底部按钮组布局方式, row, column
+    DialogLayout layout = DialogLayout.column, //底部按钮组布局方式, row, column
     List<DialogButton>? buttons, //底部操作按钮组
     Curve? curve, // carve 动画进行方式
     Widget? slot, // 插槽内容
