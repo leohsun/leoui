@@ -198,8 +198,8 @@ class _ColorPickerState extends State<ColorPicker> {
               onPanUpdate: (details) {
                 double dx = details.localPosition.dx < 0
                     ? 0
-                    : details.localPosition.dx > _swatchWidth - _indicatorSize
-                        ? _swatchWidth - _indicatorSize
+                    : details.localPosition.dx > _swatchWidth
+                        ? _swatchWidth
                         : details.localPosition.dx;
 
                 double dy = details.localPosition.dy < 0
@@ -361,74 +361,81 @@ class _ColorPickerState extends State<ColorPicker> {
 
   Widget _buildPreview() {
     _colorCtr.text = '0x' + _color.value.toRadixString(16).padLeft(8, '0');
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(right: _sliderHeight),
-          child: Stack(
-            children: [
-              Container(
-                height: _sliderHeight * 3,
-                width: _sliderHeight * 3,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                        colors: [
-                          Color(0xffaaaaaa),
-                          Color(0x00000000),
-                          Color(0x00000000),
-                          Color(0xffaaaaaa),
-                        ],
-                        begin: Alignment(0, 0),
-                        end: Alignment(0.3, 0.1),
-                        tileMode: TileMode.repeated)),
-              ),
-              Positioned.fill(
-                child: Container(
+    return Padding(
+      padding: EdgeInsets.only(
+          bottom: _sliderHeight,
+          left: _indicatorSize / 2,
+          right: _indicatorSize / 2),
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: _sliderHeight),
+            child: Stack(
+              children: [
+                Container(
                   height: _sliderHeight * 3,
                   width: _sliderHeight * 3,
                   decoration: BoxDecoration(
-                      color: _color,
                       shape: BoxShape.circle,
-                      boxShadow: [_indicatorBoxShadow]),
+                      gradient: LinearGradient(
+                          colors: [
+                            Color(0xffaaaaaa),
+                            Color(0x00000000),
+                            Color(0x00000000),
+                            Color(0xffaaaaaa),
+                          ],
+                          begin: Alignment(0, 0),
+                          end: Alignment(0.3, 0.1),
+                          tileMode: TileMode.repeated)),
                 ),
-              )
-            ],
+                Positioned.fill(
+                  child: Container(
+                    height: _sliderHeight * 3,
+                    width: _sliderHeight * 3,
+                    decoration: BoxDecoration(
+                        color: _color,
+                        shape: BoxShape.circle,
+                        boxShadow: [_indicatorBoxShadow]),
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        Expanded(
-            child: TextField(
-          controller: _colorCtr,
-          focusNode: _colorFocusNode,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: theme.labelPrimaryColor,
-              backgroundColor: theme.backgroundTertiaryColor),
-          onSubmitted: (val) {
-            late Color c;
-            try {
-              c = Color(int.parse(val));
-            } catch (err) {
-              c = Color(0xff000000);
-            }
-            _setUp(c);
-          },
-          decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.labelPrimaryColor),
-                borderRadius: BorderRadius.circular(_sliderHeight * 3)),
-            enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: theme.labelPrimaryColor),
-                borderRadius: BorderRadius.circular(_sliderHeight * 3)),
-          ),
-        ))
-      ],
+          Expanded(
+              child: TextField(
+            controller: _colorCtr,
+            focusNode: _colorFocusNode,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: theme.labelPrimaryColor,
+                fontSize: 12,
+                backgroundColor: Color(0x00000000)),
+            onSubmitted: (val) {
+              late Color c;
+              try {
+                c = Color(int.parse(val));
+              } catch (err) {
+                c = Color(0xff000000);
+              }
+              _setUp(c);
+            },
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.labelPrimaryColor),
+                  borderRadius: BorderRadius.circular(_sliderHeight * 3)),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.labelPrimaryColor),
+                  borderRadius: BorderRadius.circular(_sliderHeight * 3)),
+            ),
+          ))
+        ],
+      ),
     );
   }
 
   Widget _buildPresetClolors() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: _indicatorSize / 2),
+      padding: EdgeInsets.all(_indicatorSize / 2),
       child: Wrap(
           spacing: _sliderHeight,
           runSpacing: _sliderHeight,
@@ -461,6 +468,7 @@ class _ColorPickerState extends State<ColorPicker> {
         BoxShadow(color: theme.nonOpaqueSeparatorColor, spreadRadius: 1);
 
     return Material(
+      color: Color(0x000000),
       child: LayoutBuilder(builder: (context, constraints) {
         double maxWidth = constraints.maxWidth.isInfinite
             ? SizeTool.deviceWidth
@@ -476,21 +484,18 @@ class _ColorPickerState extends State<ColorPicker> {
             child: Column(
               children: [
                 _buildColorSwatch(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      _buildHueSlider(),
-                      _buildOpacitySlider(),
-                      _buildPreview(),
-                      ...(widget.presetColors != null
-                          ? [
-                              _buildPresetClolors(),
-                            ]
-                          : [])
-                    ],
-                  ),
-                )
+                Column(
+                  children: [
+                    _buildHueSlider(),
+                    _buildOpacitySlider(),
+                    _buildPreview(),
+                    ...(widget.presetColors != null
+                        ? [
+                            _buildPresetClolors(),
+                          ]
+                        : [])
+                  ],
+                ),
               ],
             ),
           ),

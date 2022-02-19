@@ -21,8 +21,12 @@ class PopoverPosition {
     if (canLeft) return PopoverPlacement.left;
     if (canTop) return PopoverPlacement.top;
     if (canRight) return PopoverPlacement.right;
-    if (canRight) return PopoverPlacement.right;
+    if (canBottom) return PopoverPlacement.bottom;
     return null;
+  }
+
+  String toString() {
+    return 'canLeft: $canLeft, \n canTop: $canTop, \n canRight: $canRight,\n canBottom: $canBottom;';
   }
 
   PopoverPosition(
@@ -250,6 +254,7 @@ class Popover extends StatefulWidget {
   final WidgetBuilder? customPopoverWidgetBuilder;
   final Color? arrowColor;
   final double? gap;
+  final bool? hideWarningToast;
 
   const Popover(
       {Key? key,
@@ -261,7 +266,8 @@ class Popover extends StatefulWidget {
       this.show,
       required this.content,
       this.arrowColor,
-      this.gap = Gap})
+      this.gap = Gap,
+      this.hideWarningToast = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
                 (show != null &&
@@ -287,7 +293,8 @@ class Popover extends StatefulWidget {
       PopoverTriggerType? triggerType,
       this.show,
       this.arrowColor,
-      this.gap = Gap})
+      this.gap = Gap,
+      this.hideWarningToast = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
                 (show != null &&
@@ -311,7 +318,8 @@ class Popover extends StatefulWidget {
       this.show,
       required this.customPopoverWidgetBuilder,
       this.arrowColor,
-      this.gap = Gap})
+      this.gap = Gap,
+      this.hideWarningToast = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
                 (show != null &&
@@ -375,7 +383,8 @@ class _PopoverState extends State<Popover> {
     bool canRight = popoverPosition.canRight;
     bool canBottom = popoverPosition.canBottom;
     if (!canLeft && !canTop && !canRight && !canBottom)
-      return; // has not enough size to place popover widget
+      // has not enough size to place popover widget
+      return computedPlacement = null;
 
     switch (widget.placement!) {
       case PopoverPlacement.top:
@@ -405,7 +414,7 @@ class _PopoverState extends State<Popover> {
     }
   }
 
-  OverlayEntry buildOverlay() {
+  OverlayEntry? buildOverlay() {
     double? top;
     double? bottom;
     double? left;
@@ -427,7 +436,10 @@ class _PopoverState extends State<Popover> {
     calcRightPlacement();
 
     if (computedPlacement == null) {
-      showToast('Not enough size to show popover', type: ToastType.warning);
+      if (widget.hideWarningToast == false) {
+        showToast('Not enough size to show popover', type: ToastType.warning);
+      }
+      return null;
     }
 
     switch (computedPlacement!) {
@@ -528,7 +540,12 @@ class _PopoverState extends State<Popover> {
                                   widget.customPopoverWidgetBuilder,
                             ),
                             Transform.translate(
-                              offset: Offset(triggerWidgetOffset.dx, 0),
+                              offset: Offset(
+                                  triggerWidgetOffset.dx -
+                                      left! +
+                                      triggerWidgetSize.width / 2 -
+                                      ArrowMaxLength / 2,
+                                  0),
                               child: SizedBox(
                                 width: ArrowMaxLength,
                                 height: ArrowMinLength,
@@ -721,14 +738,18 @@ class _PopoverState extends State<Popover> {
   void _onTapDown(TapDownDetails details) {
     if (widget.triggerType == PopoverTriggerType.press) {
       _overlayEntry = buildOverlay();
-      Overlay.of(context)!.insert(_overlayEntry!);
+      if (_overlayEntry != null) {
+        Overlay.of(context)!.insert(_overlayEntry!);
+      }
     }
   }
 
   void _onLongPress() {
     if (widget.triggerType == PopoverTriggerType.lonPress) {
       _overlayEntry = buildOverlay();
-      Overlay.of(context)!.insert(_overlayEntry!);
+      if (_overlayEntry != null) {
+        Overlay.of(context)!.insert(_overlayEntry!);
+      }
     }
   }
 
