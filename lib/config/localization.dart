@@ -1,54 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-class LocaleSubTag {
-  final String languageCode;
-  final String? scriptCode;
-  final String? countryCode;
-
-  LocaleSubTag({required this.languageCode, this.scriptCode, this.countryCode});
-
-  @override
-  String toString() {
-    return "languageCode:$languageCode,scriptCode:$scriptCode,countryCode:$countryCode;";
-  }
-
-  factory LocaleSubTag.fromLocaleName(String localeName) {
-    List<String> raw = localeName.split('_');
-    String? scriptCode;
-    String? countryCode;
-    if (raw.length == 2) {
-      countryCode = raw.last;
-    }
-
-    if (raw.length == 3) {
-      scriptCode = raw[1];
-      countryCode = raw.last;
-    }
-
-    return LocaleSubTag(
-        languageCode: raw.first,
-        scriptCode: scriptCode,
-        countryCode: countryCode);
-  }
-}
+import 'package:leoui/utils/extensions.dart';
 
 class LeouiLocalization {
-  final LocaleSubTag localeSubTag;
   final String languageName;
 
   factory LeouiLocalization(Locale locale) {
-    LocaleSubTag localSubTag = LocaleSubTag.fromLocaleName(locale.toString());
-    String languageName = localSubTag.languageCode;
-    if (localSubTag.scriptCode != null) {
-      languageName += '_${localSubTag.scriptCode}';
-    }
-    return LeouiLocalization.raw(
-        localeSubTag: localSubTag, languageName: languageName);
+    return LeouiLocalization.raw(languageName: locale.languageName());
   }
 
-  const LeouiLocalization.raw(
-      {required this.languageName, required this.localeSubTag});
+  const LeouiLocalization.raw({required this.languageName});
 
   static LeouiLocalization of(BuildContext context) {
     return Localizations.of<LeouiLocalization>(context, LeouiLocalization)!;
@@ -154,14 +115,7 @@ class LeouiLocalizationDelegate
     extends LocalizationsDelegate<LeouiLocalization> {
   @override
   bool isSupported(Locale locale) {
-    LocaleSubTag localSubTag = LocaleSubTag.fromLocaleName(locale.toString());
-    String languageName = localSubTag.languageCode;
-    if (localSubTag.scriptCode != null) {
-      languageName += '_${localSubTag.scriptCode}';
-    }
-
-    bool support = LeouiLocalization.languages.contains(languageName);
-
+    bool support = LeouiLocalization.languages.contains(locale.languageName());
     if (!support) {
       print(
           "****************************** \n ${this.runtimeType} supports languages are ${LeouiLocalization.languages.toString()} \n******************************");

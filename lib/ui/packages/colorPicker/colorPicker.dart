@@ -458,6 +458,8 @@ class _ColorPickerState extends State<ColorPicker> {
     );
   }
 
+  double val = 0;
+
   @override
   Widget build(BuildContext context) {
     theme = widget.brightness == null
@@ -483,6 +485,13 @@ class _ColorPickerState extends State<ColorPicker> {
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: Column(
               children: [
+                Slider(
+                    value: val,
+                    onChanged: (v) {
+                      setState(() {
+                        val = v;
+                      });
+                    }),
                 _buildColorSwatch(),
                 Column(
                   children: [

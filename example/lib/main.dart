@@ -20,14 +20,14 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: 'colorPicker',
+          initialRoute: 'home',
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: [
-            Locale('en', ''),
+            Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
             Locale('zh', ''),
           ],
           locale: Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
