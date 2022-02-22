@@ -141,7 +141,6 @@ class _InputItemPageState extends State<InputItemPage> {
                         full: true,
                         onTap: () {
                           bool? valide = field.currentState?.validate();
-                          print(field.currentState?.listItemSet.length);
                           if (valide == true) {
                             var param = field.currentState?.obtainDataMap();
                             showConfirm(content: param.toString(), title: '结果');

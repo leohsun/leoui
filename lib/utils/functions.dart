@@ -6,7 +6,6 @@ Color hex(String color) {
   String _color = color.trim();
   if (_color.startsWith('#')) {
     _color = _color.replaceFirst('#', '');
-    print(_color);
     if (_color.length == 3) {
       // #ff0 3-digit
       String sixDigit =

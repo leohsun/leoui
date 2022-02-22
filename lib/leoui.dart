@@ -23,12 +23,7 @@ class Leoui extends StatelessWidget {
     if (child.locale != null) {
       localeRaw = child.locale!;
     } else {
-      LocaleSubTag localeSubTag =
-          LocaleSubTag.fromLocaleName(Platform.localeName);
-      localeRaw = Locale.fromSubtags(
-          languageCode: localeSubTag.languageCode,
-          scriptCode: localeSubTag.scriptCode,
-          countryCode: localeSubTag.countryCode);
+      localeRaw = Platform.localeName.toLocale();
     }
 
     List<LocalizationsDelegate<dynamic>> localizationsDelegatesRaw =
@@ -83,7 +78,7 @@ class Leoui extends StatelessWidget {
         theme: config.theme,
         child: DefaultTextStyle(
             style: TextStyle(
-              color: LeouiTheme.of(context).labelPrimaryColor,
+              color: config.theme?.labelPrimaryColor,
             ),
             child: Localizations(
               delegates: localizationsDelegates.toList(),
