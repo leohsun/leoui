@@ -124,21 +124,6 @@ class _PopoverPageState extends State<PopoverPage> {
                                       PopoverScope.of(context)!.close();
                                     },
                                     icon: Icon(Icons.delete)),
-                                IconButton(
-                                    onPressed: () {
-                                      PopoverScope.of(context)!.close();
-                                    },
-                                    icon: Icon(Icons.update)),
-                                IconButton(
-                                    onPressed: () {
-                                      PopoverScope.of(context)!.close();
-                                    },
-                                    icon: Icon(Icons.mail)),
-                                IconButton(
-                                    onPressed: () {
-                                      PopoverScope.of(context)!.close();
-                                    },
-                                    icon: Icon(Icons.podcasts))
                               ],
                             ),
                           ),
@@ -338,6 +323,23 @@ class _PopoverPageState extends State<PopoverPage> {
                                       icon: Icon(Icons.podcasts))
                                 ],
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Popover.customize(
+                            placement: PopoverPlacement.top,
+                            child: Button('hello top'),
+                            arrowColor: Colors.white,
+                            customPopoverWidgetBuilder: (context) => Container(
+                              height: SizeTool.deviceHeight,
+                              color: Colors.red,
                             ),
                           ),
                         ],

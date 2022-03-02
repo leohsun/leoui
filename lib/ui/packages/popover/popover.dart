@@ -802,12 +802,20 @@ class _PopoverState extends State<Popover> {
             widget.child,
             Offstage(
               offstage: true,
-              child: PopoverWidget(
-                theme: theme,
-                key: popoverWidgetKey,
-                content: widget.content,
-                actions: widget.actions,
-                customPopoverWidgetBuilder: widget.customPopoverWidgetBuilder,
+              child: Column(
+                children: [
+                  PopoverWidget(
+                    theme: theme,
+                    key: popoverWidgetKey,
+                    content: widget.content,
+                    actions: widget.actions,
+                    customPopoverWidgetBuilder:
+                        widget.customPopoverWidgetBuilder,
+                  ),
+                  ...(widget.customPopoverWidgetBuilder != null
+                      ? [widget.customPopoverWidgetBuilder!(context)]
+                      : [])
+                ],
               ),
             ),
           ],
