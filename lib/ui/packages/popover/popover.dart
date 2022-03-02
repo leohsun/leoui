@@ -254,6 +254,7 @@ class Popover extends StatefulWidget {
   final WidgetBuilder? customPopoverWidgetBuilder;
   final Color? arrowColor;
   final double? gap;
+  final bool? inSafeArea;
   final bool? hideWarningToast;
 
   const Popover(
@@ -267,6 +268,7 @@ class Popover extends StatefulWidget {
       required this.content,
       this.arrowColor,
       this.gap = Gap,
+      this.inSafeArea = true,
       this.hideWarningToast = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
@@ -294,6 +296,7 @@ class Popover extends StatefulWidget {
       this.show,
       this.arrowColor,
       this.gap = Gap,
+      this.inSafeArea = true,
       this.hideWarningToast = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
@@ -319,6 +322,7 @@ class Popover extends StatefulWidget {
       required this.customPopoverWidgetBuilder,
       this.arrowColor,
       this.gap = Gap,
+      this.inSafeArea = true,
       this.hideWarningToast = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
@@ -356,9 +360,14 @@ class _PopoverState extends State<Popover> {
         (popoverWidgetKey.currentContext!.findRenderObject() as RenderBox);
     Size popoverWidgetSize = popoverWidgetRenderbox.size;
 
+    final double devicePaddingTop =
+        widget.inSafeArea == true ? SizeTool.devicePadding.top : 0;
+    final double devicePaddingBottom =
+        widget.inSafeArea == true ? SizeTool.devicePadding.bottom : 0;
+
     final double leftMaxGap = triggerWidgetOffset.dx - widget.gap!;
     final double topMaxGap =
-        triggerWidgetOffset.dy - widget.gap! - SizeTool.devicePadding.top;
+        triggerWidgetOffset.dy - widget.gap! - devicePaddingTop;
     final double rightMaxGap = SizeTool.deviceWidth -
         triggerWidgetOffset.dx -
         triggerWidgetSize.width -
@@ -367,7 +376,7 @@ class _PopoverState extends State<Popover> {
         triggerWidgetOffset.dy -
         triggerWidgetSize.height -
         widget.gap! -
-        SizeTool.devicePadding.bottom;
+        devicePaddingBottom;
 
     return PopoverPosition(
         canLeft: popoverWidgetSize.width <= leftMaxGap,
