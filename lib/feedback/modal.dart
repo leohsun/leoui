@@ -172,7 +172,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   Timer? autoCloseCounter;
 
   double? _left;
-  double _top = 0;
+  double? _top;
   double? _right;
   double? _bottom;
 
@@ -206,29 +206,29 @@ class _ModalWidgetState extends State<_ModalWidget>
     switch (widget.direction) {
       case ModalDirection.left:
         _left = 0;
-        _bottom = 0;
+        _top = 0;
         break;
 
       case ModalDirection.top:
         _left = 0;
         _right = 0;
+        _top = 0;
         break;
 
       case ModalDirection.right:
         _right = 0;
-        _left = 0;
-        _bottom = 0;
+        _top = 0;
         break;
 
       case ModalDirection.bottom:
-        _left = 0;
-        _right = 0;
+        _top = null;
         _bottom = 0;
         break;
 
       case ModalDirection.center:
         _left = 0;
         _right = 0;
+        _top = 0;
         _bottom = 0;
         break;
     }
@@ -354,7 +354,7 @@ class _ModalWidgetState extends State<_ModalWidget>
                         if (!isTop && !isBottom) return;
 
                         if (isTop) {
-                          double dragTop = _top + details.delta.dy;
+                          double dragTop = _top! + details.delta.dy;
                           if (dragTop < 0) {
                             setState(() {
                               _top = dragTop;
@@ -374,16 +374,16 @@ class _ModalWidgetState extends State<_ModalWidget>
                       onVerticalDragEnd: (_) {
                         if (!isTop && !isBottom) return;
                         int tragEndTime = DateTime.now().millisecondsSinceEpoch;
-                        tragVelocity =
-                            _top.abs() / (tragEndTime - tragStartTime);
 
                         bool achieveLimit = false;
                         if (isTop) {
+                          tragVelocity =
+                              _top!.abs() / (tragEndTime - tragStartTime);
                           achieveLimit =
                               tragVelocity > widget.dragToCloseVelocity ||
-                                  _top.abs() > widget.dragToCloseGap;
+                                  _top!.abs() > widget.dragToCloseGap;
 
-                          if (_top < 0 && achieveLimit) {
+                          if (_top! < 0 && achieveLimit) {
                             handleClose();
                           } else {
                             setState(() {
@@ -392,6 +392,8 @@ class _ModalWidgetState extends State<_ModalWidget>
                             resetCounter();
                           }
                         } else if (isBottom) {
+                          tragVelocity =
+                              _bottom!.abs() / (tragEndTime - tragStartTime);
                           achieveLimit =
                               tragVelocity > widget.dragToCloseVelocity ||
                                   _bottom!.abs() > widget.dragToCloseGap;
@@ -435,7 +437,7 @@ class _ModalWidgetState extends State<_ModalWidget>
                         if (!isLeft && !isRight) return;
                         int tragEndTime = DateTime.now().millisecondsSinceEpoch;
                         tragVelocity =
-                            _top.abs() / (tragEndTime - tragStartTime);
+                            _top!.abs() / (tragEndTime - tragStartTime);
 
                         bool achieveLimit = false;
                         if (isLeft) {
