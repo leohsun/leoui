@@ -20,17 +20,17 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: 'modal',
+          initialRoute: 'home',
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: [
-            Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+            Locale('zh', 'TW'),
             Locale('zh', ''),
           ],
-          locale: Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+          // locale: Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
           routes: routes,
         ),
         config: LeouiConfig());

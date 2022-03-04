@@ -307,6 +307,11 @@ class _ModalWidgetState extends State<_ModalWidget>
 
     List<Widget> _children = [];
 
+    Widget _child = ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight: SizeTool.deviceHeight, maxWidth: SizeTool.deviceWidth),
+        child: widget.child);
+
     if (!widget.noMask) {
       _children.add(
         Positioned.fill(
@@ -325,7 +330,7 @@ class _ModalWidgetState extends State<_ModalWidget>
         child: Opacity(
             opacity: (1.0 + _slide.value).clamp(0, 1),
             child: Center(
-              child: widget.child,
+              child: _child,
             )),
       ));
     } else {
@@ -338,7 +343,7 @@ class _ModalWidgetState extends State<_ModalWidget>
               translation: _offset,
               child: widget.dragToClose
                   ? GestureDetector(
-                      child: widget.child,
+                      child: _child,
                       onTapDown: (_) {
                         autoCloseCounter?.cancel();
                       },
@@ -469,7 +474,7 @@ class _ModalWidgetState extends State<_ModalWidget>
                         }
                       },
                     )
-                  : widget.child)));
+                  : _child)));
     }
 
     return Stack(

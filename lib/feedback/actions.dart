@@ -152,17 +152,14 @@ Future showTabPicker(
           direction: ModalDirection.bottom,
           reverseAnimationWhenClose: true,
           closeOnClickMask: true,
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: TabPicker(
-              dataList: dataList,
-              columnKey: columnKey,
-              childrenKey: childrenKey,
-              selectHintText: selectHintText,
-              brightness: brightness,
-              linkage: linkage,
-              selectorHeight: selectorHeight,
-            ),
+          child: TabPicker(
+            dataList: dataList,
+            columnKey: columnKey,
+            childrenKey: childrenKey,
+            selectHintText: selectHintText,
+            brightness: brightness,
+            linkage: linkage,
+            selectorHeight: selectorHeight,
           )));
 }
 
@@ -188,21 +185,19 @@ Future showSelector(
       modal: Modal(
     reverseAnimationWhenClose: true,
     direction: ModalDirection.bottom,
-    child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Selector(
-            dataList: dataList,
-            count: count,
-            title: title,
-            linkage: linkage,
-            cancleText: cancleText,
-            cancleTextColor: cancleTextColor,
-            confirmText: confirmText,
-            confirmTextColor: confirmTextColor,
-            columnKey: columnKey,
-            brightness: brightness,
-            selectorHeight: selectorHeight,
-            hideHeader: hideHeader = false)),
+    child: Selector(
+        dataList: dataList,
+        count: count,
+        title: title,
+        linkage: linkage,
+        cancleText: cancleText,
+        cancleTextColor: cancleTextColor,
+        confirmText: confirmText,
+        confirmTextColor: confirmTextColor,
+        columnKey: columnKey,
+        brightness: brightness,
+        selectorHeight: selectorHeight,
+        hideHeader: hideHeader = false),
   ));
 }
 

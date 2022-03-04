@@ -221,13 +221,11 @@ class _SelectorState extends State<Selector> {
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(sz(theme.size.cardBorderRadius)),
           topRight: Radius.circular(sz(theme.size.cardBorderRadius))),
-      child: Container(
-        // height: LeoSize.itemExtent * 1.5,
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: theme.backgroundSecondaryColor,
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.max,
           children: [
             TextButton(
                 onPressed: _handleCancel,
