@@ -1,10 +1,7 @@
 library leoui;
 
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:leoui/config/index.dart';
-import 'package:leoui/utils/index.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:leoui/leoui_state.dart';
 
 export './feedback/index.dart';
 export './model/index.dart';
@@ -14,86 +11,42 @@ export './config/index.dart';
 
 class Leoui extends StatelessWidget {
   final MaterialApp child;
-  final LeouiConfig config;
-  final Iterable<LocalizationsDelegate<dynamic>> localizationsDelegates;
-  final Locale locale;
+  final LeouiConfig? config;
 
-  factory Leoui({Key? key, required MaterialApp child, LeouiConfig? config}) {
-    Locale localeRaw;
-    if (child.locale != null) {
-      localeRaw = child.locale!;
-    } else {
-      localeRaw = Platform.localeName.toLocale();
-    }
-
-    List<LocalizationsDelegate<dynamic>> localizationsDelegatesRaw =
-        getChildlocalizationsDelegates(child);
-
-    localizationsDelegatesRaw.add(LeouiLocalizationDelegate());
-
-    return Leoui.raw(
-        child: child,
-        config: config ?? LeouiConfig(),
-        localizationsDelegates: localizationsDelegatesRaw,
-        locale: localeRaw);
-  }
-
-  const Leoui.raw(
-      {required this.child,
-      required this.config,
-      required this.localizationsDelegates,
-      required this.locale});
-
-  static List<LocalizationsDelegate<dynamic>> getChildlocalizationsDelegates(
-      child) {
-    if (child.localizationsDelegates != null) {
-      var tmp = child.localizationsDelegates;
-      if (!tmp.contains(GlobalMaterialLocalizations.delegate)) {
-        tmp.add(GlobalMaterialLocalizations.delegate);
-      }
-
-      if (!tmp.contains(GlobalWidgetsLocalizations.delegate)) {
-        tmp.add(GlobalWidgetsLocalizations.delegate);
-      }
-
-      if (!tmp.contains(GlobalCupertinoLocalizations.delegate)) {
-        tmp.add(GlobalCupertinoLocalizations.delegate);
-      }
-
-      return tmp;
-    } else {
-      return [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ];
-    }
-  }
+  /// executing when setup is completed,
+  /// at this time [LeoFeedback.currentContext] was initialized
+  /// can call feedback functions like: [showModal]
+  final VoidCallback? initState;
+  final VoidCallback? dispose;
+  final Future Function()? setup;
+  final Widget? setupPlaceholder;
+  const Leoui(
+      {Key? key,
+      required this.child,
+      this.setup,
+      this.config,
+      this.initState,
+      this.dispose,
+      this.setupPlaceholder})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQueryData.fromWindow(WidgetsBinding.instance!.window),
-      child: LeouiTheme(
-        theme: config.theme,
-        child: DefaultTextStyle(
-            style: TextStyle(
-              color: config.theme?.labelPrimaryColor,
-            ),
-            child: Localizations(
-              delegates: localizationsDelegates.toList(),
-              locale: locale,
-              child: Overlay(
-                initialEntries: [
-                  OverlayEntry(builder: (BuildContext context) {
-                    setup(config, context);
-                    // we need a context to show overlay, then we can call feedback functions without context at anywhere
-                    return child;
-                  }),
-                ],
-              ),
-            )),
-      ),
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      print(constraints.maxWidth);
+      if (constraints.maxWidth == 0) {
+        return Container(
+          color: Colors.white,
+        );
+      }
+      return LeouiState(
+        child: child,
+        config: config,
+        setup: setup,
+        initState: initState,
+        dispose: dispose,
+        setupPlaceholder: setupPlaceholder,
+      );
+    });
   }
 }

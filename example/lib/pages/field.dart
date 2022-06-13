@@ -56,7 +56,7 @@ class _FieldPageState extends State<FieldPage> {
                             child: Text(
                               '这是child区域',
                             ),
-                            onTap: () {
+                            onTap: (ctx) {
                               showToast('点击了');
                             }),
                         FieldItem(
@@ -68,7 +68,7 @@ class _FieldPageState extends State<FieldPage> {
                               textAlign: TextAlign.right,
                             ),
                             arrow: true,
-                            onTap: () {
+                            onTap: (ctx) {
                               showToast('点击了');
                             }),
                         FieldItem(
@@ -78,7 +78,7 @@ class _FieldPageState extends State<FieldPage> {
                               '次要文字',
                               textAlign: TextAlign.right,
                             ),
-                            onTap: () {}),
+                            onTap: (ctx) {}),
                       ],
                       footer: Text('区域页脚区域内容'),
                     )

@@ -3,6 +3,7 @@ import 'package:leoui/config/index.dart';
 import 'package:leoui/feedback/index.dart';
 import 'package:leoui/ui/packages/button/configs.dart';
 import 'package:leoui/utils/size.dart';
+import 'package:leoui/utils/extensions.dart';
 
 import 'button.dart';
 
@@ -14,6 +15,7 @@ class ButtonGroup extends StatefulWidget {
   final ButtonType type;
   final ButtonSize size;
   final Color? color;
+  final Color? textColor;
   final List<Button> children;
 
   const ButtonGroup(
@@ -23,6 +25,7 @@ class ButtonGroup extends StatefulWidget {
       this.full = false,
       this.disabled,
       Color? color,
+      this.textColor,
       required this.children,
       this.type = ButtonType.primary,
       this.size = ButtonSize.nomarl})
@@ -45,6 +48,8 @@ class ButtonGroup extends StatefulWidget {
 
 class ButtonGroupState extends State<ButtonGroup> {
   late List<Widget> _children;
+
+  late Color _textColor;
 
   late bool onlyTwo = widget.children.length == 2;
 
@@ -136,6 +141,7 @@ class ButtonGroupState extends State<ButtonGroup> {
           color: widget.type == ButtonType.primary
               ? _buttonProperties.color ?? widget.color
               : widget.color,
+          textColor: _textColor,
           type: widget.type,
           full: widget.full,
           size: widget.size,
@@ -153,6 +159,7 @@ class ButtonGroupState extends State<ButtonGroup> {
                 color: widget.type == ButtonType.primary
                     ? _buttonProperties.color ?? widget.color
                     : widget.color,
+                textColor: _textColor,
                 type: widget.type,
                 full: widget.full,
                 size: widget.size,
@@ -168,10 +175,10 @@ class ButtonGroupState extends State<ButtonGroup> {
         tmp.add(Container(
           height: widget.size == ButtonSize.nomarl
               ? sz(LeouiTheme.of(LeoFeedback.currentContext!)
-                  .size
+                  .size!()
                   .buttonNormalHeight)
               : sz(LeouiTheme.of(LeoFeedback.currentContext!)
-                  .size
+                  .size!()
                   .buttonSmallHeight),
           width: 0.3,
           color: LeouiTheme.of(LeoFeedback.currentContext!)
@@ -191,6 +198,15 @@ class ButtonGroupState extends State<ButtonGroup> {
     }
 
     _children = tmp;
+  }
+
+  @override
+  void initState() {
+    _textColor = widget.textColor ??
+        (widget.color!.isDark()
+            ? widget.color!.lighten(50)
+            : widget.color!.darken(50));
+    super.initState();
   }
 
   @override
@@ -214,7 +230,7 @@ class ButtonGroupState extends State<ButtonGroup> {
     }
     LeouiThemeData theme = LeouiTheme.of(context);
     return PhysicalModel(
-      elevation: theme.size.itemElevation,
+      elevation: theme.size!().itemElevation,
       borderRadius: groupBorderRadius,
       color: Colors.transparent,
       child: Row(

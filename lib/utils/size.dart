@@ -8,8 +8,8 @@ class SizeTool {
 
   factory SizeTool(
       {required double designWidth, required double designHeight}) {
-    double widthRatio = SizeTool.deviceWidth / designWidth;
-    double heightRatio = SizeTool.deviceWidth / designHeight;
+    double widthRatio = deviceWidth / designWidth;
+    double heightRatio = deviceWidth / designHeight;
     return SizeTool.raw(
         widthRatio: double.parse(widthRatio.toStringAsFixed(6)),
         heightRatio: double.parse(heightRatio.toStringAsFixed(6)));

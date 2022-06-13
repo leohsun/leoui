@@ -47,7 +47,7 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
       children: [
         PhysicalModel(
           color: Colors.white,
-          elevation: theme.size.itemElevation,
+          elevation: theme.size!().itemElevation,
           child: GestureDetector(
             onTap: () {
               if (expanded) {
@@ -73,7 +73,7 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
                   children: [
                     Text(
                       widget.title,
-                      style: TextStyle(fontSize: theme.size.title),
+                      style: TextStyle(fontSize: theme.size!().title),
                     ),
                     Transform(
                       alignment: Alignment.center,
@@ -81,7 +81,7 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
                         ..rotateZ(_tween.value * 3.1415926),
                       child: Icon(
                         Icons.arrow_forward_ios_outlined,
-                        size: theme.size.content,
+                        size: theme.size!().content,
                       ),
                     )
                   ],

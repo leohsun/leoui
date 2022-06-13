@@ -5,7 +5,9 @@ import 'dart:core';
 
 import 'package:flutter/material.dart' hide Slider, Dialog;
 import 'package:flutter/services.dart';
+import 'package:leoui/feedback/modalRoute.dart';
 import 'package:leoui/leoui.dart';
+import 'package:leoui/ui/packages/actionSheet/actionSheet.dart';
 
 part './model.dart';
 part './actions.dart';
@@ -15,7 +17,7 @@ class LeoFeedback {
   static init(
     BuildContext context,
   ) {
-    if (currentContext != null) return;
+    // if (currentContext != null) return;
     currentContext = context;
   }
 

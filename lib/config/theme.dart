@@ -16,8 +16,12 @@ class LeouiSize {
   final double dialogWidth;
   final double buttonNormalMinWidth;
   final double buttonNormalHeight;
+  final double buttonNormalFontSize;
   final double buttonSmallMinWidth;
   final double buttonSmallHeight;
+  final double buttonSmallFontSize;
+  final double buttonDefaultBorderRadius;
+  final double buttonElevation;
   const LeouiSize(
       {this.title = 17,
       this.content = 17,
@@ -32,8 +36,12 @@ class LeouiSize {
       this.itemElevation = 4,
       this.buttonNormalMinWidth = 120,
       this.buttonNormalHeight = 44,
+      this.buttonNormalFontSize = 15,
       this.buttonSmallMinWidth = 100,
-      this.buttonSmallHeight = 30});
+      this.buttonSmallHeight = 30,
+      this.buttonSmallFontSize = 13,
+      this.buttonElevation = 2,
+      this.buttonDefaultBorderRadius = 8});
 }
 
 class LeouiThemeData {
@@ -77,7 +85,9 @@ class LeouiThemeData {
 
   final List<BoxShadow> boxShadow;
   final LeouiBrightness brightness;
-  final LeouiSize size;
+
+  /// size meybe use SizeTool to scale
+  final LeouiSize Function()? size;
 
   factory LeouiThemeData(
       {Color? backgroundPrimaryColor,
@@ -114,7 +124,9 @@ class LeouiThemeData {
       Color? dialogBackgroundColor,
       List<BoxShadow>? boxShadow,
       LeouiBrightness? brightness,
-      LeouiSize? size}) {
+
+      /// size meybe use SizeTool to scale
+      LeouiSize Function()? size}) {
     brightness = brightness ?? LeouiBrightness.light;
     bool isDark = brightness == LeouiBrightness.dark;
     backgroundPrimaryColor ??= isDark ? Colors.black : Colors.white;
@@ -226,7 +238,7 @@ class LeouiThemeData {
                 blurRadius: 4,
                 spreadRadius: 0),
           ];
-    size ??= LeouiSize();
+    size ??= () => LeouiSize();
     return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,
@@ -340,7 +352,7 @@ class LeouiThemeData {
       Color? dialogBackgroundColor,
       List<BoxShadow>? boxShadow,
       LeouiBrightness? brightness,
-      LeouiSize? size}) {
+      LeouiSize Function()? size}) {
     brightness ??= this.brightness;
     bool isDark = brightness == LeouiBrightness.dark;
     backgroundPrimaryColor ??= isDark ? Colors.black : Colors.white;
@@ -452,7 +464,7 @@ class LeouiThemeData {
                 blurRadius: 4,
                 spreadRadius: 0),
           ];
-    size ??= LeouiSize();
+    size ??= () => LeouiSize();
     return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,

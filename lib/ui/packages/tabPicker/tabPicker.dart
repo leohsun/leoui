@@ -98,7 +98,7 @@ class _TabPickerState extends State<TabPicker>
       Map data = Map.from(e);
       data.remove(widget.childrenKey);
       return data;
-    }).toList();
+    }).toList(growable: false);
 
     bool isInModal = ModalScope.of(context) != null;
 
@@ -137,7 +137,7 @@ class _TabPickerState extends State<TabPicker>
                   decoration: BoxDecoration(
                       border: Border(
                           top: BorderSide(color: theme.fillPrimaryColor))),
-                  height: sz(theme.size.itemExtent),
+                  height: sz(theme.size!().itemExtent),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: sz(10)),
                     child: Align(
@@ -146,7 +146,7 @@ class _TabPickerState extends State<TabPicker>
                         data[widget.columnKey] ?? 'unknown',
                         minFontSize: sz(10),
                         style: TextStyle(
-                            fontSize: sz(theme.size.content),
+                            fontSize: sz(theme.size!().content),
                             color: isSelected
                                 ? theme.userAccentColor
                                 : theme.labelPrimaryColor),
@@ -174,14 +174,15 @@ class _TabPickerState extends State<TabPicker>
             decoration: BoxDecoration(
               color: theme.backgroundPrimaryColor,
               borderRadius:
-                  BorderRadius.circular(sz(theme.size.cardBorderRadius)),
+                  BorderRadius.circular(sz(theme.size!().cardBorderRadius)),
             ),
             child: DefaultTabController(
                 length: selectedDataList.length,
                 child: Builder(builder: (BuildContext ctx) {
                   tabContext = ctx;
                   final hintText = widget.selectHintText ??
-                      LeouiLocalization.of(context).tabPickerSelectHintText;
+                      LeouiLocalization.of(LeoFeedback.currentContext!)
+                          .tabPickerSelectHintText;
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -194,12 +195,12 @@ class _TabPickerState extends State<TabPicker>
                             tabs: [
                               ...mapWithIndex(selectedDataList, (data, idx) {
                                 return Container(
-                                  height: sz(theme.size.itemExtent),
+                                  height: sz(theme.size!().itemExtent),
                                   child: Center(
                                     child: Text(
                                       data[widget.columnKey] ?? hintText,
                                       style: TextStyle(
-                                          fontSize: sz(theme.size.title)),
+                                          fontSize: sz(theme.size!().title)),
                                     ),
                                   ),
                                 );
@@ -208,7 +209,7 @@ class _TabPickerState extends State<TabPicker>
                       ),
                       Container(
                         height: widget.selectorHeight ??
-                            sz(theme.size.itemExtent * 4),
+                            sz(theme.size!().itemExtent * 4),
                         child: TabBarView(
                           children: [
                             ...mapWithIndex(columnDataList, (e, idx) {

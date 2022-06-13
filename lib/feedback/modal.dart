@@ -1,12 +1,15 @@
 part of leoui.feedback;
 
 class Modal {
-  final Widget child;
   final OverlayEntry entry;
+  final WidgetBuilder childBuilder;
 
   final Completer dismissCompleter;
   final ValueChanged<bool>? onClose;
   final GlobalKey<_ModalWidgetState> modalWidgetKey;
+
+  /// we need this to remove specific route, because the modalRoute is not aways at top,can not use [Navigator.pop]
+  final LeoModalRoute route;
 
   get dissmissed => dismissCompleter.future;
 
@@ -26,7 +29,7 @@ class Modal {
   }
 
   factory Modal(
-      {required Widget child,
+      {required WidgetBuilder childBuilder,
       ModalDirection? direction,
       Duration? duration,
       bool? closeOnClickMask,
@@ -39,8 +42,8 @@ class Modal {
       bool? animateWhenOpen,
       ValueChanged<bool>? onClose,
       Curve? curve}) {
-    assert(autoClose != true || closeOnClickMask != true,
-        'can not provide both autoColse and closeOnClickMask are \'ture\' value');
+    // assert(autoClose != true || closeOnClickMask != true,
+    //     'can not provide both autoColse and closeOnClickMask are \'ture\' value');
     assert(dragToClose != true || direction != ModalDirection.center,
         'can not procide both [dragToClose = true] and [direction = ModalDirection.center]');
 
@@ -48,13 +51,18 @@ class Modal {
     closeOnClickMask ??= false;
     dragToClose ??= false;
     Completer dismissedCompleter = Completer();
-    OverlayEntry? entry;
+    late OverlayEntry entry;
+    LeoModalRoute? route;
     GlobalKey<_ModalWidgetState> childKey =
         GlobalKey<_ModalWidgetState>(debugLabel: "Leoui_modal");
 
     _ModalWidget modalWidget = _ModalWidget(
         key: childKey,
-        child: child,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return childBuilder.call(context);
+          },
+        ),
         direction: direction ?? ModalDirection.center,
         duration: duration ?? Duration(milliseconds: 3000),
         closeOnClickMask: closeOnClickMask,
@@ -68,29 +76,39 @@ class Modal {
         reverseAnimationWhenClose: reverseAnimationWhenClose);
 
     entry = OverlayEntry(
-        builder: (ctx) => ModalScope(
-              child: modalWidget,
-              entry: entry,
-              dismissCompleter: dismissedCompleter,
-              childKey: childKey,
-              onClose: onClose,
-              reverseAnimationWhenClose: reverseAnimationWhenClose,
-            ));
+        builder: (ctx) {
+          bool _modalRoute =
+              ctx.findRootAncestorStateOfType<NavigatorState>() != null;
+          return ModalScope(
+            child: modalWidget,
+            entry: entry,
+            dismissCompleter: dismissedCompleter,
+            childKey: childKey,
+            onClose: onClose,
+            routeContext: _modalRoute ? ctx : null,
+            route: route,
+            reverseAnimationWhenClose: reverseAnimationWhenClose,
+          );
+        },
+        maintainState: true);
+
+    route = LeoModalRoute(entry);
 
     return Modal.raw(
-      child: modalWidget,
-      entry: entry,
-      dismissCompleter: dismissedCompleter,
-      modalWidgetKey: childKey,
-      onClose: onClose,
-    );
+        childBuilder: childBuilder,
+        entry: entry,
+        dismissCompleter: dismissedCompleter,
+        modalWidgetKey: childKey,
+        onClose: onClose,
+        route: route);
   }
 
   Modal.raw(
-      {required this.child,
-      required this.entry,
+      {required this.entry,
       required this.dismissCompleter,
       required this.modalWidgetKey,
+      required this.route,
+      required this.childBuilder,
       this.onClose});
 }
 
@@ -101,11 +119,19 @@ class ModalScope extends InheritedWidget {
   final bool? reverseAnimationWhenClose;
   final Completer? dismissCompleter;
   final ValueChanged<bool>? onClose;
+  final BuildContext? routeContext;
+  final LeoModalRoute? route;
   void closeModal([data, autoColse = false]) async {
     if (reverseAnimationWhenClose == true) {
       await childKey.currentState!.reverseAnimation();
     }
-    entry?.remove();
+
+    if (routeContext != null) {
+      // Todo how to pass data back???????
+      Navigator.of(routeContext!).removeRoute(route!);
+    } else {
+      entry?.remove();
+    }
     if (onClose != null) {
       onClose!(autoColse);
     }
@@ -117,6 +143,8 @@ class ModalScope extends InheritedWidget {
   ModalScope(
       {required this.child,
       required this.childKey,
+      this.routeContext,
+      this.route,
       this.entry,
       this.dismissCompleter,
       this.onClose,
@@ -165,7 +193,7 @@ class _ModalWidget extends StatefulWidget {
 }
 
 class _ModalWidgetState extends State<_ModalWidget>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _controller;
   late Animation<double> _slide;
 
@@ -175,6 +203,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   double? _top;
   double? _right;
   double? _bottom;
+  double viewPaddingBottom = 0;
 
   int tragStartTime = 0;
   double tragVelocity = 0;
@@ -182,6 +211,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
 
@@ -242,11 +272,25 @@ class _ModalWidgetState extends State<_ModalWidget>
         ModalScope.of(context)?.onClose!(false);
       }
     }
+
     super.deactivate();
   }
 
   @override
+  void didChangeMetrics() {
+    setState(() {
+      viewPaddingBottom =
+          MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+              .viewInsets
+              .bottom;
+    });
+
+    super.didChangeMetrics();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }
@@ -310,7 +354,12 @@ class _ModalWidgetState extends State<_ModalWidget>
     Widget _child = ConstrainedBox(
         constraints: BoxConstraints(
             maxHeight: SizeTool.deviceHeight, maxWidth: SizeTool.deviceWidth),
-        child: widget.child);
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: viewPaddingBottom),
+            child: widget.child,
+          ),
+        ));
 
     if (!widget.noMask) {
       _children.add(
@@ -477,9 +526,12 @@ class _ModalWidgetState extends State<_ModalWidget>
                   : _child)));
     }
 
-    return Stack(
-      fit: StackFit.expand,
-      children: _children,
+    return DefaultTextStyle(
+      style: TextStyle(),
+      child: Stack(
+        fit: StackFit.expand,
+        children: _children,
+      ),
     );
   }
 }

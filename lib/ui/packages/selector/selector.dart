@@ -219,8 +219,8 @@ class _SelectorState extends State<Selector> {
       );
     return ClipRRect(
       borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(sz(theme.size.cardBorderRadius)),
-          topRight: Radius.circular(sz(theme.size.cardBorderRadius))),
+          topLeft: Radius.circular(sz(theme.size!().cardBorderRadius)),
+          topRight: Radius.circular(sz(theme.size!().cardBorderRadius))),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: theme.backgroundSecondaryColor,
@@ -234,7 +234,7 @@ class _SelectorState extends State<Selector> {
                   style: TextStyle(
                       color:
                           widget.cancleTextColor ?? theme.labelSecondaryColor,
-                      fontSize: sz(theme.size.title)),
+                      fontSize: sz(theme.size!().title)),
                 )),
             Expanded(
                 child: Center(
@@ -242,14 +242,14 @@ class _SelectorState extends State<Selector> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: widget.cancleTextColor,
-                            fontSize: theme.size.title)))),
+                            fontSize: theme.size!().title)))),
             TextButton(
                 onPressed: _handleCofirm,
                 child: Text(
                   widget.confirmText ?? LeouiLocalization.of(context).confirm,
                   style: TextStyle(
                       color: widget.confirmTextColor ?? theme.userAccentColor,
-                      fontSize: theme.size.title),
+                      fontSize: theme.size!().title),
                 ))
           ],
         ),
@@ -261,14 +261,15 @@ class _SelectorState extends State<Selector> {
     String label,
   ) {
     return Container(
-      height: theme.size.itemExtent,
+      height: theme.size!().itemExtent,
       child: Center(
         child: ScalableText(
           label,
           minFontSize: sz(10),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: sz(theme.size.content), color: theme.labelPrimaryColor),
+              fontSize: sz(theme.size!().content),
+              color: theme.labelPrimaryColor),
           maxLines: 1,
         ),
       ),
@@ -286,7 +287,7 @@ class _SelectorState extends State<Selector> {
     }
     List<Widget> children = _data
         .map((data) => _buildCell(data[widget.columnKey] ?? 'unknown'))
-        .toList();
+        .toList(growable: false);
 
     FixedExtentScrollController _controller =
         _scrollControllerList[columnIndex];
@@ -315,7 +316,7 @@ class _SelectorState extends State<Selector> {
             capRightEdge: columnIndex == _dataList.length - 1,
             background: theme.fillSecondaryColor,
           ),
-          itemExtent: theme.size.itemExtent,
+          itemExtent: theme.size!().itemExtent,
           onSelectedItemChanged: (int cellIndex) {
             _handleSelectChange(columnIndex, cellIndex);
           },
@@ -330,7 +331,7 @@ class _SelectorState extends State<Selector> {
     }
 
     return Container(
-      height: widget.selectorHeight ?? sz(theme.size.itemExtent * 5),
+      height: widget.selectorHeight ?? sz(theme.size!().itemExtent * 5),
       key: selectorContainer,
       color: theme.backgroundPrimaryColor,
       child: Row(

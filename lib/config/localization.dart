@@ -108,7 +108,7 @@ class LeouiLocalization {
 
   static get delegate => LeouiLocalizationDelegate();
 
-  static List<String> languages = _localizedValues.keys.toList();
+  static List<String> languages = _localizedValues.keys.toList(growable: false);
 }
 
 class LeouiLocalizationDelegate

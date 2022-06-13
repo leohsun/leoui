@@ -21,9 +21,9 @@ class _SkeletonState extends State<Skeleton>
 
     _tweenAnimation = Tween<double>(begin: 0, end: 1)
         .animate(CurvedAnimation(parent: _tween, curve: Curves.easeInOut))
-          ..addListener(() {
-            setState(() {});
-          });
+      ..addListener(() {
+        setState(() {});
+      });
 
     _tween.repeat();
 
@@ -65,28 +65,28 @@ class _SkeletonState extends State<Skeleton>
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                    height: theme.size.content,
+                    height: theme.size!().content,
                     color: Colors.white,
                     width: SizeTool.deviceWidth / 1.5),
                 SizedBox(
-                  height: theme.size.secondary,
+                  height: theme.size!().secondary,
                 ),
                 Container(
-                  height: theme.size.content,
+                  height: theme.size!().content,
                   color: Colors.white,
                 ),
                 SizedBox(
-                  height: theme.size.secondary,
+                  height: theme.size!().secondary,
                 ),
                 Container(
-                  height: theme.size.content,
+                  height: theme.size!().content,
                   color: Colors.white,
                 ),
                 SizedBox(
-                  height: theme.size.secondary,
+                  height: theme.size!().secondary,
                 ),
                 Container(
-                    height: theme.size.content,
+                    height: theme.size!().content,
                     color: Colors.white,
                     width: SizeTool.deviceWidth / 1.5),
               ],

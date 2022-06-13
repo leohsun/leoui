@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'dart:math' show sin, pi;
 import 'package:flutter/material.dart';
@@ -72,7 +73,7 @@ Widget buildButtonWidget(
   Color _color = color ?? Colors.transparent;
   Color _splashColor = splashColor ?? lighten(_color, 80);
   return Material(
-    color: _color,
+    color: color ?? Colors.transparent,
     child: InkWell(
       splashColor: _splashColor,
       highlightColor: Colors.transparent,
@@ -111,4 +112,16 @@ void forEachWithIndex<T>(List data, cb(element, int index)) {
   for (int i = 0; i < data.length; i++) {
     cb(data[i], i);
   }
+}
+
+Function debounce(Function() fn, Duration delay) {
+  Timer? _timer;
+
+  return () {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+
+    _timer = Timer(delay, fn);
+  };
 }

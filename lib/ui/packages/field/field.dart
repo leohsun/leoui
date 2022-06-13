@@ -13,11 +13,12 @@ class Field extends StatefulWidget {
   final Widget? trailing; //标题尾部内容
   final Color? color; //背景颜色
   final Color? dividerColor; //分割线颜色
+  final double? dividerHorizontalMargin; // 分割线左右边距
   final LeouiBrightness? brightness; // 主题色
   final FieldValidateErrorMessageType? messageType; // 表单校验失败后提示类型
   final EdgeInsets? margin;
 
-  final List<ListItem>? children; //  FieldItem
+  final List<Widget>? children; //  FieldItem
   const Field(
       {Key? key,
       this.title,
@@ -29,6 +30,7 @@ class Field extends StatefulWidget {
       this.footer,
       this.color,
       this.dividerColor,
+      this.dividerHorizontalMargin,
       this.brightness,
       this.margin,
       this.messageType = FieldValidateErrorMessageType.message})
@@ -94,7 +96,7 @@ class FieldState extends State<Field> {
       preffix.add(DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
         child: widget.title!,
-        size: sz(theme.size.title),
+        size: sz(theme.size!().title),
       ));
     }
 
@@ -102,7 +104,7 @@ class FieldState extends State<Field> {
       preffix.add(DefaultTextIconStyle(
         color: theme.labelSecondaryColor,
         child: widget.brief!,
-        size: sz(theme.size.secondary),
+        size: sz(theme.size!().secondary),
       ));
     }
 
@@ -137,10 +139,14 @@ class FieldState extends State<Field> {
 
     for (int i = 0; i < widget.children!.length; i++) {
       _children.add(widget.children![i]);
+
       if (i < widget.children!.length - 1 &&
-          widget.children![i].child == null) {
+          (widget.children![i] is ListItem) &&
+          (widget.children![i] as ListItem).child == null) {
         _children.add(Container(
-          height: 1,
+          height: 0.6,
+          margin: EdgeInsets.symmetric(
+              horizontal: widget.dividerHorizontalMargin ?? 0),
           color: widget.dividerColor ?? theme.nonOpaqueSeparatorColor,
         ));
       }
@@ -148,6 +154,14 @@ class FieldState extends State<Field> {
     return Column(
       children: _children,
     );
+  }
+
+  void blurAll() {
+    if (listItemSet.length == 0) return;
+
+    for (var itemState in listItemSet) {
+      itemState.blur();
+    }
   }
 
   @override
@@ -169,13 +183,13 @@ class FieldState extends State<Field> {
 
     if (widget.footer != null) {
       _children.add(Container(
-          height: 1, color: widget.color ?? theme.nonOpaqueSeparatorColor));
+          height: 0.6, color: widget.color ?? theme.nonOpaqueSeparatorColor));
       _children.add(Padding(
         padding: EdgeInsets.only(top: sz(10)),
         child: DefaultTextIconStyle(
           color: theme.labelTertiaryColor,
           child: widget.footer,
-          size: sz(theme.size.tertiary),
+          size: sz(theme.size!().tertiary),
         ),
       ));
     }
@@ -187,7 +201,8 @@ class FieldState extends State<Field> {
           color: widget.plain == true
               ? null
               : widget.color ?? theme.backgroundTertiaryColor,
-          borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius))),
+          borderRadius:
+              BorderRadius.circular(sz(theme.size!().cardBorderRadius))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: _children,
@@ -224,9 +239,11 @@ abstract class ListItem extends Widget {
 abstract class ListItemState {
   String validate();
   Map<String, String>? obtainData();
+  void blur();
+  void focus();
 }
 
-class FieldItem extends StatelessWidget implements ListItem {
+class FieldItem extends StatefulWidget implements ListItem {
   final Widget? title; //标题
   final Widget? content; //描述内容
   final Widget? addon; //附加文案
@@ -234,10 +251,12 @@ class FieldItem extends StatelessWidget implements ListItem {
   final bool? disabled; // 是否禁用项目
   final bool? arrow; //动作箭头标识
   final double? verticalPadding; // 内容竖直间距
+  final double? horizontalPadding; //内容横向间距
   final bool solid; //是否固定标题宽度，超出会自动换行
-  final VoidCallback? onTap; // 点击回调
+  final ValueChanged<BuildContext>? onTap; // 点击回调
   final Widget? child; // 子组件
   final LeouiBrightness? brightness;
+  final VoidCallback? onDispose;
 
   const FieldItem(
       {Key? key,
@@ -247,72 +266,87 @@ class FieldItem extends StatelessWidget implements ListItem {
       this.disabled,
       this.arrow,
       this.verticalPadding,
+      this.horizontalPadding,
       this.solid = true,
       this.onTap,
       this.child,
       this.brightness,
-      this.placeholder})
+      this.placeholder,
+      this.onDispose})
       : assert(content == null || placeholder == null,
             'can not provice both \'content\' and \'placeholder\''),
         super(key: key);
 
+  @override
+  State<FieldItem> createState() => _FieldItemState();
+
+  @override
+  String? get itemKey => null;
+
+  @override
+  String? get itemLabel => null;
+}
+
+class _FieldItemState extends State<FieldItem> {
   Widget _buildTitle(LeouiThemeData theme) {
     return Container(
       margin: EdgeInsets.only(right: sz(5)),
-      width: solid ? sz(80) : null,
+      width: widget.solid ? sz(80) : null,
       child: DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
-        child: title!,
-        size: sz(theme.size.title),
+        child: widget.title!,
+        size: sz(theme.size!().title),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = brightness != null
-        ? LeouiThemeData(brightness: brightness)
+    LeouiThemeData theme = widget.brightness != null
+        ? LeouiThemeData(brightness: widget.brightness)
         : LeouiTheme.of(context);
 
     List<Widget> _children = [];
-    if (title != null) {
+    if (widget.title != null) {
       _children.add(_buildTitle(theme));
     }
 
-    if (content != null) {
+    if (widget.content != null) {
       _children.add(Expanded(
           child: DefaultTextIconStyle(
-        color: disabled == true
+        color: widget.disabled == true
             ? theme.labelSecondaryColor
             : theme.labelPrimaryColor,
-        child: content,
+        child: widget.content,
         fontWeight: FontWeight.w500,
-        size: sz(theme.size.content),
+        size: sz(theme.size!().content),
       )));
     }
 
-    if (placeholder != null) {
+    if (widget.placeholder != null) {
       _children.add(Expanded(
           flex: 2,
           child: DefaultTextIconStyle(
             color: theme.labelSecondaryColor,
-            child: placeholder,
-            size: sz(theme.size.content),
+            child: widget.placeholder,
+            size: sz(theme.size!().content),
           )));
     }
 
-    if (addon != null) {
-      _children.add(Padding(
-        padding: EdgeInsets.only(left: sz(5)),
-        child: DefaultTextIconStyle(
-          color: theme.labelSecondaryColor,
-          child: addon,
-          size: sz(theme.size.secondary),
+    if (widget.addon != null) {
+      _children.add(Expanded(
+        child: Padding(
+          padding: EdgeInsets.only(left: sz(5)),
+          child: DefaultTextIconStyle(
+            color: theme.labelSecondaryColor,
+            child: widget.addon,
+            size: sz(theme.size!().secondary),
+          ),
         ),
       ));
     }
 
-    if (arrow == true) {
+    if (widget.arrow == true) {
       _children.add(Padding(
         padding: EdgeInsets.only(left: sz(5)),
         child: Icon(
@@ -322,15 +356,21 @@ class FieldItem extends StatelessWidget implements ListItem {
       ));
     }
 
-    if (child != null) {
+    if (widget.child != null) {
       List<Widget> _colChildren = [];
 
       _colChildren.add(
         buildButtonWidget(
           splashColor: theme.fillPrimaryColor,
-          onPress: disabled == true ? null : onTap,
+          onPress: (widget.disabled == true || widget.onTap == null)
+              ? null
+              : () {
+                  widget.onTap!(context);
+                },
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 15)),
+            padding: EdgeInsets.symmetric(
+                vertical: widget.verticalPadding ?? sz(15),
+                horizontal: widget.horizontalPadding ?? 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -343,14 +383,17 @@ class FieldItem extends StatelessWidget implements ListItem {
       _colChildren.add(Container(
         margin: EdgeInsets.only(bottom: sz(10)),
         height: 1,
-        color: theme.nonOpaqueSeparatorColor,
+        color: Field.of(context)?.widget.dividerColor ??
+            theme.nonOpaqueSeparatorColor,
       ));
 
-      _colChildren.add(child!);
+      _colChildren.add(widget.child!);
 
       return Container(
-        padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 0)),
-        constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
+        padding: EdgeInsets.symmetric(
+            vertical: widget.verticalPadding ?? 0,
+            horizontal: widget.horizontalPadding ?? 0),
+        constraints: BoxConstraints(minHeight: sz(theme.size!().itemExtent)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _colChildren,
@@ -359,10 +402,16 @@ class FieldItem extends StatelessWidget implements ListItem {
     } else {
       return buildButtonWidget(
         splashColor: theme.fillPrimaryColor,
-        onPress: disabled == true ? null : onTap,
+        onPress: (widget.disabled == true || widget.onTap == null)
+            ? null
+            : () {
+                widget.onTap?.call(context);
+              },
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: sz(verticalPadding ?? 0)),
-          constraints: BoxConstraints(minHeight: sz(theme.size.itemExtent)),
+          padding: EdgeInsets.symmetric(
+              vertical: widget.verticalPadding ?? 0,
+              horizontal: widget.horizontalPadding ?? 0),
+          constraints: BoxConstraints(minHeight: sz(theme.size!().itemExtent)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
@@ -374,8 +423,10 @@ class FieldItem extends StatelessWidget implements ListItem {
   }
 
   @override
-  String? get itemKey => null;
-
-  @override
-  String? get itemLabel => null;
+  void dispose() {
+    if (widget.onDispose != null) {
+      widget.onDispose!();
+    }
+    super.dispose();
+  }
 }

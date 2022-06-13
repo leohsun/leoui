@@ -14,6 +14,7 @@ class Button extends StatefulWidget {
   final bool disabled;
   final bool square;
   final Color? color;
+  final Color? textColor;
   final Border? border;
   final BorderRadius? borderRadius;
   final String data;
@@ -34,6 +35,7 @@ class Button extends StatefulWidget {
       this.maxWidth,
       this.borderRadius,
       this.color,
+      this.textColor,
       this.loading = false,
       this.onTap})
       : assert(
@@ -67,11 +69,14 @@ class _ButtonState extends State<Button> {
 
   @override
   Widget build(BuildContext context) {
+    LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!);
+
     BorderRadius? borderRadius = widget.circle
         ? BorderRadius.circular(100)
         : widget.square
             ? null
-            : widget.borderRadius ?? BorderRadius.circular(sz(8));
+            : widget.borderRadius ??
+                BorderRadius.circular(theme.size!().buttonDefaultBorderRadius);
 
     Map size = sizeList[widget.size.index];
 
@@ -84,8 +89,9 @@ class _ButtonState extends State<Button> {
     Color backgroundColor =
         widget.type == ButtonType.primary ? _widgetColor : Colors.white;
 
-    Color fontColor =
-        widget.type == ButtonType.primary ? Colors.white : _widgetColor;
+    Color fontColor = widget.type == ButtonType.primary
+        ? widget.textColor ?? Colors.white
+        : _widgetColor;
 
     Border? _border = widget.border != null
         ? widget.border
@@ -132,12 +138,10 @@ class _ButtonState extends State<Button> {
 
     double _maxWidth = widget.maxWidth ?? SizeTool.deviceWidth;
     return Material(
-      color: widget.disabled
-          ? lighten(backgroundColor, ColorChangeLightneessFactor)
-          : backgroundColor,
-      elevation: widget.inGroup
+      color: widget.disabled ? theme.baseGreyColor : backgroundColor,
+      elevation: (widget.inGroup || widget.type == ButtonType.plain)
           ? 0
-          : LeouiTheme.of(LeoFeedback.currentContext!).size.itemElevation,
+          : theme.size!().buttonElevation,
       borderRadius: borderRadius,
       child: InkWell(
           highlightColor: Colors.transparent,

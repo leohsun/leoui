@@ -454,7 +454,7 @@ class _ColorPickerState extends State<ColorPicker> {
                           boxShadow: [_indicatorBoxShadow]),
                     ),
                   ))
-              .toList()),
+              .toList(growable: false)),
     );
   }
 

@@ -4,23 +4,27 @@ import 'package:leoui/config/index.dart';
 import 'package:leoui/feedback/index.dart';
 import 'package:leoui/utils/size.dart';
 
-enum ButtonType { primary, secondary }
+enum ButtonType { primary, secondary, plain }
 enum ButtonSize { nomarl, small }
 
 List<Map<String, double>> sizeList = [
   {
-    'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!).size.secondary),
-    'minWidth': sz(
-        LeouiTheme.of(LeoFeedback.currentContext!).size.buttonNormalMinWidth),
-    'height':
-        sz(LeouiTheme.of(LeoFeedback.currentContext!).size.buttonNormalHeight),
+    'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!)
+        .size!()
+        .buttonNormalFontSize),
+    'minWidth': sz(LeouiTheme.of(LeoFeedback.currentContext!)
+        .size!()
+        .buttonNormalMinWidth),
+    'height': sz(
+        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonNormalHeight),
   },
   {
-    'fontSize': sz(LeouiTheme.of(LeoFeedback.currentContext!).size.tertiary),
-    'minWidth':
-        sz(LeouiTheme.of(LeoFeedback.currentContext!).size.buttonSmallMinWidth),
+    'fontSize': sz(
+        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonSmallFontSize),
+    'minWidth': sz(
+        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonSmallMinWidth),
     'height':
-        sz(LeouiTheme.of(LeoFeedback.currentContext!).size.buttonSmallHeight)
+        sz(LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonSmallHeight)
   }
 ];
 

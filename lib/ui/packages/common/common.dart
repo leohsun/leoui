@@ -16,7 +16,7 @@ class DefaultTextIconStyle extends StatelessWidget {
     return IconTheme(
       data: IconThemeData(
           color: color ?? theme.labelPrimaryColor,
-          size: size ?? theme.size.title),
+          size: size ?? theme.size!().title),
       child: DefaultTextStyle(
         child: child!,
         style: TextStyle(

@@ -55,21 +55,22 @@ class _SearchBarState extends State<SearchBar>
         ? LeouiTheme.of(context)
         : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
     return Container(
-      height: sz(theme.size.itemExtent),
+      height: sz(theme.size!().itemExtent),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(left: sz(theme.size.cardBorderRadius)),
+              padding:
+                  EdgeInsets.only(left: sz(theme.size!().cardBorderRadius)),
               child: InputItem(
                 brightness: widget.brightness,
                 icon: Icon(
                   Icons.search,
                 ),
                 solid: false,
-                placeholder:
-                    widget.placeholder ?? LeouiLocalization.of(context).search,
+                placeholder: widget.placeholder ??
+                    LeouiLocalization.of(LeoFeedback.currentContext!).search,
                 onChanged: (_keywords) {
                   keywords = _keywords;
                 },
@@ -81,11 +82,11 @@ class _SearchBarState extends State<SearchBar>
                 defaultValue: keywords,
                 inputAction: TextInputAction.search,
               ),
-              height: sz(theme.size.itemExtent),
+              height: sz(theme.size!().itemExtent),
               decoration: BoxDecoration(
                   color: theme.fillTertiaryColor,
-                  borderRadius:
-                      BorderRadius.circular(sz(theme.size.cardBorderRadius))),
+                  borderRadius: BorderRadius.circular(
+                      sz(theme.size!().cardBorderRadius))),
             ),
           ),
           AnimatedBuilder(
@@ -93,7 +94,9 @@ class _SearchBarState extends State<SearchBar>
               child: Padding(
                 child: GestureDetector(
                     child: Center(
-                      child: Text(LeouiLocalization.of(context).cancel,
+                      child: Text(
+                          LeouiLocalization.of(LeoFeedback.currentContext!)
+                              .cancel,
                           style: TextStyle(color: theme.labelPrimaryColor)),
                     ),
                     onTap: () {
@@ -101,7 +104,8 @@ class _SearchBarState extends State<SearchBar>
                       (input.currentState as InputItemState).blur();
                       _controller.reverse();
                     }),
-                padding: EdgeInsets.only(left: sz(theme.size.cardBorderRadius)),
+                padding:
+                    EdgeInsets.only(left: sz(theme.size!().cardBorderRadius)),
               ),
               builder: (context, child) {
                 return ClipRect(

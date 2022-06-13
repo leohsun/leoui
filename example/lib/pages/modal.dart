@@ -50,7 +50,7 @@ class _ModalPageState extends State<ModalPage> {
                         showModal(
                           modal: Modal(
                             closeOnClickMask: true,
-                            child: Container(
+                            childBuilder: (c) => Container(
                               height: SizeTool.deviceWidth / 2,
                               width: SizeTool.deviceWidth - 20,
                               decoration: BoxDecoration(
@@ -76,7 +76,7 @@ class _ModalPageState extends State<ModalPage> {
                             closeOnClickMask: true,
                             dragToClose: true,
                             direction: ModalDirection.left,
-                            child: Container(
+                            childBuilder: (c) => Container(
                               color: Colors.white,
                               height: SizeTool.deviceHeight,
                               width: SizeTool.deviceWidth / 2,
@@ -99,7 +99,7 @@ class _ModalPageState extends State<ModalPage> {
                             closeOnClickMask: true,
                             direction: ModalDirection.top,
                             dragToClose: true,
-                            child: Container(
+                            childBuilder: (c) => Container(
                               color: Colors.white,
                               height: SizeTool.deviceHeight / 5,
                               child: Center(
@@ -121,7 +121,7 @@ class _ModalPageState extends State<ModalPage> {
                             closeOnClickMask: true,
                             direction: ModalDirection.right,
                             dragToClose: true,
-                            child: Container(
+                            childBuilder: (c) => Container(
                               color: Colors.white,
                               width: 300,
                               height: SizeTool.deviceHeight,
@@ -144,7 +144,7 @@ class _ModalPageState extends State<ModalPage> {
                             closeOnClickMask: true,
                             direction: ModalDirection.bottom,
                             dragToClose: true,
-                            child: Container(
+                            childBuilder: (c) => Container(
                               color: Colors.white,
                               width: SizeTool.deviceWidth,
                               height: SizeTool.deviceHeight / 5,

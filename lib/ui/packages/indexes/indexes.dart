@@ -209,7 +209,7 @@ class _IndexesState extends State<Indexes> {
                                       (item, index) {
                                     return FieldItem(
                                         onTap: widget.onItemTap != null
-                                            ? () {
+                                            ? (ctx) {
                                                 Map callback = {
                                                   "data": item,
                                                   "itemIndex": index,
@@ -249,8 +249,8 @@ class _IndexesState extends State<Indexes> {
                               width: indexKeyExtend,
                               child: Center(
                                 child: Container(
-                                  height: sz(theme.size.tertiary * 1.5),
-                                  width: sz(theme.size.tertiary * 1.5),
+                                  height: sz(theme.size!().tertiary * 1.5),
+                                  width: sz(theme.size!().tertiary * 1.5),
                                   decoration: BoxDecoration(
                                       color:
                                           active ? theme.userAccentColor : null,
@@ -260,7 +260,7 @@ class _IndexesState extends State<Indexes> {
                                       e,
                                       style: TextStyle(
                                           height: 1,
-                                          fontSize: sz(theme.size.tertiary),
+                                          fontSize: sz(theme.size!().tertiary),
                                           color: active
                                               ? Colors.white
                                               : theme.labelSecondaryColor),

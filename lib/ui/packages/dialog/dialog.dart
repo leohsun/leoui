@@ -58,7 +58,7 @@ class _DialogState extends State<Dialog> {
           widget.title!,
           style: TextStyle(
               height: 1.2,
-              fontSize: sz(theme.size.title),
+              fontSize: sz(theme.size!().title),
               color: theme.labelPrimaryColor),
         ),
       ));
@@ -83,21 +83,22 @@ class _DialogState extends State<Dialog> {
         widget.content!,
         style: TextStyle(
             height: 1.2,
-            fontSize: sz(theme.size.tertiary),
+            fontSize: sz(theme.size!().tertiary),
             color: theme.labelPrimaryColor),
       ));
     }
 
     if (widget.promopt) {
       _children.add(Material(
-        borderRadius: BorderRadius.circular(sz(theme.size.fieldBorderRadius)),
+        borderRadius:
+            BorderRadius.circular(sz(theme.size!().fieldBorderRadius)),
         color: theme.backgroundSecondaryColor,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: sz(4)),
           decoration: BoxDecoration(
             border: Border.all(color: theme.nonOpaqueSeparatorColor),
             borderRadius:
-                BorderRadius.circular(sz(theme.size.fieldBorderRadius)),
+                BorderRadius.circular(sz(theme.size!().fieldBorderRadius)),
           ),
           child: InputItem(
             key: widget.promoptItemKey,
@@ -108,7 +109,7 @@ class _DialogState extends State<Dialog> {
             fieldKey: widget.fieldKey,
             fieldLabel: widget.fieldLabel,
             focus: true,
-            fontSize: theme.size.tertiary,
+            fontSize: theme.size!().tertiary,
           ),
         ),
       ));
@@ -126,30 +127,30 @@ class _DialogState extends State<Dialog> {
   Widget _buildButtons(LeouiThemeData theme) {
     List<Widget> _children = widget.buttons!.map((DialogButton config) {
       return _buildButton(config, theme);
-    }).toList();
+    }).toList(growable: false);
 
-    List<Widget> _chilrenWithDividerIn = [];
+    List<Widget> _chilrenWithinDivider = [];
     int count = _children.length - 1;
     bool isRow = widget.layout == DialogLayout.row;
     for (int i = 0; i <= count; i++) {
-      _chilrenWithDividerIn.add(_children[i]);
+      _chilrenWithinDivider.add(_children[i]);
       if (i < count) {
-        _chilrenWithDividerIn.add(Container(
-          height: isRow ? sz(theme.size.buttonNormalHeight) : 1,
-          width: isRow ? 1 : null,
+        _chilrenWithinDivider.add(Container(
+          height: isRow ? sz(theme.size!().buttonNormalHeight) : 0.5,
+          width: isRow ? 0.5 : null,
           color: theme.nonOpaqueSeparatorColor,
         ));
       }
     }
 
     if (widget.layout == DialogLayout.row) {
-      return DecoratedBox(
+      return Container(
         decoration: BoxDecoration(
             border: Border(
                 top: BorderSide(
                     width: 1, color: theme.nonOpaqueSeparatorColor))),
         child: Row(
-          children: _chilrenWithDividerIn,
+          children: _chilrenWithinDivider,
         ),
       );
     } else {
@@ -158,10 +159,10 @@ class _DialogState extends State<Dialog> {
             border: Border(
                 top: BorderSide(
                     width: 1, color: theme.nonOpaqueSeparatorColor))),
-        height: _children.length * sz(theme.size.buttonNormalHeight),
+        height: _children.length * sz(theme.size!().buttonNormalHeight),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: _chilrenWithDividerIn,
+          children: _chilrenWithinDivider,
         ),
       );
     }
@@ -175,7 +176,7 @@ class _DialogState extends State<Dialog> {
           button.text,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: sz(theme.size.title),
+              fontSize: sz(theme.size!().title),
               color: color,
               fontWeight:
                   button.bold == true ? FontWeight.bold : FontWeight.normal),
@@ -187,10 +188,10 @@ class _DialogState extends State<Dialog> {
       _children.insert(
           0,
           Padding(
-            padding: EdgeInsets.only(right: sz(theme.size.title) / 3),
+            padding: EdgeInsets.only(right: sz(theme.size!().title) / 3),
             child: Icon(
               button.icon,
-              size: sz(theme.size.title),
+              size: sz(theme.size!().title),
               color: color,
             ),
           ));
@@ -200,10 +201,10 @@ class _DialogState extends State<Dialog> {
       _children.insert(
         0,
         Padding(
-          padding: EdgeInsets.only(right: sz(theme.size.title) / 3),
+          padding: EdgeInsets.only(right: sz(theme.size!().title) / 3),
           child: SizedBox(
-              width: sz(theme.size.title),
-              height: sz(theme.size.title),
+              width: sz(theme.size!().title),
+              height: sz(theme.size!().title),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 color: color,
@@ -218,9 +219,11 @@ class _DialogState extends State<Dialog> {
           button.handler(context);
         },
         splashColor: theme.fillPrimaryColor,
+        color: theme.dialogBackgroundColor,
         child: Container(
-          height: sz(theme.size.buttonNormalHeight),
-          padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+          height: sz(theme.size!().buttonNormalHeight),
+          padding:
+              EdgeInsets.symmetric(horizontal: sz(theme.size!().title / 2)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: widget.layout == DialogLayout.row
@@ -239,7 +242,7 @@ class _DialogState extends State<Dialog> {
         ? LeouiTheme.of(context)
         : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
 
-    double _width = widget.width ?? theme.size.dialogWidth;
+    double _width = widget.width ?? theme.size!().dialogWidth;
     List<Widget> _children = [];
     if (widget.slot != null) _children.add(widget.slot!);
     if (widget.title != null ||
@@ -251,14 +254,13 @@ class _DialogState extends State<Dialog> {
     }
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius)),
+      borderRadius: BorderRadius.circular(sz(theme.size!().cardBorderRadius)),
       child: Container(
         width: _width,
         decoration: BoxDecoration(
-            color: theme.dialogBackgroundColor,
-            boxShadow: theme.boxShadow,
-            borderRadius:
-                BorderRadius.circular(sz(theme.size.cardBorderRadius))),
+          color: theme.dialogBackgroundColor,
+          boxShadow: theme.boxShadow,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _children,

@@ -57,16 +57,16 @@ class ArrowPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Color _color = color ?? theme.dialogBackgroundColor;
     Paint pathPaint = new Paint();
-    pathPaint.strokeWidth = 2;
-    pathPaint.color = darken(_color, 0);
+    pathPaint.strokeWidth = 1;
+    pathPaint.color = _color;
     pathPaint.style = PaintingStyle.fill;
 
     Path path = new Path();
-    double delta = 0; //to clear the gap between popoverWidget and arrow
+    double delta = 1; //to clear the gap between popoverWidget and arrow
     switch (placement) {
       case PopoverPlacement.top:
         path.moveTo(-delta, -delta);
-        path.lineTo(size.width, -delta);
+        path.lineTo(size.width + delta, -delta);
         path.lineTo(size.width / 2, size.height);
         break;
       case PopoverPlacement.bottom:
@@ -85,7 +85,7 @@ class ArrowPainter extends CustomPainter {
         path.lineTo(size.width + delta, size.height + delta);
         break;
     }
-    canvas.drawShadow(path, _color, 1, _color.alpha == 255);
+    // canvas.drawShadow(path, _color, 1, _color.alpha == 255);
     canvas.drawPath(path, pathPaint);
   }
 
@@ -127,9 +127,9 @@ class PopoverWidget extends StatelessWidget {
         opacity: action.disabled ? 0.4 : 1,
         child: Container(
           constraints: BoxConstraints(
-              minHeight: theme.size.itemExtent,
+              minHeight: theme.size!().itemExtent,
               maxWidth: SizeTool.deviceWidth,
-              minWidth: sz(theme.size.buttonSmallMinWidth)),
+              minWidth: sz(theme.size!().buttonSmallMinWidth)),
           decoration: BoxDecoration(
               border: border
                   ? Border(
@@ -137,10 +137,11 @@ class PopoverWidget extends StatelessWidget {
                           width: 1, color: theme.nonOpaqueSeparatorColor))
                   : null),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+            padding:
+                EdgeInsets.symmetric(horizontal: sz(theme.size!().title / 2)),
             child: DefaultTextIconStyle(
               color: theme.labelPrimaryColor,
-              size: theme.size.title,
+              size: theme.size!().title,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -148,7 +149,7 @@ class PopoverWidget extends StatelessWidget {
                       ? [
                           Padding(
                             padding: EdgeInsets.only(
-                                right: sz(theme.size.title / 2)),
+                                right: sz(theme.size!().title / 2)),
                             child: Icon(action.icon),
                           ),
                           Text(action.text)
@@ -172,7 +173,8 @@ class PopoverWidget extends StatelessWidget {
     });
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(sz(theme.size.cardBorderRadius / 2)),
+      borderRadius:
+          BorderRadius.circular(sz(theme.size!().cardBorderRadius / 2)),
       child: Column(
         children: _children,
       ),
@@ -185,7 +187,8 @@ class PopoverWidget extends StatelessWidget {
     if (content != null) {
       _child = Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: sz(theme.size.title / 2)),
+          padding:
+              EdgeInsets.symmetric(horizontal: sz(theme.size!().title / 2)),
           child: DefaultTextIconStyle(
               color: theme.labelPrimaryColor, child: Text(content!)),
         ),
@@ -207,9 +210,9 @@ class PopoverWidget extends StatelessWidget {
         color: theme.dialogBackgroundColor,
         boxShadow: theme.boxShadow,
         borderRadius:
-            BorderRadius.circular(sz(theme.size.cardBorderRadius / 2)),
+            BorderRadius.circular(sz(theme.size!().cardBorderRadius / 2)),
       ),
-      constraints: BoxConstraints(minHeight: theme.size.itemExtent),
+      constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
       child: _child,
     );
   }
@@ -453,7 +456,8 @@ class _PopoverState extends State<Popover> {
 
     switch (computedPlacement!) {
       case PopoverPlacement.top:
-        double exceptLeft = triggerWidgetOffset.dx;
+        double exceptLeft = triggerWidgetOffset.dx -
+            (popoverWidgetSize.width - triggerWidgetSize.width) / 2;
         bool rightOverflow =
             exceptLeft + popoverWidgetSize.width > SizeTool.deviceWidth;
 
@@ -471,7 +475,8 @@ class _PopoverState extends State<Popover> {
 
         break;
       case PopoverPlacement.bottom:
-        double exceptLeft = triggerWidgetOffset.dx;
+        double exceptLeft = triggerWidgetOffset.dx -
+            (popoverWidgetSize.width - triggerWidgetSize.width) / 2;
         bool rightOverflow =
             exceptLeft + popoverWidgetSize.width > SizeTool.deviceWidth;
 
@@ -639,9 +644,9 @@ class _PopoverState extends State<Popover> {
                             ),
                             Padding(
                               padding: EdgeInsets.only(
-                                  top:
-                                      (theme.size.itemExtent - ArrowMaxLength) /
-                                          2),
+                                  top: (theme.size!().itemExtent -
+                                          ArrowMaxLength) /
+                                      2),
                               child: SizedBox(
                                 width: ArrowMinLength,
                                 height: ArrowMaxLength,
@@ -672,9 +677,9 @@ class _PopoverState extends State<Popover> {
                           children: [
                             Padding(
                               padding: EdgeInsets.only(
-                                  top:
-                                      (theme.size.itemExtent - ArrowMaxLength) /
-                                          2),
+                                  top: (theme.size!().itemExtent -
+                                          ArrowMaxLength) /
+                                      2),
                               child: SizedBox(
                                 width: ArrowMinLength,
                                 height: ArrowMaxLength,

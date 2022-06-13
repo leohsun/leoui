@@ -31,6 +31,18 @@ extension ColorTools on Color {
         (this.green * factor).round().clamp(0, 255),
         (this.blue * factor).round().clamp(0, 255));
   }
+
+  bool isDark() {
+    double _colorBrightness = this.computeLuminance();
+
+    return (_colorBrightness + 0.05) * (_colorBrightness + 0.05) < 0.15;
+  }
+
+  bool isLight() {
+    double _colorBrightness = this.computeLuminance();
+
+    return (_colorBrightness + 0.05) * (_colorBrightness + 0.05) > 0.15;
+  }
 }
 
 extension StringTools on String {
@@ -76,5 +88,17 @@ extension StringTools on String {
         languageCode: raw.first,
         scriptCode: scriptCode,
         countryCode: countryCode);
+  }
+}
+
+extension ListTools on List {
+  firstWhereOrNull(fn(element)) {
+    for (int i = 0; i < this.length; i++) {
+      if (fn(this[i])) {
+        return this[i];
+      }
+    }
+
+    return null;
   }
 }
