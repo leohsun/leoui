@@ -85,7 +85,7 @@ class _TabPickerState extends State<TabPicker>
 
   void animateTabIndex() {
     setState(() {});
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (DefaultTabController.of(tabContext) == null) return;
 
       DefaultTabController.of(tabContext)!
@@ -107,7 +107,7 @@ class _TabPickerState extends State<TabPicker>
     }
 
     if (isInModal) {
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ModalScope.of(context)?.closeModal(submitList);
       });
     }

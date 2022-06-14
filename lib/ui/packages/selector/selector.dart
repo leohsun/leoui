@@ -181,7 +181,7 @@ class _SelectorState extends State<Selector> {
     bool isInModal = ModalScope.of(context) != null;
 
     if (isInModal) {
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ModalScope.of(context)?.closeModal();
       });
     }
@@ -206,7 +206,7 @@ class _SelectorState extends State<Selector> {
     bool isInModal = ModalScope.of(context) != null;
 
     if (isInModal) {
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         ModalScope.of(context)?.closeModal(checkedData);
       });
     }
@@ -312,8 +312,8 @@ class _SelectorState extends State<Selector> {
       child: CupertinoPicker(
           scrollController: _scrollControllerList[columnIndex],
           selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-            capLeftEdge: columnIndex == 0,
-            capRightEdge: columnIndex == _dataList.length - 1,
+            capStartEdge: columnIndex == 0,
+            capEndEdge: columnIndex == _dataList.length - 1,
             background: theme.fillSecondaryColor,
           ),
           itemExtent: theme.size!().itemExtent,

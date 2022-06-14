@@ -5,7 +5,9 @@ import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 
 enum PopoverPlacement { top, bottom, left, right }
+
 enum PopoverTriggerType { press, lonPress, property }
+
 const double Gap = 4;
 const double Translate = 10;
 const double ArrowMaxLength = 20;
@@ -777,7 +779,7 @@ class _PopoverState extends State<Popover> {
   void initState() {
     if (widget.show == true) {
       //show can be null or bool so do this
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         _overlayEntry = buildOverlay();
         Overlay.of(context)!.insert(_overlayEntry!);
       });
@@ -790,12 +792,12 @@ class _PopoverState extends State<Popover> {
     if (widget.show != oldWidget.show) {
       if (widget.show == true) {
         //show can be null or bool so do this
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           _overlayEntry = buildOverlay();
           Overlay.of(context)!.insert(_overlayEntry!);
         });
       } else if (widget.show == false) {
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           _remove();
         });
       }

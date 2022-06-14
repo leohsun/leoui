@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-enum ratioType { width, height }
+enum RatioType { width, height }
 
 class SizeTool {
   final double widthRatio;
@@ -18,7 +18,7 @@ class SizeTool {
   const SizeTool.raw({required this.widthRatio, required this.heightRatio});
 
   static MediaQueryData _mediaQueryData =
-      MediaQueryData.fromWindow(WidgetsBinding.instance!.window);
+      MediaQueryData.fromWindow(WidgetsBinding.instance.window);
 
   static Size get deviceSize => _mediaQueryData.size;
   static double get deviceWidth => _mediaQueryData.size.width;

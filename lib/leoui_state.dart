@@ -129,7 +129,7 @@ class _LeouiStateState extends State<LeouiState> {
       }
 
       final child = MediaQuery(
-        data: MediaQueryData.fromWindow(WidgetsBinding.instance!.window),
+        data: MediaQueryData.fromWindow(WidgetsBinding.instance.window),
         child: LeouiTheme(
           theme: theme,
           child: DefaultTextStyle(

@@ -119,7 +119,7 @@ class _IndexesState extends State<Indexes> {
   @override
   void initState() {
     scrollListData = _assembleListData();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       calcSliverPostions();
       maxScrollExtend = scrollView.position.maxScrollExtent;
     });

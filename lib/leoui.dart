@@ -33,7 +33,6 @@ class Leoui extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      print(constraints.maxWidth);
       if (constraints.maxWidth == 0) {
         return Container(
           color: Colors.white,

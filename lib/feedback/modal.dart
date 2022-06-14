@@ -211,7 +211,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     _controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
 
@@ -280,7 +280,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   void didChangeMetrics() {
     setState(() {
       viewPaddingBottom =
-          MediaQueryData.fromWindow(WidgetsBinding.instance!.window)
+          MediaQueryData.fromWindow(WidgetsBinding.instance.window)
               .viewInsets
               .bottom;
     });
@@ -290,7 +290,7 @@ class _ModalWidgetState extends State<_ModalWidget>
 
   @override
   void dispose() {
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
   }

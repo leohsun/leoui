@@ -56,7 +56,7 @@ class ButtonGroupState extends State<ButtonGroup> {
   BorderRadius? groupBorderRadius;
 
   late double maxWidth =
-      MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width /
+      MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width /
           widget.children.length;
 
   void _assembleChildrenList() {

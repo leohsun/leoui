@@ -55,7 +55,7 @@ class _NoticeBarState extends State<NoticeBar> {
   @override
   void initState() {
     if (widget.scrollable) {
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         LeouiThemeData theme = LeouiTheme.of(context);
         int time = (_scrollController.position.maxScrollExtent /
                 sz(theme.size!().title * 2))
