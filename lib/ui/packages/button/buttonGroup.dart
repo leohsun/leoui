@@ -49,7 +49,7 @@ class ButtonGroup extends StatefulWidget {
 class ButtonGroupState extends State<ButtonGroup> {
   late List<Widget> _children;
 
-  late Color _textColor;
+  Color? _textColor;
 
   late bool onlyTwo = widget.children.length == 2;
 
@@ -202,10 +202,13 @@ class ButtonGroupState extends State<ButtonGroup> {
 
   @override
   void initState() {
-    _textColor = widget.textColor ??
-        (widget.color!.isDark()
+    Color? computedColor = widget.color != null
+        ? (widget.color!.isDark()
             ? widget.color!.lighten(50)
-            : widget.color!.darken(50));
+            : widget.color!.darken(50))
+        : null;
+    _textColor = widget.textColor ?? computedColor;
+
     super.initState();
   }
 
