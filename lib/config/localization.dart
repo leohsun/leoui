@@ -12,6 +12,8 @@ class LeouiLocalization {
   const LeouiLocalization.raw({required this.languageName});
 
   static LeouiLocalization of(BuildContext context) {
+    assert(Localizations.of<LeouiLocalization>(context, LeouiLocalization) !=
+        null);
     return Localizations.of<LeouiLocalization>(context, LeouiLocalization)!;
   }
 

@@ -2,7 +2,6 @@ library leoui.feedback;
 
 import 'dart:async';
 import 'dart:core';
-
 import 'package:flutter/material.dart' hide Slider, Dialog;
 import 'package:flutter/services.dart';
 import 'package:leoui/feedback/modalRoute.dart';

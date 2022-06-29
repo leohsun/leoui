@@ -230,7 +230,8 @@ class _SelectorState extends State<Selector> {
             TextButton(
                 onPressed: _handleCancel,
                 child: Text(
-                  widget.cancleText ?? LeouiLocalization.of(context).cancel,
+                  widget.cancleText ??
+                      LeouiLocalization.of(LeoFeedback.currentContext!).cancel,
                   style: TextStyle(
                       color:
                           widget.cancleTextColor ?? theme.labelSecondaryColor,
@@ -246,7 +247,8 @@ class _SelectorState extends State<Selector> {
             TextButton(
                 onPressed: _handleCofirm,
                 child: Text(
-                  widget.confirmText ?? LeouiLocalization.of(context).confirm,
+                  widget.confirmText ??
+                      LeouiLocalization.of(LeoFeedback.currentContext!).confirm,
                   style: TextStyle(
                       color: widget.confirmTextColor ?? theme.userAccentColor,
                       fontSize: theme.size!().title),

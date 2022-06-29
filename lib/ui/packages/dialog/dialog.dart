@@ -94,22 +94,26 @@ class _DialogState extends State<Dialog> {
             BorderRadius.circular(sz(theme.size!().fieldBorderRadius)),
         color: theme.backgroundSecondaryColor,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: sz(4)),
           decoration: BoxDecoration(
             border: Border.all(color: theme.nonOpaqueSeparatorColor),
             borderRadius:
                 BorderRadius.circular(sz(theme.size!().fieldBorderRadius)),
           ),
-          child: InputItem(
-            key: widget.promoptItemKey,
-            brightness: widget.brightness,
-            validatePattern: widget.validatePattern,
-            patternDescript: widget.patternDescript,
-            placeholder: widget.placeholder,
-            fieldKey: widget.fieldKey,
-            fieldLabel: widget.fieldLabel,
-            focus: true,
-            fontSize: theme.size!().tertiary,
+          child: ClipRRect(
+            borderRadius:
+                BorderRadius.circular(sz(theme.size!().fieldBorderRadius)),
+            child: InputItem(
+              key: widget.promoptItemKey,
+              horizontalPadding: sz(4),
+              brightness: widget.brightness,
+              validatePattern: widget.validatePattern,
+              patternDescript: widget.patternDescript,
+              placeholder: widget.placeholder,
+              fieldKey: widget.fieldKey,
+              fieldLabel: widget.fieldLabel,
+              focus: true,
+              fontSize: theme.size!().tertiary,
+            ),
           ),
         ),
       ));

@@ -203,7 +203,6 @@ class _ModalWidgetState extends State<_ModalWidget>
   double? _top;
   double? _right;
   double? _bottom;
-  double viewPaddingBottom = 0;
 
   int tragStartTime = 0;
   double tragVelocity = 0;
@@ -221,6 +220,10 @@ class _ModalWidgetState extends State<_ModalWidget>
             setState(() {});
           }));
 
+    MediaQueryData windowData =
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    double windowPadddingBottom = windowData.viewInsets.bottom;
+
     if (widget.animateWhenOpen) {
       _controller.forward();
     } else {
@@ -237,6 +240,7 @@ class _ModalWidgetState extends State<_ModalWidget>
       case ModalDirection.left:
         _left = 0;
         _top = 0;
+        _bottom = windowPadddingBottom;
         break;
 
       case ModalDirection.top:
@@ -248,18 +252,20 @@ class _ModalWidgetState extends State<_ModalWidget>
       case ModalDirection.right:
         _right = 0;
         _top = 0;
+        _bottom = windowPadddingBottom;
         break;
 
       case ModalDirection.bottom:
         _top = null;
-        _bottom = 0;
+        _bottom = windowPadddingBottom;
         break;
 
       case ModalDirection.center:
         _left = 0;
         _right = 0;
         _top = 0;
-        _bottom = 0;
+        _bottom = windowPadddingBottom;
+
         break;
     }
   }
@@ -278,15 +284,19 @@ class _ModalWidgetState extends State<_ModalWidget>
 
   @override
   void didChangeMetrics() {
-    setState(() {
-      viewPaddingBottom =
-          MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-              .viewInsets
-              .bottom;
-    });
+    MediaQueryData windowData =
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    double windowPadddingBottom = windowData.viewInsets.bottom;
+
+    if (widget.direction != ModalDirection.top) {
+      _bottom = windowPadddingBottom;
+    }
+    setState(() {});
 
     super.didChangeMetrics();
   }
+
+  void changePostionBottom() {}
 
   @override
   void dispose() {
@@ -327,6 +337,10 @@ class _ModalWidgetState extends State<_ModalWidget>
     bool isLeft = widget.direction == ModalDirection.left;
     bool isRight = widget.direction == ModalDirection.right;
 
+    MediaQueryData windowData =
+        MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    double windowPadddingBottom = windowData.viewInsets.bottom;
+
     switch (widget.direction) {
       case ModalDirection.left:
         _offset = Offset(_slide.value, 0);
@@ -351,16 +365,6 @@ class _ModalWidgetState extends State<_ModalWidget>
 
     List<Widget> _children = [];
 
-    Widget _child = ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: SizeTool.deviceHeight, maxWidth: SizeTool.deviceWidth),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: viewPaddingBottom),
-            child: widget.child,
-          ),
-        ));
-
     if (!widget.noMask) {
       _children.add(
         Positioned.fill(
@@ -373,158 +377,162 @@ class _ModalWidgetState extends State<_ModalWidget>
       );
     }
 
+    late Widget child;
+
     if (widget.direction == ModalDirection.center) {
-      _children.add(Transform.scale(
-        scale: 1.0 + _slide.value,
-        child: Opacity(
-            opacity: (1.0 + _slide.value).clamp(0, 1),
-            child: Center(
-              child: _child,
-            )),
-      ));
+      child = Center(
+        child: Transform.scale(
+          scale: 1.0 + _slide.value,
+          child: Opacity(
+              opacity: (1.0 + _slide.value).clamp(0, 1), child: widget.child),
+        ),
+      );
     } else {
-      _children.add(Positioned(
-          left: _left,
-          top: _top,
-          right: _right,
-          bottom: _bottom,
-          child: FractionalTranslation(
-              translation: _offset,
-              child: widget.dragToClose
-                  ? GestureDetector(
-                      child: _child,
-                      onTapDown: (_) {
-                        autoCloseCounter?.cancel();
-                      },
-                      onTapCancel: () {
-                        this.resetCounter();
-                      },
-                      onVerticalDragStart: (_) {
-                        if (!isTop && !isBottom) return;
-                        autoCloseCounter?.cancel();
-                        tragStartTime = DateTime.now().millisecondsSinceEpoch;
-                      },
-                      onVerticalDragUpdate: (DragUpdateDetails details) {
-                        if (!isTop && !isBottom) return;
+      child = FractionalTranslation(
+          translation: _offset,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxHeight: SizeTool.deviceHeight,
+                maxWidth: SizeTool.deviceWidth),
+            child: widget.dragToClose
+                ? GestureDetector(
+                    child: widget.child,
+                    onTapDown: (_) {
+                      autoCloseCounter?.cancel();
+                    },
+                    onTapCancel: () {
+                      this.resetCounter();
+                    },
+                    onVerticalDragStart: (_) {
+                      if (!isTop && !isBottom) return;
+                      autoCloseCounter?.cancel();
+                      tragStartTime = DateTime.now().millisecondsSinceEpoch;
+                    },
+                    onVerticalDragUpdate: (DragUpdateDetails details) {
+                      if (!isTop && !isBottom) return;
 
-                        if (isTop) {
-                          double dragTop = _top! + details.delta.dy;
-                          if (dragTop < 0) {
-                            setState(() {
-                              _top = dragTop;
-                            });
-                          }
+                      if (isTop) {
+                        double dragTop = _top! + details.delta.dy;
+                        if (dragTop < 0) {
+                          setState(() {
+                            _top = dragTop;
+                          });
                         }
+                      }
 
-                        if (isBottom) {
-                          double dragBottom = _bottom! - details.delta.dy;
-                          if (dragBottom < 0) {
-                            setState(() {
-                              _bottom = dragBottom;
-                            });
-                          }
+                      if (isBottom) {
+                        double dragBottom = _bottom! - details.delta.dy;
+                        if (dragBottom < windowPadddingBottom) {
+                          setState(() {
+                            _bottom = dragBottom;
+                          });
                         }
-                      },
-                      onVerticalDragEnd: (_) {
-                        if (!isTop && !isBottom) return;
-                        int tragEndTime = DateTime.now().millisecondsSinceEpoch;
+                      }
+                    },
+                    onVerticalDragEnd: (_) {
+                      if (!isTop && !isBottom) return;
+                      int tragEndTime = DateTime.now().millisecondsSinceEpoch;
 
-                        bool achieveLimit = false;
-                        if (isTop) {
-                          tragVelocity =
-                              _top!.abs() / (tragEndTime - tragStartTime);
-                          achieveLimit =
-                              tragVelocity > widget.dragToCloseVelocity ||
-                                  _top!.abs() > widget.dragToCloseGap;
-
-                          if (_top! < 0 && achieveLimit) {
-                            handleClose();
-                          } else {
-                            setState(() {
-                              _top = 0;
-                            });
-                            resetCounter();
-                          }
-                        } else if (isBottom) {
-                          tragVelocity =
-                              _bottom!.abs() / (tragEndTime - tragStartTime);
-                          achieveLimit =
-                              tragVelocity > widget.dragToCloseVelocity ||
-                                  _bottom!.abs() > widget.dragToCloseGap;
-
-                          if (_bottom! < 0 && achieveLimit) {
-                            handleClose();
-                          } else {
-                            setState(() {
-                              _bottom = 0;
-                            });
-                            resetCounter();
-                          }
-                        }
-                      },
-                      onHorizontalDragStart: (_) {
-                        if (!isLeft && !isRight) return;
-                        autoCloseCounter?.cancel();
-                        tragStartTime = DateTime.now().millisecondsSinceEpoch;
-                      },
-                      onHorizontalDragUpdate: (DragUpdateDetails details) {
-                        if (!isLeft && !isRight) return;
-                        if (isLeft) {
-                          double dragLeft = _left! + details.delta.dx;
-                          if (dragLeft < 0) {
-                            setState(() {
-                              _left = dragLeft;
-                            });
-                          }
-                        }
-
-                        if (isRight) {
-                          double dragRight = _right! - details.delta.dx;
-                          if (dragRight < 0) {
-                            setState(() {
-                              _right = dragRight;
-                            });
-                          }
-                        }
-                      },
-                      onHorizontalDragEnd: (_) {
-                        if (!isLeft && !isRight) return;
-                        int tragEndTime = DateTime.now().millisecondsSinceEpoch;
+                      bool achieveLimit = false;
+                      if (isTop) {
                         tragVelocity =
                             _top!.abs() / (tragEndTime - tragStartTime);
+                        achieveLimit =
+                            tragVelocity > widget.dragToCloseVelocity ||
+                                _top!.abs() > widget.dragToCloseGap;
 
-                        bool achieveLimit = false;
-                        if (isLeft) {
-                          achieveLimit =
-                              tragVelocity > widget.dragToCloseVelocity ||
-                                  _left!.abs() > widget.dragToCloseGap;
-
-                          if (_left! < 0 && achieveLimit) {
-                            handleClose();
-                          } else {
-                            setState(() {
-                              _left = 0;
-                            });
-                            resetCounter();
-                          }
-                        } else if (isRight) {
-                          achieveLimit =
-                              tragVelocity > widget.dragToCloseVelocity ||
-                                  _right!.abs() > widget.dragToCloseGap;
-
-                          if (_right! < 0 && achieveLimit) {
-                            handleClose();
-                          } else {
-                            setState(() {
-                              _right = 0;
-                            });
-                            resetCounter();
-                          }
+                        if (_top! < 0 && achieveLimit) {
+                          handleClose();
+                        } else {
+                          setState(() {
+                            _top = 0;
+                          });
+                          resetCounter();
                         }
-                      },
-                    )
-                  : _child)));
+                      } else if (isBottom) {
+                        tragVelocity =
+                            _bottom!.abs() / (tragEndTime - tragStartTime);
+                        achieveLimit =
+                            tragVelocity > widget.dragToCloseVelocity ||
+                                _bottom!.abs() > widget.dragToCloseGap;
+
+                        if (_bottom! < windowPadddingBottom && achieveLimit) {
+                          handleClose();
+                        } else {
+                          setState(() {
+                            _bottom = 0;
+                          });
+                          resetCounter();
+                        }
+                      }
+                    },
+                    onHorizontalDragStart: (_) {
+                      if (!isLeft && !isRight) return;
+                      autoCloseCounter?.cancel();
+                      tragStartTime = DateTime.now().millisecondsSinceEpoch;
+                    },
+                    onHorizontalDragUpdate: (DragUpdateDetails details) {
+                      if (!isLeft && !isRight) return;
+                      if (isLeft) {
+                        double dragLeft = _left! + details.delta.dx;
+                        if (dragLeft < 0) {
+                          setState(() {
+                            _left = dragLeft;
+                          });
+                        }
+                      }
+
+                      if (isRight) {
+                        double dragRight = _right! - details.delta.dx;
+                        if (dragRight < 0) {
+                          setState(() {
+                            _right = dragRight;
+                          });
+                        }
+                      }
+                    },
+                    onHorizontalDragEnd: (_) {
+                      if (!isLeft && !isRight) return;
+                      int tragEndTime = DateTime.now().millisecondsSinceEpoch;
+                      tragVelocity =
+                          _top!.abs() / (tragEndTime - tragStartTime);
+
+                      bool achieveLimit = false;
+                      if (isLeft) {
+                        achieveLimit =
+                            tragVelocity > widget.dragToCloseVelocity ||
+                                _left!.abs() > widget.dragToCloseGap;
+
+                        if (_left! < 0 && achieveLimit) {
+                          handleClose();
+                        } else {
+                          setState(() {
+                            _left = 0;
+                          });
+                          resetCounter();
+                        }
+                      } else if (isRight) {
+                        achieveLimit =
+                            tragVelocity > widget.dragToCloseVelocity ||
+                                _right!.abs() > widget.dragToCloseGap;
+
+                        if (_right! < 0 && achieveLimit) {
+                          handleClose();
+                        } else {
+                          setState(() {
+                            _right = 0;
+                          });
+                          resetCounter();
+                        }
+                      }
+                    },
+                  )
+                : widget.child,
+          ));
     }
+
+    _children.add(Positioned(
+        left: _left, top: _top, right: _right, bottom: _bottom, child: child));
 
     return DefaultTextStyle(
       style: TextStyle(),

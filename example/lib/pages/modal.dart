@@ -142,6 +142,7 @@ class _ModalPageState extends State<ModalPage> {
                         showModal(
                           modal: Modal(
                             closeOnClickMask: true,
+                            noMask: true,
                             direction: ModalDirection.bottom,
                             dragToClose: true,
                             childBuilder: (c) => Container(
@@ -161,6 +162,10 @@ class _ModalPageState extends State<ModalPage> {
                       SizedBox(
                         height: 20,
                       ),
+                      InputItem(
+                        title: '输入框',
+                        placeholder: '触发键盘',
+                      )
                     ]),
               ),
             ),
