@@ -34,9 +34,7 @@ class Leoui extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       if (constraints.maxWidth == 0) {
-        return Container(
-          color: Colors.white,
-        );
+        return setupPlaceholder ?? Container(color: Colors.white);
       }
       return LeouiState(
         child: child,

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
 import 'package:leoui/feedback/index.dart';
+import 'package:leoui/ui/index.dart';
 import 'package:leoui/ui/packages/scalableText/scalableText.dart';
 import 'package:leoui/utils/index.dart';
 
@@ -391,12 +392,16 @@ class _SelectorState extends State<Selector> {
         : LeouiTheme.of(context);
 
     return Material(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: bottom),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [_buildHeader(), _buldColumns()],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildHeader(),
+          _buldColumns(),
+          Container(
+            height: bottom,
+            color: theme.backgroundPrimaryColor,
+          )
+        ],
       ),
     );
   }

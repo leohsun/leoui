@@ -144,7 +144,6 @@ class _LeouiStateState extends State<LeouiState> {
                   child: Overlay(
                     initialEntries: [
                       OverlayEntry(builder: (BuildContext context) {
-                        print(LeouiLocalization.of(context).confirm);
                         // we need a context to show overlay, then we can call feedback functions without context at anywhere
                         setup(widget.config, context);
                         if (!setupComplater.isCompleted) {

@@ -392,7 +392,7 @@ class _ModalWidgetState extends State<_ModalWidget>
           translation: _offset,
           child: ConstrainedBox(
             constraints: BoxConstraints(
-                maxHeight: SizeTool.deviceHeight,
+                maxHeight: SizeTool.deviceHeight - _bottom!,
                 maxWidth: SizeTool.deviceWidth),
             child: widget.dragToClose
                 ? GestureDetector(

@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'dart:math' show sin, pi;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Color hex(String color) {
@@ -91,7 +92,7 @@ Widget buildBlurWidget({required Widget child, BorderRadius? borderRadius}) {
   return ClipRRect(
     borderRadius: borderRadius ?? BorderRadius.circular(12),
     child: BackdropFilter(
-      filter: ImageFilter.blur(
+      filter: ui.ImageFilter.blur(
         sigmaX: 0.001,
         sigmaY: 0.001,
       ),
@@ -124,4 +125,62 @@ Function debounce(Function() fn, Duration delay) {
 
     _timer = Timer(delay, fn);
   };
+}
+
+void tracePrint(dynamic log, {packageName: 'leoui', onlyDebugModel: true}) {
+  if (onlyDebugModel && !kDebugMode) return;
+
+  if (log.runtimeType != String) {
+    log = log.toString();
+  }
+
+  var lines = StackTrace.current.toString().split('\n');
+
+  if (lines.length > 2) {
+    RegExpMatch? mathedPathDeep1 =
+        RegExp('\\(package:$packageName[^\)]+\\)').firstMatch(lines[1]);
+
+    RegExpMatch? mathedPathDeep2 =
+        RegExp('\\(package:$packageName[^\)]+\\)').firstMatch(lines[2]);
+    if (mathedPathDeep2 != null) {
+      print(
+          log + lines[2].substring(mathedPathDeep2.start, mathedPathDeep2.end));
+    } else if (mathedPathDeep1 != null) {
+      print(
+          log + lines[1].substring(mathedPathDeep1.start, mathedPathDeep1.end));
+    } else {
+      print(log);
+    }
+  } else {
+    print(log);
+  }
+}
+
+Future<ui.Image?> loadImage(String path) {
+  Completer<ui.Image?> loading = Completer();
+  ImageStream imageStream;
+  late ImageStreamListener imageStreamListener;
+
+  void onImage(ImageInfo imageInfo, bool synchronousCall) {
+    loading.complete(imageInfo.image);
+  }
+
+  void onError(Object exception, StackTrace? stackTrace) {
+    loading.complete(null);
+    tracePrint(onError);
+  }
+
+  imageStreamListener = ImageStreamListener(onImage, onError: onError);
+
+  bool isRemote = path.startsWith(RegExp(r'https?://'));
+
+  if (isRemote) {
+    imageStream = NetworkImage(path).resolve(ImageConfiguration());
+  } else {
+    imageStream = AssetImage(path).resolve(ImageConfiguration());
+  }
+
+  imageStream.addListener(imageStreamListener);
+
+  return loading.future;
 }
