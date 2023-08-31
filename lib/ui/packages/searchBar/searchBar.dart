@@ -6,26 +6,44 @@ class SearchBar extends StatefulWidget {
   final String? defaultkeywords;
   final ValueChanged<String> onSubmit;
   final LeouiBrightness? brightness;
+  final VoidCallback? onCancel;
+  final String? cancelText;
+  final bool focus;
   const SearchBar(
       {Key? key,
       this.placeholder,
       this.defaultkeywords,
       this.brightness,
-      required this.onSubmit})
+      required this.onSubmit,
+      this.onCancel,
+      this.cancelText,
+      this.focus = false})
       : super(key: key);
 
   @override
-  _SearchBarState createState() => _SearchBarState();
+  SearchBarState createState() => SearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar>
+class SearchBarState extends State<SearchBar>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
   late String keywords;
 
-  GlobalKey input = GlobalKey();
+  GlobalKey<InputItemState> input = GlobalKey();
+
+  void clear() {
+    input.currentState?.clear();
+  }
+
+  void blur() {
+    input.currentState?.blur();
+  }
+
+  void focus() {
+    input.currentState?.focus();
+  }
 
   @override
   void initState() {
@@ -63,6 +81,7 @@ class _SearchBarState extends State<SearchBar>
             child: Container(
               padding: EdgeInsets.only(left: theme.size!().cardBorderRadius),
               child: InputItem(
+                focus: widget.focus,
                 brightness: widget.brightness,
                 icon: Icon(
                   Icons.search,
@@ -94,16 +113,21 @@ class _SearchBarState extends State<SearchBar>
                 child: GestureDetector(
                     child: Center(
                       child: Text(
-                          LeouiLocalization.of(LeoFeedback.currentContext!)
-                              .cancel,
+                          widget.cancelText ??
+                              LeouiLocalization.of(LeoFeedback.currentContext!)
+                                  .cancel,
                           style: TextStyle(
                               color: theme.labelPrimaryColor,
                               fontSize: theme.size!().title)),
                     ),
                     onTap: () {
-                      (input.currentState as InputItemState).clear();
-                      (input.currentState as InputItemState).blur();
-                      _controller.reverse();
+                      if (widget.onCancel != null) {
+                        widget.onCancel!();
+                      } else {
+                        (input.currentState as InputItemState).clear();
+                        (input.currentState as InputItemState).blur();
+                        _controller.reverse();
+                      }
                     }),
                 padding: EdgeInsets.only(left: theme.size!().cardBorderRadius),
               ),

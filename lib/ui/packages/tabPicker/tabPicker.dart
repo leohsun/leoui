@@ -87,7 +87,7 @@ class _TabPickerState extends State<TabPicker>
     setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       DefaultTabController.of(tabContext)
-          ?.animateTo(selectedDataList.length - 1);
+          .animateTo(selectedDataList.length - 1);
     });
   }
 
@@ -121,7 +121,7 @@ class _TabPickerState extends State<TabPicker>
       List columnData, int columnIndex, LeouiThemeData theme) {
     return CustomScrollView(
       slivers: [
-        ...mapWithIndex(
+        ...mapWithIndex<Widget, Map>(
           columnData,
           ((data, idx) {
             bool isSelected = selectedDataList[columnIndex][widget.columnKey] ==
@@ -191,7 +191,8 @@ class _TabPickerState extends State<TabPicker>
                             indicatorColor: theme.userAccentColor,
                             isScrollable: true,
                             tabs: [
-                              ...mapWithIndex(selectedDataList, (data, idx) {
+                              ...mapWithIndex<Widget, Map>(selectedDataList,
+                                  (data, idx) {
                                 return Container(
                                   height: sz(theme.size!().itemExtent),
                                   child: Center(
@@ -210,7 +211,8 @@ class _TabPickerState extends State<TabPicker>
                             sz(theme.size!().itemExtent * 4),
                         child: TabBarView(
                           children: [
-                            ...mapWithIndex(columnDataList, (e, idx) {
+                            ...mapWithIndex<Widget, dynamic>(columnDataList,
+                                (e, idx) {
                               return _buildTabViewChild(e, idx, theme);
                             })
                           ],

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide SearchBar;
 import 'package:leoui/leoui.dart';
 
 class SearchBarPage extends StatefulWidget {

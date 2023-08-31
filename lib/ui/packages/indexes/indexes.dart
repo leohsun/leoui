@@ -208,7 +208,7 @@ class _IndexesState extends State<Indexes> {
                     controller: scrollView,
                     child: Column(
                       children: [
-                        ...mapWithIndex<Widget>(scrollListData,
+                        ...mapWithIndex<Widget, Map>(scrollListData,
                             (item, filedIndex) {
                           return Field(
                             key: sliverKeys[filedIndex],
@@ -216,7 +216,7 @@ class _IndexesState extends State<Indexes> {
                             title: Text('${item["key"]}'),
                             margin: EdgeInsets.only(bottom: 20),
                             children: [
-                              ...mapWithIndex<ListItem>(item['data'],
+                              ...mapWithIndex<ListItem, Map>(item['data'],
                                   (item, index) {
                                 IndexesItemBuilderCallback callback =
                                     IndexesItemBuilderCallback(

@@ -7,6 +7,7 @@ class Modal {
   final Completer dismissCompleter;
   final ValueChanged<bool>? onClose;
   final GlobalKey<_ModalWidgetState> modalWidgetKey;
+  final bool fixed;
 
   /// we need this to remove specific route, because the modalRoute is not aways at top,can not use [Navigator.pop]
   final LeoModalRoute route;
@@ -41,6 +42,7 @@ class Modal {
       bool? reverseAnimationWhenClose,
       bool? animateWhenOpen,
       ValueChanged<bool>? onClose,
+      bool? fixed,
       Curve? curve}) {
     // assert(autoClose != true || closeOnClickMask != true,
     //     'can not provide both autoColse and closeOnClickMask are \'ture\' value');
@@ -73,6 +75,7 @@ class Modal {
         dragToCloseGap: dragToCloseGap ?? 30,
         dragToCloseVelocity: dragToCloseVelocity ?? 0.1,
         animateWhenOpen: animateWhenOpen ?? true,
+        fixed: fixed ?? false,
         reverseAnimationWhenClose: reverseAnimationWhenClose);
 
     entry = OverlayEntry(
@@ -109,7 +112,8 @@ class Modal {
       required this.modalWidgetKey,
       required this.route,
       required this.childBuilder,
-      this.onClose});
+      this.onClose,
+      this.fixed = false});
 }
 
 class ModalScope extends InheritedWidget {
@@ -128,7 +132,8 @@ class ModalScope extends InheritedWidget {
 
     if (routeContext != null) {
       // Todo how to pass data back???????
-      Navigator.of(routeContext!).removeRoute(route!);
+      // Navigator.of(routeContext!).removeRoute(route!);
+      Navigator.of(routeContext!).pop(data);
     } else {
       entry?.remove();
     }
@@ -172,6 +177,7 @@ class _ModalWidget extends StatefulWidget {
   final double dragToCloseVelocity;
   final bool noMask;
   final Curve curve;
+  final bool fixed;
 
   _ModalWidget(
       {Key? key,
@@ -186,7 +192,8 @@ class _ModalWidget extends StatefulWidget {
       required this.dragToCloseGap,
       required this.dragToCloseVelocity,
       required this.closeOnClickMask,
-      required this.noMask})
+      required this.noMask,
+      this.fixed = false})
       : super(key: key);
   @override
   _ModalWidgetState createState() => _ModalWidgetState();
@@ -220,8 +227,8 @@ class _ModalWidgetState extends State<_ModalWidget>
             setState(() {});
           }));
 
-    MediaQueryData windowData =
-        MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    MediaQueryData windowData = MediaQueryData.fromView(
+        WidgetsBinding.instance.platformDispatcher.views.single);
     double windowPadddingBottom = windowData.viewInsets.bottom;
 
     if (widget.animateWhenOpen) {
@@ -284,11 +291,11 @@ class _ModalWidgetState extends State<_ModalWidget>
 
   @override
   void didChangeMetrics() {
-    MediaQueryData windowData =
-        MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    MediaQueryData windowData = MediaQueryData.fromView(
+        WidgetsBinding.instance.platformDispatcher.views.single);
     double windowPadddingBottom = windowData.viewInsets.bottom;
 
-    if (widget.direction != ModalDirection.top) {
+    if (widget.direction != ModalDirection.top && !widget.fixed) {
       _bottom = windowPadddingBottom;
     }
     setState(() {});
@@ -337,8 +344,8 @@ class _ModalWidgetState extends State<_ModalWidget>
     bool isLeft = widget.direction == ModalDirection.left;
     bool isRight = widget.direction == ModalDirection.right;
 
-    MediaQueryData windowData =
-        MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    MediaQueryData windowData = MediaQueryData.fromView(
+        WidgetsBinding.instance.platformDispatcher.views.single);
     double windowPadddingBottom = windowData.viewInsets.bottom;
 
     switch (widget.direction) {

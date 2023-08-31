@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 
-enum FieldValidateErrorMessageType { message, toast }
+enum FieldValidateErrorMessageType { warningMessage, warningToast, toast, none }
 
 class Field extends StatefulWidget {
   final Widget? title; //标题
@@ -19,22 +19,22 @@ class Field extends StatefulWidget {
   final EdgeInsets? margin;
 
   final List<Widget>? children; //  FieldItem
-  const Field(
-      {Key? key,
-      this.title,
-      this.brief,
-      this.disabled,
-      this.plain,
-      this.children,
-      this.trailing,
-      this.footer,
-      this.color,
-      this.dividerColor,
-      this.dividerHorizontalMargin,
-      this.brightness,
-      this.margin,
-      this.messageType = FieldValidateErrorMessageType.message})
-      : super(key: key);
+  const Field({
+    Key? key,
+    this.title,
+    this.brief,
+    this.disabled,
+    this.plain,
+    this.children,
+    this.trailing,
+    this.footer,
+    this.color,
+    this.dividerColor,
+    this.dividerHorizontalMargin,
+    this.brightness,
+    this.margin,
+    this.messageType = FieldValidateErrorMessageType.warningMessage,
+  }) : super(key: key);
 
   @override
   FieldState createState() => FieldState();
@@ -57,24 +57,34 @@ class FieldState extends State<Field> {
     listItemSet.remove(item);
   }
 
-  bool validate() {
-    if (listItemSet.length == 0) return true;
-    bool valid = true;
+  /// return error message, empty --> [true]
+  String validate() {
+    if (listItemSet.length == 0) return "";
 
+    String validateCallBack = '';
     for (var itemState in listItemSet) {
-      String validateCallBack = itemState.validate();
+      validateCallBack = itemState.validate();
       if (validateCallBack.isNotEmpty) {
-        if (widget.messageType == FieldValidateErrorMessageType.message) {
-          showMessage(validateCallBack, type: MessageType.warning);
-        } else {
-          showToast(validateCallBack, type: ToastType.warning);
+        if (widget.messageType != FieldValidateErrorMessageType.none) {
+          switch (widget.messageType) {
+            case FieldValidateErrorMessageType.warningMessage:
+              showMessage(validateCallBack, type: MessageType.warning);
+              break;
+            case FieldValidateErrorMessageType.toast:
+              showToast(validateCallBack);
+              break;
+            case FieldValidateErrorMessageType.warningToast:
+              showToast(validateCallBack, type: ToastType.warning);
+              break;
+            case FieldValidateErrorMessageType.none:
+            case null:
+          }
         }
-        valid = false;
         break;
       }
     }
 
-    return valid;
+    return validateCallBack;
   }
 
   Map<String, String> obtainDataMap() {
@@ -86,6 +96,14 @@ class FieldState extends State<Field> {
     }
 
     return param;
+  }
+
+  void reset() {
+    if (listItemSet.length == 0) return;
+
+    for (var item in listItemSet) {
+      item.reset();
+    }
   }
 
   Widget _buildHeader(LeouiThemeData theme) {
@@ -142,7 +160,8 @@ class FieldState extends State<Field> {
 
       if (i < widget.children!.length - 1 &&
           (widget.children![i] is ListItem) &&
-          (widget.children![i] as ListItem).child == null) {
+          (widget.children![i] as ListItem).child == null &&
+          (widget.children![i + 1] is ListItem)) {
         _children.add(Container(
           height: 0.6,
           margin: EdgeInsets.symmetric(
@@ -241,6 +260,7 @@ abstract class ListItemState {
   Map<String, String>? obtainData();
   void blur();
   void focus();
+  void reset();
 }
 
 class FieldItem extends StatefulWidget implements ListItem {

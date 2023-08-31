@@ -1,5 +1,3 @@
-library leo_feedback.ui;
-
 export 'packages/button/index.dart';
 export 'packages/popover/popover.dart';
 export 'packages/collapse/collapse.dart';

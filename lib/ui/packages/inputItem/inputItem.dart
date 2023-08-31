@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 
+typedef InputItemOnTapCallBack = void Function(
+    {required String label, required String value});
+
 class InputItem extends StatefulWidget implements ListItem {
-  final String? title; //标题
+  final Widget? title; //标题
   final Icon? icon; //leading icon
   final Widget? leading; //leading 与tile和icon互斥
   final String? defaultValue; //默认值
@@ -26,6 +29,9 @@ class InputItem extends StatefulWidget implements ListItem {
   final ValueChanged<String>? onFocus; //输入框聚焦时回调
   final ValueChanged<String>? onBlur; //输入框聚失焦时回调
   final ValueChanged<String>? onSubmit; //输入框聚失焦时回调
+  final void Function(InputItemOnTapCallBack, TextEditingController)?
+      onTap; //read-only
+  final Color? splashColor;
   final RegExp? validatePattern; // 表单校验码规则 --> RegExp(r'^[a-z][a-z\d]{3,}$')
   final String? patternDescript; // 表单正确格式描述 --> 小写字母开头，包含数字，不小于3位
   final String? fieldKey; // 用于Field导出数据的key --> {'username':'kim'}
@@ -71,6 +77,8 @@ class InputItem extends StatefulWidget implements ListItem {
       this.fontSize,
       this.maxLines = 1,
       this.focus = false,
+      this.onTap,
+      this.splashColor,
       this.onDispose})
       : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
@@ -97,9 +105,25 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   bool showCloseButton = false;
 
-  String value = '';
-
   TextEditingController _controller = TextEditingController();
+
+  String get value {
+    if (widget.onTap == null) {
+      return _controller.value.text;
+    }
+    return _label;
+  }
+
+  set value(String input) {
+    _controller.value = TextEditingValue(text: input);
+  }
+
+  String _label = "";
+
+  void _setMapValue({required String label, required String value}) {
+    _label = value;
+    _controller.value = TextEditingValue(text: label);
+  }
 
   bool valid = true;
 
@@ -141,7 +165,6 @@ class InputItemState extends State<InputItem> implements ListItemState {
     super.initState();
     if (widget.defaultValue != null) {
       _controller.value = TextEditingValue(text: widget.defaultValue!);
-      value = widget.defaultValue!;
       showCloseButton = value.isNotEmpty;
     }
 
@@ -169,8 +192,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
     } else {
       List<Widget> children = [];
       if (widget.icon != null) children.add(widget.icon!);
-      if (widget.title != null)
-        children.add(Flexible(child: Text(widget.title!)));
+      if (widget.title != null) children.add(Flexible(child: widget.title!));
 
       if (children.length == 2) {
         children.insert(
@@ -221,11 +243,10 @@ class InputItemState extends State<InputItem> implements ListItemState {
         contentPadding:
             EdgeInsets.symmetric(vertical: widget.verticalPadding ?? 0));
 
-    rowChildren.add(Expanded(
-        child: TextField(
+    TextField textField = TextField(
       enabled: !widget.disabled,
       controller: _controller,
-      readOnly: widget.readonly,
+      readOnly: widget.readonly || widget.onTap != null,
       maxLength: widget.maxLength,
       focusNode: focusNode,
       keyboardType: widget.inputType,
@@ -235,7 +256,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
       obscureText: widget.obscureText,
       maxLines: widget.maxLines,
       onChanged: (String input) {
-        value = input;
+        // value = input;
         if (showCloseButton != input.isNotEmpty) {
           setState(() {
             showCloseButton = input.isNotEmpty;
@@ -255,7 +276,9 @@ class InputItemState extends State<InputItem> implements ListItemState {
             ? widget.fontSize!
             : sz(theme.size!().title),
       ),
-    )));
+    );
+
+    rowChildren.add(Expanded(child: textField));
 
     if (widget.clearable) {
       if (showCloseButton) {
@@ -303,7 +326,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
     }
 
     Field.of(context)?.add(this);
-    return Container(
+
+    final child = Container(
       constraints: BoxConstraints(
           minHeight: widget.fontSize != null
               ? sz(widget.fontSize! * 2.588)
@@ -315,6 +339,26 @@ class InputItemState extends State<InputItem> implements ListItemState {
         children: rowChildren,
       ),
     );
+
+    if (widget.onTap != null) {
+      return buildButtonWidget(
+          splashColor: widget.splashColor,
+          onPress: () {
+            widget.onTap!(_setMapValue, _controller);
+          },
+          child: Stack(
+            children: [
+              child,
+              Positioned.fill(
+                child: Container(
+                  color: Colors.transparent,
+                ),
+              )
+            ],
+          ));
+    }
+
+    return child;
   }
 
   @override
@@ -363,5 +407,10 @@ class InputItemState extends State<InputItem> implements ListItemState {
     String key = 'unknownFieldKey';
     if (widget.itemKey != null) key = widget.itemKey!;
     return {key: value};
+  }
+
+  @override
+  void reset() {
+    clear();
   }
 }

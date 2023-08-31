@@ -163,7 +163,7 @@ class _ModalPageState extends State<ModalPage> {
                         height: 20,
                       ),
                       InputItem(
-                        title: '输入框',
+                        title: Text('输入框'),
                         placeholder: '触发键盘',
                       )
                     ]),

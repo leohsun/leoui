@@ -100,7 +100,7 @@ extension StringTools on String {
 }
 
 extension ListTools<E> on List<E> {
-  firstWhereOrNull<T extends Object>(fn(E element)) {
+  firstWhereOrNull<T>(fn(E element)) {
     for (int i = 0; i < this.length; i++) {
       if (fn(this[i])) {
         return this[i];
@@ -110,7 +110,7 @@ extension ListTools<E> on List<E> {
     return null;
   }
 
-  mapWithIndex<T extends Object>(fn(E eletemt, int index)) {
+  mapWithIndex<T>(fn(E eletemt, int index)) {
     List<T> result = [];
     for (int i = 0; i < this.length; i++) {
       result.add(fn(this[i], i));

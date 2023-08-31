@@ -13,7 +13,7 @@ class _InputItemPageState extends State<InputItemPage> {
 
   List<ListItem> _children = [
     InputItem(
-      title: '用户名',
+      title: Text("用户名"),
       icon: Icon(Icons.person),
       placeholder: '请输入用户名',
       fieldKey: 'username',
@@ -60,27 +60,27 @@ class _InputItemPageState extends State<InputItemPage> {
                       title: Text('基础'),
                       children: [
                         InputItem(
-                          title: '普通文本',
+                          title: Text('普通文本'),
                           placeholder: '普通文本',
                         ),
                         InputItem(
-                          title: '禁用表单',
+                          title: Text('禁用表单'),
                           placeholder: '禁用表单',
                           disabled: true,
                         ),
                         InputItem(
-                          title: '只读表单',
+                          title: Text('只读表单'),
                           placeholder: '只读表单',
                           readonly: true,
                         ),
                         InputItem(
-                          title: '文字居中',
+                          title: Text('文字居中'),
                           placeholder: '文字居中',
                           textAlign: TextAlign.center,
                           clearable: false,
                         ),
                         InputItem(
-                          title: '文字居右',
+                          title: Text('文字居右'),
                           placeholder: '文字居右',
                           textAlign: TextAlign.right,
                           clearable: false,
@@ -107,8 +107,9 @@ class _InputItemPageState extends State<InputItemPage> {
                               _children.add(
                                 InputItem(
                                   solid: false,
-                                  title:
-                                      '用户名' + (_children.length + 1).toString(),
+                                  title: Text(
+                                    '用户名' + (_children.length + 1).toString(),
+                                  ),
                                   icon: Icon(Icons.person),
                                   placeholder: '请输入用户名' +
                                       (_children.length + 1).toString(),
@@ -140,8 +141,8 @@ class _InputItemPageState extends State<InputItemPage> {
                         'validate',
                         full: true,
                         onTap: () {
-                          bool? valide = field.currentState?.validate();
-                          if (valide == true) {
+                          String? valide = field.currentState?.validate();
+                          if (valide == '') {
                             var param = field.currentState?.obtainDataMap();
                             showConfirm(content: param.toString(), title: '结果');
                           }

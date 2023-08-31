@@ -191,23 +191,28 @@ class _SelectorState extends State<Selector> {
     List checkedData = [];
 
     for (int i = 0; i < activeIndexList.length; i++) {
-      Map item = activeIndexList[i] > -1
+      final item = activeIndexList[i] > -1
           ? _dataList[i].length > 0
-              ? Map.from(_dataList[i][activeIndexList[i]])
-              : {}
-          : {};
-      item.remove(widget.childrenKey);
+              ? _dataList[i][activeIndexList[i]]
+              : null
+          : null;
+      if (item is Map && widget.linkage == true) {
+        item.remove(widget.childrenKey);
+      }
       checkedData.add(item);
     }
 
+    List? filterData =
+        checkedData.every((element) => element == null) ? null : checkedData;
+
     if (widget.onComfrim != null) {
-      widget.onComfrim!(checkedData);
+      widget.onComfrim!(filterData);
     }
     bool isInModal = ModalScope.of(context) != null;
 
     if (isInModal) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        ModalScope.of(context)?.closeModal(checkedData);
+        ModalScope.of(context)?.closeModal(filterData);
       });
     }
   }
@@ -287,9 +292,16 @@ class _SelectorState extends State<Selector> {
       // must provide less one child to CupertinoSelector children, otherwise ,it will cause a rebuilding bug;
       _data.add({widget.columnKey: ' '});
     }
-    List<Widget> children = _data
-        .map((data) => _buildCell(data[widget.columnKey] ?? 'unknown'))
-        .toList(growable: false);
+
+    List<Widget> children = _data.map((data) {
+      String resource = "";
+      try {
+        resource = data[widget.columnKey];
+      } catch (err) {
+        resource = "$data";
+      }
+      return _buildCell(resource);
+    }).toList(growable: false);
 
     FixedExtentScrollController _controller =
         _scrollControllerList[columnIndex];

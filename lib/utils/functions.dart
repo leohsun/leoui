@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:math' show sin, pi;
 import 'package:flutter/foundation.dart';
@@ -101,28 +100,34 @@ Widget buildButtonWidget(
   );
 }
 
-Widget buildBlurWidget({required Widget child, BorderRadius? borderRadius}) {
+Widget buildBlurWidget({
+  required Widget child,
+  BorderRadius? borderRadius,
+  double sigmaX = 0.0,
+  double sigmaY = 0.0,
+}) {
   return ClipRRect(
     borderRadius: borderRadius ?? BorderRadius.circular(12),
     child: BackdropFilter(
       filter: ui.ImageFilter.blur(
-        sigmaX: 0.001,
-        sigmaY: 0.001,
+        sigmaX: sigmaX,
+        sigmaY: sigmaY,
       ),
       child: child,
     ),
   );
 }
 
-List<T> mapWithIndex<T>(List<dynamic> data, cb(element, int index)) {
+List<T> mapWithIndex<T, E>(List data, cb(E element, int index)) {
+  List<E> castList = List<E>.from(data);
   List<T> result = [];
-  for (int i = 0; i < data.length; i++) {
-    result.add(cb(data[i], i));
+  for (int i = 0; i < castList.length; i++) {
+    result.add(cb(castList[i], i));
   }
   return result;
 }
 
-void forEachWithIndex<T>(List data, cb(element, int index)) {
+void forEachWithIndex<T>(List<T> data, cb(T element, int index)) {
   for (int i = 0; i < data.length; i++) {
     cb(data[i], i);
   }

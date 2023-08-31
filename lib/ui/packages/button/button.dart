@@ -104,16 +104,15 @@ class _ButtonState extends State<Button> {
             : null;
     List<Widget> children = [
       Flexible(
-        child: Text(
-          widget.data,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: widget.disabled
-                ? lighten(fontColor, ColorChangeLightneessFactor)
-                : fontColor,
-            fontSize: size['fontSize'],
-          ),
-        ),
+        child: Text(widget.data,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: widget.disabled
+                  ? lighten(fontColor, ColorChangeLightneessFactor)
+                  : fontColor,
+              fontSize: size['fontSize'],
+            ),
+            textAlign: TextAlign.center),
       ),
     ];
 

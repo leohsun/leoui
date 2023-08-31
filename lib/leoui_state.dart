@@ -98,7 +98,7 @@ class LeouiState extends StatefulWidget {
   State<LeouiState> createState() => _LeouiStateState();
 }
 
-class _LeouiStateState extends State<LeouiState> {
+class _LeouiStateState extends State<LeouiState> with WidgetsBindingObserver {
   Completer setupComplater = Completer();
 
   void afterSetup() async {
@@ -129,7 +129,7 @@ class _LeouiStateState extends State<LeouiState> {
       }
 
       final child = MediaQuery(
-        data: MediaQueryData.fromWindow(WidgetsBinding.instance.window),
+        data: MediaQueryData.fromView(View.of(context)),
         child: LeouiTheme(
           theme: theme,
           child: DefaultTextStyle(

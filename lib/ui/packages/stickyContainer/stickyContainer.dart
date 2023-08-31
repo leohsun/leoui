@@ -32,7 +32,7 @@ class _StickyContainerState extends State<StickyContainer> {
         ]),
       );
 
-      Overlay.of(context)?.insert(overlayEntry);
+      Overlay.of(context).insert(overlayEntry);
     }
   }
 

@@ -141,8 +141,10 @@ Future showModal({required Modal modal, BuildContext? context}) async {
   if (context != null) {
     Navigator.of(context).push(modal.route);
   } else {
-    Overlay.of(LeoFeedback.currentContext!)?.insert(modal.entry);
+    Overlay.of(LeoFeedback.currentContext!).insert(modal.entry);
   }
+  // Navigator.of(LeoFeedback.currentContext!).push(modal.route);
+
   return modal.dissmissed;
 }
 

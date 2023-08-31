@@ -27,19 +27,6 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              SizedBox(
-                height: 800,
-              ),
-              StickyContainer(
-                scrollController: controller,
-                child: Container(
-                  color: Colors.red,
-                  height: 20,
-                ),
-              ),
-              SizedBox(
-                height: 800,
-              ),
               Collapse(title: 'Basic - 基础', childern: [
                 ListTile(
                   title: Text('Button - 按钮'),

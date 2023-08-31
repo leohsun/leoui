@@ -22,7 +22,7 @@ class _PopoverPageState extends State<PopoverPage> {
               icon: Icon(Icons.arrow_back_ios_new_rounded)),
           title: Text('popover-气泡弹出框'),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Color(0xfffbfbfb),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
@@ -393,7 +393,7 @@ class _PopoverPageState extends State<PopoverPage> {
                                 });
                               },
                             ),
-                            show: false,
+                            show: _show,
                             arrowColor: Colors.orange,
                             // showArrow: false,
                             customPopoverWidgetBuilder: (context) => Container(

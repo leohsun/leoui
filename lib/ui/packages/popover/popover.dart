@@ -1,6 +1,7 @@
 library leo_ui.popover;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 
@@ -41,11 +42,16 @@ class PopoverPosition {
 class PopoverAction {
   final String text;
   final IconData? icon;
+  final Color? color;
   final bool disabled;
   final VoidCallback? onPress;
 
   PopoverAction(
-      {required this.text, this.icon, this.disabled = false, this.onPress});
+      {required this.text,
+      this.icon,
+      this.color,
+      this.disabled = false,
+      this.onPress});
 }
 
 class ArrowPainter extends CustomPainter {
@@ -142,10 +148,9 @@ class PopoverWidget extends StatelessWidget {
             padding:
                 EdgeInsets.symmetric(horizontal: sz(theme.size!().title / 2)),
             child: DefaultTextIconStyle(
-              color: theme.labelPrimaryColor,
+              color: action.color ?? theme.labelPrimaryColor,
               size: theme.size!().title,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   ...(action.icon != null
                       ? [
@@ -154,7 +159,9 @@ class PopoverWidget extends StatelessWidget {
                                 right: sz(theme.size!().title / 2)),
                             child: Icon(action.icon),
                           ),
-                          Text(action.text)
+                          Text(
+                            action.text,
+                          )
                         ]
                       : [Text(action.text)])
                 ],
@@ -177,8 +184,10 @@ class PopoverWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius:
           BorderRadius.circular(sz(theme.size!().cardBorderRadius / 2)),
-      child: Column(
-        children: _children,
+      child: IntrinsicWidth(
+        child: Column(
+          children: _children,
+        ),
       ),
     );
   }
@@ -261,6 +270,7 @@ class Popover extends StatefulWidget {
   final double? gap;
   final bool? inSafeArea;
   final bool? hideWarningToast;
+  final bool? effective;
 
   const Popover(
       {Key? key,
@@ -274,7 +284,8 @@ class Popover extends StatefulWidget {
       this.arrowColor,
       this.gap = Gap,
       this.inSafeArea = true,
-      this.hideWarningToast = false})
+      this.hideWarningToast = false,
+      this.effective = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
                 (show != null &&
@@ -302,7 +313,8 @@ class Popover extends StatefulWidget {
       this.arrowColor,
       this.gap = Gap,
       this.inSafeArea = true,
-      this.hideWarningToast = false})
+      this.hideWarningToast = false,
+      this.effective = true})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
                 (show != null &&
@@ -328,7 +340,8 @@ class Popover extends StatefulWidget {
       this.arrowColor,
       this.gap = Gap,
       this.inSafeArea = true,
-      this.hideWarningToast = false})
+      this.hideWarningToast = false,
+      this.effective = false})
       : assert(
             (triggerType != PopoverTriggerType.property && show == null) ||
                 (show != null &&
@@ -761,13 +774,54 @@ class _PopoverState extends State<Popover> {
 
       if (widget.triggerType != PopoverTriggerType.property) {
         _children.insert(
-            0,
-            GestureDetector(
-              onTap: _remove,
+          0,
+          GestureDetector(
+            onTap: _remove,
+            child: buildBlurWidget(
+              sigmaX: 5,
+              sigmaY: 5,
               child: Container(
-                color: Colors.transparent,
+                color: theme.backgroundPrimaryColor.withOpacity(.5),
               ),
-            ));
+            ),
+          ),
+        );
+      }
+      if (widget.effective == true) {
+        HapticFeedback.heavyImpact();
+
+        _children.insert(
+            1,
+            Positioned(
+                left: triggerWidgetOffset.dx,
+                top: triggerWidgetOffset.dy,
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                        maxWidth: triggerWidgetSize.width,
+                        maxHeight: triggerWidgetSize.height),
+                    child: ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(theme.size!().cardBorderRadius),
+                      child: TweenAnimationBuilder(
+                          duration: Duration(milliseconds: 300),
+                          tween: Tween<double>(begin: 0, end: 1),
+                          curve: Curves.easeInOutCubic,
+                          child: IgnorePointer(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    color: theme.dialogBackgroundColor,
+                                    borderRadius: BorderRadius.circular(
+                                        theme.size!().cardBorderRadius)),
+                                child: widget.child),
+                          ),
+                          builder: (_, double value, child) {
+                            final delta = value < 0.8 ? 1 : -1;
+                            return Transform.scale(
+                              scale: 1 + value * 0.05 * delta,
+                              child: child,
+                            );
+                          }),
+                    ))));
       }
       return PopoverScope(
         popoverEntry: popoverEntry,
@@ -782,11 +836,11 @@ class _PopoverState extends State<Popover> {
     return popoverEntry;
   }
 
-  void _onTapDown(TapDownDetails details) {
+  void _onTapDown(TapDownDetails _) {
     if (widget.triggerType == PopoverTriggerType.press) {
       _overlayEntry = buildOverlay();
       if (_overlayEntry != null) {
-        Overlay.of(context)?.insert(_overlayEntry!);
+        Overlay.of(LeoFeedback.currentContext!).insert(_overlayEntry!);
       }
     }
   }
@@ -795,7 +849,7 @@ class _PopoverState extends State<Popover> {
     if (widget.triggerType == PopoverTriggerType.lonPress) {
       _overlayEntry = buildOverlay();
       if (_overlayEntry != null) {
-        Overlay.of(context)?.insert(_overlayEntry!);
+        Overlay.of(LeoFeedback.currentContext!).insert(_overlayEntry!);
       }
     }
   }
@@ -812,7 +866,7 @@ class _PopoverState extends State<Popover> {
       //show can be null or bool so do this
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         _overlayEntry = buildOverlay();
-        Overlay.of(context)?.insert(_overlayEntry!);
+        Overlay.of(context).insert(_overlayEntry!);
       });
     }
     super.initState();
@@ -825,7 +879,7 @@ class _PopoverState extends State<Popover> {
         //show can be null or bool so do this
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           _overlayEntry = buildOverlay();
-          Overlay.of(context)?.insert(_overlayEntry!);
+          Overlay.of(context).insert(_overlayEntry!);
         });
       } else if (widget.show == false) {
         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -846,7 +900,7 @@ class _PopoverState extends State<Popover> {
             ? _onLongPress
             : null,
         key: triggerWidget,
-        child: Row(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             widget.child,

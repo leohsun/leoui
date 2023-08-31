@@ -53,7 +53,7 @@ class ActionSheet extends StatelessWidget {
     }
 
     Column actionWidget = Column(
-        children: mapWithIndex(actions, (d, i) {
+        children: mapWithIndex<Widget, ActionSheetAction>(actions, (d, i) {
       if (i != actions.length - 1) {
         return Column(
           children: [

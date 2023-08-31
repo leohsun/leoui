@@ -103,6 +103,7 @@ class CollaspeContainer extends StatefulWidget {
   final CollaspeDirection? direction;
   final bool expanded;
   final ValueChanged<double>? onExpanding;
+
   const CollaspeContainer(
       {Key? key,
       required this.child,
