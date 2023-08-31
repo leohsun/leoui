@@ -17,13 +17,13 @@ class SizeTool {
 
   const SizeTool.raw({required this.widthRatio, required this.heightRatio});
 
-  static MediaQueryData _mediaQueryData =
+  static MediaQueryData _mediaQueryData() =>
       MediaQueryData.fromWindow(WidgetsBinding.instance.window);
 
-  static Size get deviceSize => _mediaQueryData.size;
-  static double get deviceWidth => _mediaQueryData.size.width;
-  static double get deviceHeight => _mediaQueryData.size.height;
-  static EdgeInsets get devicePadding => _mediaQueryData.padding;
+  static Size get deviceSize => _mediaQueryData().size;
+  static double get deviceWidth => _mediaQueryData().size.width;
+  static double get deviceHeight => _mediaQueryData().size.height;
+  static EdgeInsets get devicePadding => _mediaQueryData().padding;
 
   double sizeWidth(double size) {
     double expceptWidth = (size * widthRatio).floorToDouble();
