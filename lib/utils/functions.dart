@@ -65,7 +65,9 @@ class DelayTween extends Tween<double> {
 
 Widget buildButtonWidget(
     {required Widget child,
-    VoidCallback? onPress,
+    VoidCallback? onTap,
+    void Function(TapDownDetails)? onTapDown,
+    void Function(TapUpDetails)? onTapUp,
     VoidCallback? onLongPress,
     VoidCallback? onTapCancel,
     ValueChanged<bool>? onFocusChange,
@@ -86,12 +88,15 @@ Widget buildButtonWidget(
     child: Material(
       color: color ?? Colors.transparent,
       borderRadius: borderRadius,
+      type: MaterialType.button,
       child: InkWell(
         splashColor: _splashColor,
         highlightColor: Colors.transparent,
         borderRadius: borderRadius,
         child: child,
-        onTap: onPress,
+        onTap: onTap,
+        onTapDown: onTapDown,
+        onTapUp: onTapUp,
         onLongPress: onLongPress,
         onTapCancel: onTapCancel,
         onFocusChange: onFocusChange,

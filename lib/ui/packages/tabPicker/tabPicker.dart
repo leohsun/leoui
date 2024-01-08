@@ -128,23 +128,23 @@ class _TabPickerState extends State<TabPicker>
                 data[widget.columnKey];
             return SliverToBoxAdapter(
               child: buildButtonWidget(
-                onPress: () {
+                onTap: () {
                   _handleSelectChange(columnIndex, idx);
                 },
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border(
                           top: BorderSide(color: theme.fillPrimaryColor))),
-                  height: sz(theme.size!().itemExtent),
+                  height: theme.size!().itemExtent,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: sz(10)),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: ScalableText(
                         data[widget.columnKey] ?? 'unknown',
-                        minFontSize: sz(10),
+                        minFontSize: 10,
                         style: TextStyle(
-                            fontSize: sz(theme.size!().content),
+                            fontSize: theme.size!().content,
                             color: isSelected
                                 ? theme.userAccentColor
                                 : theme.labelPrimaryColor),
@@ -194,7 +194,7 @@ class _TabPickerState extends State<TabPicker>
                               ...mapWithIndex<Widget, Map>(selectedDataList,
                                   (data, idx) {
                                 return Container(
-                                  height: sz(theme.size!().itemExtent),
+                                  height: theme.size!().itemExtent,
                                   child: Center(
                                     child: Text(
                                       data[widget.columnKey] ?? hintText,
@@ -208,7 +208,7 @@ class _TabPickerState extends State<TabPicker>
                       ),
                       Container(
                         height: widget.selectorHeight ??
-                            sz(theme.size!().itemExtent * 4),
+                            theme.size!().itemExtent * 4,
                         child: TabBarView(
                           children: [
                             ...mapWithIndex<Widget, dynamic>(columnDataList,

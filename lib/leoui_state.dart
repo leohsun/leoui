@@ -134,7 +134,7 @@ class _LeouiStateState extends State<LeouiState> with WidgetsBindingObserver {
           theme: theme,
           child: DefaultTextStyle(
               style: TextStyle(
-                color: widget.config.theme?.labelPrimaryColor,
+                color: theme.labelPrimaryColor,
               ),
               child: Localizations(
                 delegates:

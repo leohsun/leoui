@@ -59,7 +59,8 @@ class _LoadingPageState extends State<LoadingPage> {
                       'dark',
                       full: true,
                       onTap: () {
-                        showLoading(title: '正在保存...', closable: true);
+                        showLoading(
+                            title: '正在保存...', closable: true, context: context);
                       },
                     ),
                     SizedBox(

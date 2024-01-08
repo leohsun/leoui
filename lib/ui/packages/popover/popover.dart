@@ -130,7 +130,7 @@ class PopoverWidget extends StatelessWidget {
     }
 
     return buildButtonWidget(
-      onPress: _onPress,
+      onTap: _onPress,
       child: Opacity(
         opacity: action.disabled ? 0.4 : 1,
         child: Container(

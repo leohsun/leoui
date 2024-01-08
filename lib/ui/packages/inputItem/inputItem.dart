@@ -38,6 +38,7 @@ class InputItem extends StatefulWidget implements ListItem {
   final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
   final LeouiBrightness? brightness; // 主题 dark 、light
   final double? fontSize;
+  final FontWeight? fontWeight;
   final bool focus; //获取焦点
   final bool? hideCounter;
   final int? maxLines;
@@ -75,6 +76,7 @@ class InputItem extends StatefulWidget implements ListItem {
       this.patternDescript,
       this.brightness,
       this.fontSize,
+      this.fontWeight,
       this.maxLines = 1,
       this.focus = false,
       this.onTap,
@@ -198,7 +200,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
         children.insert(
             1,
             SizedBox(
-              width: sz(5),
+              width: 5,
             ));
       }
 
@@ -208,8 +210,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
       );
     }
     return Container(
-      margin: EdgeInsets.only(right: sz(5)),
-      width: widget.solid ? sz(80) : null,
+      margin: EdgeInsets.only(right: 5),
+      width: widget.solid ? theme.size!().title * 5 : null,
       child: DefaultTextIconStyle(
         color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
         child: child,
@@ -271,40 +273,32 @@ class InputItemState extends State<InputItem> implements ListItemState {
         color: widget.disabled == true
             ? theme.labelSecondaryColor
             : theme.labelPrimaryColor,
-        fontWeight: FontWeight.w500,
-        fontSize: widget.fontSize != null
-            ? widget.fontSize!
-            : sz(theme.size!().title),
+        fontWeight: widget.fontWeight,
+        height: 1,
+        fontSize:
+            widget.fontSize != null ? widget.fontSize! : theme.size!().title,
       ),
+      strutStyle: StrutStyle(leading: 0),
     );
 
     rowChildren.add(Expanded(child: textField));
 
     if (widget.clearable) {
       if (showCloseButton) {
-        double b = (widget.maxLength != null && widget.hideCounter != true)
-            ? inputStyle.hintStyle?.fontSize ?? 0
-            : 0;
-        rowChildren.add(Padding(
-          padding: EdgeInsets.only(left: 0, bottom: b * 1.3),
-          child: GestureDetector(
-            child: Container(
-              padding: EdgeInsets.only(
-                  left: widget.fontSize != null
-                      ? widget.fontSize! / 4
-                      : sz(theme.size!().title / 4)),
-              height: widget.fontSize != null
-                  ? sz(widget.fontSize! * 2.588)
-                  : sz(theme.size!().title * 2.588),
-              child: Icon(
-                Icons.cancel,
-                size: widget.fontSize != null
-                    ? widget.fontSize! * 1.5
-                    : sz(theme.size!().title * 1.5),
-                color: theme.userAccentColor,
-              ),
+        rowChildren.add(GestureDetector(
+          onTap: clear,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: widget.fontSize != null
+                    ? widget.fontSize! / 4
+                    : theme.size!().title / 4),
+            child: Icon(
+              Icons.cancel,
+              size: widget.fontSize != null
+                  ? widget.fontSize!
+                  : theme.size!().title,
+              color: theme.userAccentColor,
             ),
-            onTap: clear,
           ),
         ));
       } else if (widget.clearIconPlaceHolder != null) {
@@ -314,13 +308,13 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
     if (widget.addon != null) {
       rowChildren.add(Padding(
-        padding: EdgeInsets.only(left: sz(5)),
+        padding: EdgeInsets.only(left: 5),
         child: DefaultTextIconStyle(
           color: theme.labelSecondaryColor,
           child: widget.addon,
           size: widget.fontSize != null
               ? widget.fontSize! - 2
-              : sz(theme.size!().title),
+              : theme.size!().title,
         ),
       ));
     }
@@ -328,10 +322,6 @@ class InputItemState extends State<InputItem> implements ListItemState {
     Field.of(context)?.add(this);
 
     final child = Container(
-      constraints: BoxConstraints(
-          minHeight: widget.fontSize != null
-              ? sz(widget.fontSize! * 2.588)
-              : sz(theme.size!().title * 2.588)),
       padding: widget.horizontalPadding != null
           ? EdgeInsets.symmetric(horizontal: widget.horizontalPadding!)
           : null,
@@ -343,7 +333,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
     if (widget.onTap != null) {
       return buildButtonWidget(
           splashColor: widget.splashColor,
-          onPress: () {
+          onTap: () {
             widget.onTap!(_setMapValue, _controller);
           },
           child: Stack(

@@ -110,11 +110,28 @@ extension ListTools<E> on List<E> {
     return null;
   }
 
-  mapWithIndex<T>(fn(E eletemt, int index)) {
+  List<T> mapWithIndex<T>(T fn(E element, int index)) {
     List<T> result = [];
     for (int i = 0; i < this.length; i++) {
       result.add(fn(this[i], i));
     }
     return result;
+  }
+
+  reduceWithDefault(fn(value, E element), [defaultValue]) {
+    Iterator<E> iterator = this.iterator;
+    dynamic value = defaultValue ?? iterator.current;
+    while (iterator.moveNext()) {
+      value = fn(value, iterator.current);
+    }
+    return value;
+  }
+
+  E? index(int index) {
+    if (this.length > index) {
+      return this[index];
+    }
+
+    return null;
   }
 }

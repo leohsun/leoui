@@ -4,20 +4,21 @@ version: 0.0.3
 homepage:
 
 environment:
-  sdk: '>=3.0.5 <4.0.0'
+  sdk: ">=3.2.3 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   rational: ^2.2.2
+  path: ^1.8.3
   flutter_localizations:
     sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
-  flutter_lints: ^2.0.0
+
+  flutter_lints: ^3.0.1
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

@@ -142,7 +142,7 @@ class _NoticeBarState extends State<NoticeBar> {
 
       rowChildren.add(widget.closable == true
           ? buildButtonWidget(
-              onPress: _handleActionIconTab,
+              onTap: _handleActionIconTab,
               child: Container(
                   width: sz(theme.size!().title * 1.5),
                   child: Center(
@@ -153,7 +153,7 @@ class _NoticeBarState extends State<NoticeBar> {
 
       rowChildren.add(widget.link == true
           ? buildButtonWidget(
-              onPress: _handleActionIconTab,
+              onTap: _handleActionIconTab,
               child: Container(
                   width: sz(theme.size!().title * 1.5),
                   child: Center(
@@ -167,7 +167,7 @@ class _NoticeBarState extends State<NoticeBar> {
             ? BorderRadius.circular(300)
             : BorderRadius.zero,
         child: buildButtonWidget(
-          onPress: widget.onTap,
+          onTap: widget.onTap,
           child: Container(
               width: constrains.maxWidth,
               decoration: BoxDecoration(

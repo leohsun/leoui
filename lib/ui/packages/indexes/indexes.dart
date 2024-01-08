@@ -53,7 +53,7 @@ class _IndexesState extends State<Indexes> {
   ScrollController scrollView = ScrollController();
   List<GlobalKey> sliverKeys = [];
   List<String> indexKeyList = [];
-  double indexKeyExtend = 26;
+  double indexKeyExtend = 0;
   List<IndexPostion> indexPostionList = [];
   String activeKey = 'c';
   double maxScrollExtend = 0;
@@ -194,6 +194,7 @@ class _IndexesState extends State<Indexes> {
     LeouiThemeData theme = widget.brightness == null
         ? LeouiTheme.of(context)
         : LeouiThemeData(brightness: widget.brightness);
+    indexKeyExtend = theme.size!().tertiary * 1.5;
     return LayoutBuilder(builder: (context, constrains) {
       double contentHeight = constrains.maxHeight == double.infinity
           ? SizeTool.deviceHeight / 2
@@ -261,8 +262,8 @@ class _IndexesState extends State<Indexes> {
                           width: indexKeyExtend,
                           child: Center(
                             child: Container(
-                              height: sz(theme.size!().tertiary * 1.5),
-                              width: sz(theme.size!().tertiary * 1.5),
+                              height: theme.size!().tertiary * 1.5,
+                              width: theme.size!().tertiary * 1.5,
                               decoration: BoxDecoration(
                                   color: active ? theme.userAccentColor : null,
                                   shape: BoxShape.circle),
@@ -271,7 +272,7 @@ class _IndexesState extends State<Indexes> {
                                   e,
                                   style: TextStyle(
                                       height: 1,
-                                      fontSize: sz(theme.size!().tertiary),
+                                      fontSize: theme.size!().tertiary,
                                       color: active
                                           ? Colors.white
                                           : theme.labelSecondaryColor),

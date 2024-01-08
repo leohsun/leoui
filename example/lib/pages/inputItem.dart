@@ -19,6 +19,7 @@ class _InputItemPageState extends State<InputItemPage> {
       fieldKey: 'username',
       fieldLabel: '用户名',
       defaultValue: 'a1234',
+      maxLength: 20,
       validatePattern: RegExp(r'^[a-z][a-z\d]{3,}$'),
       patternDescript: '小写字母开头，包含数字，不小于3位',
     ),

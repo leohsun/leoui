@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:leoui/config/index.dart';
-import 'package:leoui/utils/index.dart';
+import 'package:leoui/leoui_state.dart';
 
 class ActionSheetAction {
   final String text;
@@ -71,7 +70,7 @@ class ActionSheet extends StatelessWidget {
                           color: theme.labelPrimaryColor,
                           fontSize: theme.size!().content),
                     )),
-                onPress: d.onTap != null
+                onTap: d.onTap != null
                     ? () {
                         d.onTap?.call(context);
                       }
@@ -96,7 +95,7 @@ class ActionSheet extends StatelessWidget {
                     style: TextStyle(
                         color: theme.labelPrimaryColor,
                         fontSize: theme.size!().content))),
-            onPress: d.onTap != null
+            onTap: d.onTap != null
                 ? () {
                     d.onTap?.call(context);
                   }
@@ -113,13 +112,13 @@ class ActionSheet extends StatelessWidget {
 
     _children.add(buildButtonWidget(
         splashColor: theme.opaqueSeparatorColor,
-        onPress: onCancel,
+        onTap: onCancel,
         child: Container(
           height:
               theme.size!().buttonNormalHeight + SizeTool.devicePadding.bottom,
           padding: EdgeInsets.only(bottom: SizeTool.devicePadding.bottom),
           alignment: Alignment.center,
-          child: Text(LeouiLocalization.of(context).cancel),
+          child: Text(LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
         )));
 
     return ClipRRect(

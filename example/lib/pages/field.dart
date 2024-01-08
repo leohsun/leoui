@@ -47,7 +47,7 @@ class _FieldPageState extends State<FieldPage> {
                         FieldItem(
                             title: Text('标题区域'),
                             content: Text('内容文本'),
-                            // placeholder: '提示文本',
+                            // placeholder: Text('提示文本'),
                             addon: Text(
                               '选择',
                               textAlign: TextAlign.right,

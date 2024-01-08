@@ -114,7 +114,7 @@ class FieldState extends State<Field> {
       preffix.add(DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
         child: widget.title!,
-        size: sz(theme.size!().title),
+        size: theme.size!().title,
       ));
     }
 
@@ -122,7 +122,7 @@ class FieldState extends State<Field> {
       preffix.add(DefaultTextIconStyle(
         color: theme.labelSecondaryColor,
         child: widget.brief!,
-        size: sz(theme.size!().secondary),
+        size: theme.size!().secondary,
       ));
     }
 
@@ -204,18 +204,18 @@ class FieldState extends State<Field> {
       _children.add(Container(
           height: 0.6, color: widget.color ?? theme.nonOpaqueSeparatorColor));
       _children.add(Padding(
-        padding: EdgeInsets.only(top: sz(10)),
+        padding: EdgeInsets.only(top: 10),
         child: DefaultTextIconStyle(
           color: theme.labelTertiaryColor,
           child: widget.footer,
-          size: sz(theme.size!().tertiary),
+          size: theme.size!().tertiary,
         ),
       ));
     }
 
     Widget child = Container(
       margin: widget.margin,
-      padding: widget.plain == true ? EdgeInsets.zero : EdgeInsets.all(sz(18)),
+      padding: widget.plain == true ? EdgeInsets.zero : EdgeInsets.all(18),
       decoration: BoxDecoration(
           color: widget.plain == true
               ? null
@@ -314,12 +314,12 @@ class FieldItem extends StatefulWidget implements ListItem {
 class _FieldItemState extends State<FieldItem> {
   Widget _buildTitle(LeouiThemeData theme) {
     return Container(
-      margin: EdgeInsets.only(right: sz(5)),
-      width: widget.solid ? sz(80) : null,
+      margin: EdgeInsets.only(right: 5),
+      width: widget.solid ? theme.size!().title * 5 : null,
       child: DefaultTextIconStyle(
         color: theme.labelPrimaryColor,
         child: widget.title!,
-        size: sz(theme.size!().title),
+        size: theme.size!().title,
       ),
     );
   }
@@ -343,28 +343,27 @@ class _FieldItemState extends State<FieldItem> {
             : theme.labelPrimaryColor,
         child: widget.content,
         fontWeight: FontWeight.w500,
-        size: sz(theme.size!().content),
+        size: theme.size!().content,
       )));
     }
 
     if (widget.placeholder != null) {
       _children.add(Expanded(
-          flex: 2,
           child: DefaultTextIconStyle(
-            color: theme.labelSecondaryColor,
-            child: widget.placeholder,
-            size: sz(theme.size!().content),
-          )));
+        color: theme.labelSecondaryColor,
+        child: widget.placeholder,
+        size: theme.size!().content,
+      )));
     }
 
     if (widget.addon != null) {
-      _children.add(Expanded(
+      _children.add(Flexible(
         child: Padding(
-          padding: EdgeInsets.only(left: sz(5)),
+          padding: EdgeInsets.only(left: 5),
           child: DefaultTextIconStyle(
             color: theme.labelSecondaryColor,
             child: widget.addon,
-            size: sz(theme.size!().secondary),
+            size: theme.size!().secondary,
           ),
         ),
       ));
@@ -372,11 +371,9 @@ class _FieldItemState extends State<FieldItem> {
 
     if (widget.arrow == true) {
       _children.add(Padding(
-        padding: EdgeInsets.only(left: sz(5)),
-        child: Icon(
-          Icons.keyboard_arrow_right_rounded,
-          color: theme.labelSecondaryColor,
-        ),
+        padding: EdgeInsets.only(left: widget.addon != null ? 0 : 5),
+        child: Icon(Icons.keyboard_arrow_right_rounded,
+            color: theme.labelSecondaryColor, size: theme.size!().title * 1.5),
       ));
     }
 
@@ -386,14 +383,14 @@ class _FieldItemState extends State<FieldItem> {
       _colChildren.add(
         buildButtonWidget(
           splashColor: theme.fillPrimaryColor,
-          onPress: (widget.disabled == true || widget.onTap == null)
+          onTap: (widget.disabled == true || widget.onTap == null)
               ? null
               : () {
                   widget.onTap!(context);
                 },
           child: Padding(
             padding: EdgeInsets.symmetric(
-                vertical: widget.verticalPadding ?? sz(15),
+                vertical: widget.verticalPadding ?? theme.size!().title,
                 horizontal: widget.horizontalPadding ?? 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -405,7 +402,7 @@ class _FieldItemState extends State<FieldItem> {
       );
 
       _colChildren.add(Container(
-        margin: EdgeInsets.only(bottom: sz(10)),
+        margin: EdgeInsets.only(bottom: theme.size!().title / 2),
         height: 1,
         color: Field.of(context)?.widget.dividerColor ??
             theme.nonOpaqueSeparatorColor,
@@ -426,7 +423,7 @@ class _FieldItemState extends State<FieldItem> {
     } else {
       return buildButtonWidget(
         splashColor: theme.fillPrimaryColor,
-        onPress: (widget.disabled == true || widget.onTap == null)
+        onTap: (widget.disabled == true || widget.onTap == null)
             ? null
             : () {
                 widget.onTap?.call(context);

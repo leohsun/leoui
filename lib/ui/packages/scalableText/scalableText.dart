@@ -27,7 +27,7 @@ class ScalableText extends StatelessWidget {
           style: style,
         ),
         textAlign: textAlign,
-        textScaleFactor: 1,
+        textScaler: TextScaler.noScaling,
         maxLines: maxLines,
         textDirection: TextDirection.ltr);
 
@@ -57,7 +57,7 @@ class ScalableText extends StatelessWidget {
           double minTextScaleFactor = double.parse(
               (minFontSize! / currentTextFontSize!).toStringAsFixed(2));
           // scaleFactor = 1
-          _painter.textScaleFactor = minTextScaleFactor;
+          _painter.textScaler = TextScaler.linear(minTextScaleFactor);
           _painter.layout(maxWidth: constrans.maxWidth);
           bool isOverflowInMinScaleFactor = _painter.didExceedMaxLines;
 
@@ -69,7 +69,7 @@ class ScalableText extends StatelessWidget {
             double step = (1 - minTextScaleFactor) / 2 * 100;
             double middleTextScaleFactor = minTextScaleFactor + step / 100;
 
-            _painter.textScaleFactor = middleTextScaleFactor;
+            _painter.textScaler = TextScaler.linear(middleTextScaleFactor);
 
             _painter.layout(maxWidth: constrans.maxWidth);
 
@@ -80,11 +80,15 @@ class ScalableText extends StatelessWidget {
               // to find a suitable one in range
               middleTextScaleFactor = NumberPrecision.plus(
                   [middleTextScaleFactor.toString(), deltaFactor.toString()]);
-              _painter.textScaleFactor = middleTextScaleFactor;
+              _painter.textScaler = TextScaler.linear(middleTextScaleFactor);
               _painter.layout(maxWidth: constrans.maxWidth);
               bool isOverflowInRangeScaleFactor = _painter.didExceedMaxLines;
               if (!isOverflowInRangeScaleFactor) {
-                textScaleFactor = _painter.textScaleFactor;
+                textScaleFactor = middleTextScaleFactor;
+
+                // _painter.textScaler = TextScaler.linear(middleTextScaleFactor);
+                // textScaleFactor = _painter.textScaler.
+
                 // right here; break the loop
                 break;
               }
@@ -95,9 +99,10 @@ class ScalableText extends StatelessWidget {
         return Text(
           content,
           style: style,
+          strutStyle: StrutStyle(leading: 0),
           textAlign: textAlign,
           textDirection: textDirection,
-          textScaleFactor: textScaleFactor,
+          textScaler: TextScaler.linear(textScaleFactor),
           maxLines: maxLines,
           overflow: overflow,
         );

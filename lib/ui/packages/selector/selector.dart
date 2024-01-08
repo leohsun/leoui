@@ -275,8 +275,7 @@ class _SelectorState extends State<Selector> {
           minFontSize: sz(10),
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: sz(theme.size!().content),
-              color: theme.labelPrimaryColor),
+              fontSize: theme.size!().content, color: theme.labelPrimaryColor),
           maxLines: 1,
         ),
       ),
@@ -345,7 +344,7 @@ class _SelectorState extends State<Selector> {
     }
 
     return Container(
-      height: widget.selectorHeight ?? sz(theme.size!().itemExtent * 5),
+      height: widget.selectorHeight ?? theme.size!().itemExtent * 5,
       key: selectorContainer,
       color: theme.backgroundPrimaryColor,
       child: Row(

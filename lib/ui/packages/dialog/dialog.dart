@@ -57,7 +57,7 @@ class _DialogState extends State<Dialog> {
 
     if (widget.title != null) {
       _children.add(Padding(
-        padding: EdgeInsets.only(bottom: sz(14)),
+        padding: EdgeInsets.only(bottom: 14),
         child: Text(
           widget.title!,
           style: TextStyle(
@@ -71,11 +71,11 @@ class _DialogState extends State<Dialog> {
     if (widget.icon != null) {
       _children.add(
         Padding(
-          padding: EdgeInsets.only(
-              top: widget.title != null ? 0 : sz(10), bottom: sz(14)),
+          padding:
+              EdgeInsets.only(top: widget.title != null ? 0 : 10, bottom: 14),
           child: Icon(
             widget.icon,
-            size: sz(50),
+            size: 50,
             color: theme.labelSecondaryColor,
           ),
         ),
@@ -97,6 +97,8 @@ class _DialogState extends State<Dialog> {
         borderRadius: BorderRadius.circular(theme.size!().fieldBorderRadius),
         color: theme.backgroundSecondaryColor,
         child: Container(
+          height: theme.size!().tertiary * 2,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(color: theme.nonOpaqueSeparatorColor),
             borderRadius:
@@ -107,7 +109,7 @@ class _DialogState extends State<Dialog> {
                 BorderRadius.circular(theme.size!().fieldBorderRadius),
             child: InputItem(
               key: widget.promoptItemKey,
-              horizontalPadding: sz(4),
+              horizontalPadding: 4,
               brightness: widget.brightness,
               validatePattern: widget.validatePattern,
               patternDescript: widget.patternDescript,
@@ -125,7 +127,7 @@ class _DialogState extends State<Dialog> {
     }
 
     return Padding(
-      padding: EdgeInsets.all(sz(23)),
+      padding: EdgeInsets.all(23),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: _children,
@@ -145,7 +147,7 @@ class _DialogState extends State<Dialog> {
       _chilrenWithinDivider.add(_children[i]);
       if (i < count) {
         _chilrenWithinDivider.add(Container(
-          height: isRow ? sz(theme.size!().buttonNormalHeight) : 0.5,
+          height: isRow ? theme.size!().buttonNormalHeight : 0.5,
           width: isRow ? 0.5 : null,
           color: theme.nonOpaqueSeparatorColor,
         ));
@@ -168,7 +170,7 @@ class _DialogState extends State<Dialog> {
             border: Border(
                 top: BorderSide(
                     width: 1, color: theme.nonOpaqueSeparatorColor))),
-        height: _children.length * sz(theme.size!().buttonNormalHeight),
+        height: _children.length * theme.size!().buttonNormalHeight,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _chilrenWithinDivider,
@@ -185,7 +187,7 @@ class _DialogState extends State<Dialog> {
           button.text,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              fontSize: sz(theme.size!().title),
+              fontSize: theme.size!().title,
               color: color,
               fontWeight:
                   button.bold == true ? FontWeight.bold : FontWeight.normal),
@@ -197,10 +199,10 @@ class _DialogState extends State<Dialog> {
       _children.insert(
           0,
           Padding(
-            padding: EdgeInsets.only(right: sz(theme.size!().title) / 3),
+            padding: EdgeInsets.only(right: theme.size!().title) / 3,
             child: Icon(
               button.icon,
-              size: sz(theme.size!().title),
+              size: theme.size!().title,
               color: color,
             ),
           ));
@@ -210,10 +212,10 @@ class _DialogState extends State<Dialog> {
       _children.insert(
         0,
         Padding(
-          padding: EdgeInsets.only(right: sz(theme.size!().title) / 3),
+          padding: EdgeInsets.only(right: theme.size!().title) / 3,
           child: SizedBox(
-              width: sz(theme.size!().title),
-              height: sz(theme.size!().title),
+              width: theme.size!().title,
+              height: theme.size!().title,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 color: color,
@@ -224,15 +226,14 @@ class _DialogState extends State<Dialog> {
 
     return Expanded(
       child: buildButtonWidget(
-        onPress: () {
+        onTap: () {
           button.handler(context);
         },
         splashColor: theme.fillPrimaryColor,
         color: theme.dialogBackgroundColor,
         child: Container(
-          height: sz(theme.size!().buttonNormalHeight),
-          padding:
-              EdgeInsets.symmetric(horizontal: sz(theme.size!().title / 2)),
+          height: theme.size!().buttonNormalHeight,
+          padding: EdgeInsets.symmetric(horizontal: theme.size!().title / 2),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: widget.layout == DialogLayout.row

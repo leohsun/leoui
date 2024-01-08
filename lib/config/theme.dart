@@ -508,7 +508,7 @@ class LeouiThemeData {
                 blurRadius: 4,
                 spreadRadius: 0),
           ];
-    size ??= () => LeouiSize();
+    size ??= this.size;
     return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,
