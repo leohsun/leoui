@@ -15,3 +15,4 @@ export 'packages/colorPicker/colorPicker.dart';
 export 'packages/actionSheet/actionSheet.dart';
 export 'packages/stickyContainer/stickyContainer.dart';
 export 'packages/dottedDivider/dottedDivider.dart';
+export 'packages/swipeActions/swipeActions.dart';

@@ -27,7 +27,7 @@ class _UtilsPageState extends State<UtilsPage> {
             Container(
               padding: EdgeInsets.all(12),
               width: SizeTool.deviceWidth,
-              color: LeouiTheme.of(context).fillTertiaryColor,
+              color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
               child: Text('hex(#f2f2f2)'),
             ),
             ListTile(
@@ -40,7 +40,7 @@ class _UtilsPageState extends State<UtilsPage> {
             Container(
               padding: EdgeInsets.all(12),
               width: SizeTool.deviceWidth,
-              color: LeouiTheme.of(context).fillTertiaryColor,
+              color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
               child: ScalableText(
                 ' children: [\n  ...mapWithIndex(columnDataList, (e, idx) {\n  return _buildTabViewChild(e, idx, theme);\n  })\n],',
                 maxLines: 5,
@@ -55,7 +55,7 @@ class _UtilsPageState extends State<UtilsPage> {
               padding: EdgeInsets.all(12),
               margin: EdgeInsets.only(bottom: 20),
               width: SizeTool.deviceWidth,
-              color: LeouiTheme.of(context).fillTertiaryColor,
+              color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
               child: ScalableText(
                 'double sz(double design) =>\n  SizeTool(designWidth: 375,designHeight: 800)\n.sizeWidth(design);',
                 minFontSize: 12,
@@ -65,7 +65,7 @@ class _UtilsPageState extends State<UtilsPage> {
             Container(
                 padding: EdgeInsets.all(12),
                 width: SizeTool.deviceWidth,
-                color: LeouiTheme.of(context).fillTertiaryColor,
+                color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,7 +91,7 @@ class _UtilsPageState extends State<UtilsPage> {
                 padding: EdgeInsets.all(12),
                 margin: EdgeInsets.only(bottom: 20),
                 width: SizeTool.deviceWidth,
-                color: LeouiTheme.of(context).fillTertiaryColor,
+                color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -118,7 +118,7 @@ class _UtilsPageState extends State<UtilsPage> {
                 padding: EdgeInsets.all(12),
                 margin: EdgeInsets.only(bottom: 20),
                 width: SizeTool.deviceWidth,
-                color: LeouiTheme.of(context).fillTertiaryColor,
+                color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

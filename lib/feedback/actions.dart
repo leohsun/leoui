@@ -15,7 +15,8 @@ Future showLoading({
 
   bool showTitle = title != 'none';
   bool isDark = brightness == LeouiBrightness.dark;
-  LeouiThemeData theme = LeouiThemeData(brightness: brightness);
+  LeouiThemeData theme =
+      LeouiTheme.of(LeoFeedback.currentContext!)!.theme(brightness: brightness);
   Modal? modal;
   Timer? counter;
 
@@ -220,7 +221,7 @@ Future showMessage(String message,
   Color _bgColor;
 
   final String _msg = message;
-  LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!);
+  LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!)!.theme();
 
   switch (type) {
     case MessageType.success:
@@ -301,7 +302,8 @@ Future showToast(String? msg,
     {Duration? duration,
     LeouiBrightness brightness = LeouiBrightness.dark,
     ToastType? type}) async {
-  LeouiThemeData theme = LeouiThemeData(brightness: brightness);
+  LeouiThemeData theme =
+      LeouiTheme.of(LeoFeedback.currentContext!)!.theme(brightness: brightness);
 
   bool isDark = brightness == LeouiBrightness.dark;
 
@@ -379,7 +381,9 @@ Future showToast(String? msg,
               color: bgColor,
               borderRadius:
                   BorderRadius.circular(theme.size!().cardBorderRadius),
-              boxShadow: LeouiTheme.of(LeoFeedback.currentContext!).boxShadow),
+              boxShadow: LeouiTheme.of(LeoFeedback.currentContext!)!
+                  .theme()
+                  .boxShadow),
           child: buildBlurWidget(
             borderRadius: BorderRadius.circular(theme.size!().cardBorderRadius),
             child: Padding(
@@ -406,6 +410,9 @@ Future showAlert(
     }) {
   Modal? modal;
 
+  LeouiThemeData theme =
+      LeouiTheme.of(LeoFeedback.currentContext!)!.theme(brightness: brightness);
+
   modal = Modal(
       childBuilder: (ctx) => Dialog(
             title: title ??
@@ -418,7 +425,7 @@ Future showAlert(
                     modal?.close();
                     if (onConfirm != null) onConfirm();
                   },
-                  color: LeouiThemeData(brightness: brightness).userAccentColor,
+                  color: theme.userAccentColor,
                   bold: true,
                   text:
                       LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
@@ -439,10 +446,8 @@ Future showConfirm(
     }) {
   Modal? modal;
 
-  LeouiThemeData theme = brightness != null
-      ? LeouiTheme.of(LeoFeedback.currentContext!)
-          .copyWith(brightness: brightness)
-      : LeouiTheme.of(LeoFeedback.currentContext!);
+  LeouiThemeData theme =
+      LeouiTheme.of(LeoFeedback.currentContext!)!.theme(brightness: brightness);
   List<DialogButton> buttons = [
     DialogButton(
         handler: (ctx) {
@@ -492,10 +497,8 @@ Future showPrompt(
   Modal? modal;
   GlobalKey<InputItemState> inputKey = GlobalKey(debugLabel: 'promopt__input');
 
-  LeouiThemeData theme = brightness != null
-      ? LeouiTheme.of(LeoFeedback.currentContext!)
-          .copyWith(brightness: brightness)
-      : LeouiTheme.of(LeoFeedback.currentContext!);
+  LeouiThemeData theme =
+      LeouiTheme.of(LeoFeedback.currentContext!)!.theme(brightness: brightness);
 
   List<DialogButton> buttons = [
     DialogButton(
@@ -516,7 +519,8 @@ Future showPrompt(
           }
         },
         bold: true,
-        color: LeouiTheme.of(LeoFeedback.currentContext!).userAccentColor,
+        color:
+            LeouiTheme.of(LeoFeedback.currentContext!)!.theme().userAccentColor,
         text: confirmText ??
             LeouiLocalization.of(LeoFeedback.currentContext!).confirm)
   ];

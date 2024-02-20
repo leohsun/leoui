@@ -191,9 +191,8 @@ class _IndexesState extends State<Indexes> {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiThemeData(brightness: widget.brightness);
+    LeouiThemeData theme =
+        LeouiTheme.of(context)!.theme(brightness: widget.brightness);
     indexKeyExtend = theme.size!().tertiary * 1.5;
     return LayoutBuilder(builder: (context, constrains) {
       double contentHeight = constrains.maxHeight == double.infinity

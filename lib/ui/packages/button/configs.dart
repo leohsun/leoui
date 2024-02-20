@@ -9,20 +9,32 @@ enum ButtonSize { nomarl, small }
 
 List<Map<String, double>> sizeList = [
   {
-    'fontSize':
-        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonNormalFontSize,
-    'minWidth':
-        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonNormalMinWidth,
-    'height':
-        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonNormalHeight,
+    'fontSize': LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme()
+        .size!()
+        .buttonNormalFontSize,
+    'minWidth': LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme()
+        .size!()
+        .buttonNormalMinWidth,
+    'height': LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme()
+        .size!()
+        .buttonNormalHeight,
   },
   {
-    'fontSize':
-        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonSmallFontSize,
-    'minWidth':
-        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonSmallMinWidth,
-    'height':
-        LeouiTheme.of(LeoFeedback.currentContext!).size!().buttonSmallHeight
+    'fontSize': LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme()
+        .size!()
+        .buttonSmallFontSize,
+    'minWidth': LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme()
+        .size!()
+        .buttonSmallMinWidth,
+    'height': LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme()
+        .size!()
+        .buttonSmallHeight
   }
 ];
 

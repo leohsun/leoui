@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 import 'dart:math' show sin, pi;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:leoui/leoui_state.dart';
+import 'package:leoui/widget/leoui_state.dart';
 
 Color hex(String color) {
   String _color = color.trim();
@@ -84,7 +84,9 @@ Widget buildButtonWidget(
     color: elevation == null
         ? Colors.transparent
         : shandow ??
-            LeouiTheme.of(LeoFeedback.currentContext!).nonOpaqueSeparatorColor,
+            LeouiTheme.of(LeoFeedback.currentContext!)!
+                .theme()
+                .nonOpaqueSeparatorColor,
     child: Material(
       color: color ?? Colors.transparent,
       borderRadius: borderRadius,

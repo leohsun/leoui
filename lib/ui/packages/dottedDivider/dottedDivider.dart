@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:leoui/leoui_state.dart';
+import 'package:leoui/widget/leoui_state.dart';
 
 class DottedDivider extends StatelessWidget {
   final double? radius;
@@ -21,7 +21,7 @@ class DottedDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color _color = color ?? LeouiTheme.of(context).userAccentColor;
+    Color _color = color ?? LeouiTheme.of(context)!.theme().userAccentColor;
 
     return LayoutBuilder(
       builder: (context, constraints) {

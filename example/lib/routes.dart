@@ -19,7 +19,8 @@ import 'package:leoui_example/pages/modal.dart';
 import 'package:leoui_example/pages/tabPikcer.dart';
 import 'package:leoui_example/pages/toast.dart';
 import 'package:leoui_example/pages/utils.dart';
-import './pages/home.dart';
+import 'package:leoui_example/pages/home.dart';
+import 'package:leoui_example/pages/swiperActions.dart';
 
 Map<String, WidgetBuilder> routes = {
   'home': (BuildContext context) => MyHomePage(),
@@ -43,4 +44,5 @@ Map<String, WidgetBuilder> routes = {
   'indexes': (BuildContext context) => IndexesPage(),
   'drawingBoard': (BuildContext context) => DrawingBoardPage(),
   'colorPicker': (BuildContext context) => ColorPickerPage(),
+  'swipeActions': (BuildContext context) => SwipeActionsPage(),
 };

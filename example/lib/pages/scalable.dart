@@ -24,7 +24,7 @@ class _ScalableTextPageState extends State<ScalableTextPage> {
           ),
           Container(
             padding: EdgeInsets.all(12),
-            color: LeouiTheme.of(context).fillTertiaryColor,
+            color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
             child: ScalableText(
               '根据一项新的研究，与减肥成败最密切相关的因素是肠道微生物群，与体重指数（BMI）无关。',
             ),
@@ -35,7 +35,7 @@ class _ScalableTextPageState extends State<ScalableTextPage> {
           ),
           Container(
             padding: EdgeInsets.all(12),
-            color: LeouiTheme.of(context).fillTertiaryColor,
+            color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
             child: ScalableText(
               '根据一项新的研究，与减肥成败最密切相关的因素是肠道微生物群，与体重指数（BMI）无关。',
               minFontSize: 12,
@@ -47,7 +47,7 @@ class _ScalableTextPageState extends State<ScalableTextPage> {
           ),
           Container(
             padding: EdgeInsets.all(12),
-            color: LeouiTheme.of(context).fillTertiaryColor,
+            color: LeouiTheme.of(context)!.theme().fillTertiaryColor,
             child: ScalableText(
               '根据一项新的研究，与减肥成败最密切相关的因素是肠道微生物群，与体重指数（BMI）无关。',
               minFontSize: 12,

@@ -397,9 +397,7 @@ class _SelectorState extends State<Selector> {
   Widget build(BuildContext context) {
     double bottom = SizeTool.devicePadding.bottom;
 
-    theme = widget.brightness != null
-        ? LeouiTheme.of(context).copyWith(brightness: widget.brightness)
-        : LeouiTheme.of(context);
+    theme = LeouiTheme.of(context)!.theme(brightness: widget.brightness);
 
     return Material(
       child: Column(

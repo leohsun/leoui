@@ -162,9 +162,8 @@ class _TabPickerState extends State<TabPicker>
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.brightness != null
-        ? LeouiThemeData(brightness: widget.brightness)
-        : LeouiTheme.of(context);
+    LeouiThemeData theme =
+        LeouiTheme.of(context)!.theme(brightness: widget.brightness);
     return Material(
       child: Padding(
         padding: EdgeInsets.only(bottom: SizeTool.devicePadding.bottom),

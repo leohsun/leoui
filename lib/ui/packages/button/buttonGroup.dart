@@ -176,14 +176,17 @@ class ButtonGroupState extends State<ButtonGroup> {
           i != widget.children.length - 1) {
         tmp.add(Container(
           height: widget.size == ButtonSize.nomarl
-              ? LeouiTheme.of(LeoFeedback.currentContext!)
+              ? LeouiTheme.of(LeoFeedback.currentContext!)!
+                  .theme()
                   .size!()
                   .buttonNormalHeight
-              : LeouiTheme.of(LeoFeedback.currentContext!)
+              : LeouiTheme.of(LeoFeedback.currentContext!)!
+                  .theme()
                   .size!()
                   .buttonSmallHeight,
           width: 0.3,
-          color: LeouiTheme.of(LeoFeedback.currentContext!)
+          color: LeouiTheme.of(LeoFeedback.currentContext!)!
+              .theme()
               .nonOpaqueSeparatorColor,
         ));
       }
@@ -233,7 +236,7 @@ class ButtonGroupState extends State<ButtonGroup> {
         ),
       );
     }
-    LeouiThemeData theme = LeouiTheme.of(context);
+    LeouiThemeData theme = LeouiTheme.of(context)!.theme();
     return PhysicalModel(
       elevation: theme.size!().itemElevation,
       borderRadius: groupBorderRadius,

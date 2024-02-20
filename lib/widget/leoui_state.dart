@@ -3,15 +3,14 @@ library leoui;
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:leoui/config/index.dart';
-import 'package:leoui/utils/index.dart';
+import 'package:leoui/leoui.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-export './feedback/index.dart';
-export './model/index.dart';
-export './utils/index.dart';
-export './ui/index.dart';
-export './config/index.dart';
+export '../feedback/index.dart';
+export '../model/index.dart';
+export '../utils/index.dart';
+export '../ui/index.dart';
+export '../config/index.dart';
 
 class LeouiState extends StatefulWidget {
   final MaterialApp child;
@@ -116,60 +115,59 @@ class _LeouiStateState extends State<LeouiState> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.config.theme ?? LeouiThemeData.light();
+    LeouiThemeData lightTheme =
+        widget.config.lightTheme ?? LeouiThemeData.light();
+    LeouiThemeData darkTheme = widget.config.darkTheme ??
+        LeouiThemeData.dark().copyWith(size: lightTheme.size);
 
     // to fix: https://github.com/flutter/flutter/issues/25827#issuecomment-571804641
 
     return LayoutBuilder(builder: (context, constraints) {
+      BuildContext _content = context;
       if (constraints.maxWidth == 0) {
         return widget.setupPlaceholder ??
             Container(
-              color: theme.userAccentColor,
+              color: lightTheme.userAccentColor,
             );
       }
 
-      final child = MediaQuery(
-        data: MediaQueryData.fromView(View.of(context)),
-        child: LeouiTheme(
-          theme: theme,
-          child: DefaultTextStyle(
-              style: TextStyle(
-                color: theme.labelPrimaryColor,
-              ),
-              child: Localizations(
-                delegates:
-                    widget.localizationsDelegates.toList(growable: false),
-                locale: widget.locale,
-                child: DefaultTextEditingShortcuts(
-                  child: Overlay(
-                    initialEntries: [
-                      OverlayEntry(builder: (BuildContext context) {
-                        // we need a context to show overlay, then we can call feedback functions without context at anywhere
-                        setup(widget.config, context);
-                        if (!setupComplater.isCompleted) {
-                          setupComplater.complete();
-                        }
-                        return widget.child;
-                      }),
-                    ],
-                  ),
-                ),
-              )),
-        ),
-      );
+      LeoFeedback.buildRootWidgetBuilder(
+          mediaQueryData: MediaQueryData.fromView(View.of(_content)),
+          lightTheme: lightTheme,
+          darkTheme: darkTheme,
+          delegates: widget.localizationsDelegates.toList(growable: false),
+          locale: widget.locale);
 
-      if (widget.setup == null) return child;
-      return FutureBuilder(
-          future: widget.setup!(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return child;
-            }
-            return widget.setupPlaceholder ??
-                Container(
-                  color: theme.userAccentColor,
-                );
-          });
+      return LeoFeedback.rootWidget(child: LayoutBuilder(
+        builder: (context, constraints) {
+          final _overlay = Overlay(
+            initialEntries: [
+              OverlayEntry(builder: (BuildContext overlay) {
+                // we need a context to show overlay, then we can call feedback functions without context at anywhere
+                setup(widget.config, overlay);
+                if (!setupComplater.isCompleted) {
+                  setupComplater.complete();
+                }
+                return widget.child;
+              }),
+            ],
+          );
+
+          if (widget.setup == null) return _overlay;
+
+          return FutureBuilder(
+              future: widget.setup!(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return _overlay;
+                }
+                return widget.setupPlaceholder ??
+                    Container(
+                      color: lightTheme.userAccentColor,
+                    );
+              });
+        },
+      ));
     });
   }
 

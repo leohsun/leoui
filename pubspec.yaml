@@ -13,6 +13,7 @@ dependencies:
   path: ^1.8.3
   flutter_localizations:
     sdk: flutter
+  reliable_interval_timer: ^1.0.2
 
 dev_dependencies:
   flutter_test:

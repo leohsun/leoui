@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:leoui/config/theme.dart';
 
 class DefaultTextIconStyle extends StatelessWidget {
   final Color? color;
@@ -12,18 +11,11 @@ class DefaultTextIconStyle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = LeouiTheme.of(context);
     return IconTheme(
-      data: IconThemeData(
-          color: color ?? theme.labelPrimaryColor,
-          size: size ?? theme.size!().title),
+      data: IconThemeData(color: color, size: size),
       child: DefaultTextStyle(
         child: child!,
-        style: TextStyle(
-          color: color,
-          fontSize: size,
-          fontWeight: fontWeight,
-        ),
+        style: TextStyle(color: color, fontSize: size, fontWeight: fontWeight),
       ),
     );
   }

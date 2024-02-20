@@ -11,7 +11,7 @@ final app = Leoui(
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: 'home',
+      initialRoute: 'swipeActions',
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -29,5 +29,6 @@ final app = Leoui(
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+  // debugPaintSizeEnabled = true;
   runApp(app);
 }

@@ -71,7 +71,7 @@ class _ButtonState extends State<Button> {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!);
+    LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!)!.theme();
 
     BorderRadius? borderRadius = widget.circle
         ? BorderRadius.circular(100)

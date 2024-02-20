@@ -7,6 +7,8 @@ class Modal {
   final Completer dismissCompleter;
   final ValueChanged<bool>? onClose;
   final GlobalKey<_ModalWidgetState> modalWidgetKey;
+
+  /// avoid view height change when keyboard visible or hidden
   final bool fixed;
 
   /// we need this to remove specific route, because the modalRoute is not aways at top,can not use [Navigator.pop]
@@ -42,6 +44,8 @@ class Modal {
       bool? reverseAnimationWhenClose,
       bool? animateWhenOpen,
       ValueChanged<bool>? onClose,
+
+      /// 位置不响应键盘的开启或关闭
       bool? fixed,
       Curve? curve}) {
     // assert(autoClose != true || closeOnClickMask != true,
@@ -227,10 +231,6 @@ class _ModalWidgetState extends State<_ModalWidget>
             setState(() {});
           }));
 
-    MediaQueryData windowData = MediaQueryData.fromView(
-        WidgetsBinding.instance.platformDispatcher.views.single);
-    double windowPadddingBottom = windowData.viewInsets.bottom;
-
     if (widget.animateWhenOpen) {
       _controller.forward();
     } else {
@@ -247,7 +247,7 @@ class _ModalWidgetState extends State<_ModalWidget>
       case ModalDirection.left:
         _left = 0;
         _top = 0;
-        _bottom = windowPadddingBottom;
+        _bottom = 0;
         break;
 
       case ModalDirection.top:
@@ -259,19 +259,19 @@ class _ModalWidgetState extends State<_ModalWidget>
       case ModalDirection.right:
         _right = 0;
         _top = 0;
-        _bottom = windowPadddingBottom;
+        _bottom = 0;
         break;
 
       case ModalDirection.bottom:
         _top = null;
-        _bottom = windowPadddingBottom;
+        _bottom = 0;
         break;
 
       case ModalDirection.center:
         _left = 0;
         _right = 0;
         _top = 0;
-        _bottom = windowPadddingBottom;
+        _bottom = 0;
 
         break;
     }
@@ -291,14 +291,9 @@ class _ModalWidgetState extends State<_ModalWidget>
 
   @override
   void didChangeMetrics() {
-    MediaQueryData windowData = MediaQueryData.fromView(
-        WidgetsBinding.instance.platformDispatcher.views.single);
-    double windowPadddingBottom = windowData.viewInsets.bottom;
-
     if (widget.direction != ModalDirection.top && !widget.fixed) {
-      _bottom = windowPadddingBottom;
+      setState(() {});
     }
-    setState(() {});
 
     super.didChangeMetrics();
   }
@@ -538,8 +533,15 @@ class _ModalWidgetState extends State<_ModalWidget>
           ));
     }
 
+    MediaQueryData mqData = MediaQueryData.fromView(View.of(context));
+
     _children.add(Positioned(
-        left: _left, top: _top, right: _right, bottom: _bottom, child: child));
+        left: _left,
+        top: _top,
+        right: _right,
+        bottom:
+            _bottom != null ? mqData.viewInsets.bottom + (_bottom ?? 0) : null,
+        child: child));
 
     return DefaultTextStyle(
       style: TextStyle(),

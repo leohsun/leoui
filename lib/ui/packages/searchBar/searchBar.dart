@@ -69,20 +69,25 @@ class SearchBarState extends State<SearchBar>
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
+    LeouiThemeData theme =
+        LeouiTheme.of(context)!.theme(brightness: widget.brightness);
     return Container(
       height: theme.size!().itemExtent,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
             child: Container(
               padding: EdgeInsets.only(left: theme.size!().cardBorderRadius),
+              height: theme.size!().itemExtent,
+              decoration: BoxDecoration(
+                  color: theme.fillTertiaryColor,
+                  borderRadius:
+                      BorderRadius.circular(theme.size!().cardBorderRadius)),
               child: InputItem(
                 focus: widget.focus,
                 brightness: widget.brightness,
+                padding: EdgeInsets.zero,
                 icon: Icon(
                   Icons.search,
                 ),
@@ -100,11 +105,6 @@ class SearchBarState extends State<SearchBar>
                 defaultValue: keywords,
                 inputAction: TextInputAction.search,
               ),
-              height: theme.size!().itemExtent,
-              decoration: BoxDecoration(
-                  color: theme.fillTertiaryColor,
-                  borderRadius:
-                      BorderRadius.circular(theme.size!().cardBorderRadius)),
             ),
           ),
           AnimatedBuilder(

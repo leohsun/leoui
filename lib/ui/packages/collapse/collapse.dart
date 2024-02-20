@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
 
 class Collapse extends StatefulWidget {
-  final String title;
+  final String? title;
   final List<Widget> childern;
   final Color leadingColor;
   final Widget? header;
+  final bool? expand;
 
   const Collapse(
       {Key? key,
-      required this.title,
+      this.title,
       required this.childern,
       this.header,
+      this.expand = false,
       this.leadingColor = LeoColors.primary})
-      : super(key: key);
+      : assert(title == null || header == null),
+        super(key: key);
 
   @override
   _CollapseState createState() => _CollapseState();
 }
 
 class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
-  bool expanded = false;
+  late bool expanded;
   double expandValue = 0;
   void onExpanding(value) {
     setState(() {
@@ -29,63 +32,74 @@ class _CollapseState extends State<Collapse> with TickerProviderStateMixin {
   }
 
   @override
+  void initState() {
+    expanded = widget.expand ?? false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = LeouiTheme.of(context);
+    LeouiThemeData theme = LeouiTheme.of(context)!.theme();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        PhysicalModel(
-          color: Colors.white,
-          elevation: theme.size!().itemElevation,
-          child: GestureDetector(
-            onTap: () {
-              this.setState(() {
-                expanded = !expanded;
-              });
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: theme.backgroundPrimaryColor,
-                border: Border(
-                    left: BorderSide(width: 2, color: widget.leadingColor)),
-              ),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      widget.title,
-                      style: TextStyle(fontSize: theme.size!().title),
-                    ),
-                    Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.identity()
-                        ..rotateZ(expandValue / 2 * 3.1415926),
-                      child: Icon(
-                        Icons.arrow_forward_ios_outlined,
-                        size: theme.size!().content,
+        ...(widget.title != null
+            ? [
+                PhysicalModel(
+                  color: Colors.white,
+                  elevation: theme.size!().itemElevation,
+                  child: GestureDetector(
+                    onTap: () {
+                      this.setState(() {
+                        expanded = !expanded;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: theme.backgroundPrimaryColor,
+                        border: Border(
+                            left: BorderSide(
+                                width: 2, color: widget.leadingColor)),
                       ),
-                    )
-                  ],
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              widget.title!,
+                              style: TextStyle(fontSize: theme.size!().title),
+                            ),
+                            Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..rotateZ(expandValue / 2 * 3.1415926),
+                              child: Icon(
+                                Icons.arrow_forward_ios_outlined,
+                                size: theme.size!().content,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ),
-        // ClipRRect(
-        //   child: Align(
-        //       heightFactor: _tween.value,
-        //       child: Container(
-        //         color: theme.backgroundSecondaryColor,
-        //         width: double.infinity,
-        //         child: Column(
-        //           mainAxisSize: MainAxisSize.min,
-        //           children: widget.childern,
-        //         ),
-        //       )),
-        // ),
+              ]
+            : []),
+        ...(widget.header != null
+            ? [
+                GestureDetector(
+                    onTap: () {
+                      print('clicked');
+                      this.setState(() {
+                        expanded = !expanded;
+                      });
+                    },
+                    child: widget.header!)
+              ]
+            : []),
         CollaspeContainer(
           child: Column(children: widget.childern),
           expanded: expanded,

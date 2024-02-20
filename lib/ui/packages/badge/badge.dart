@@ -1,23 +1,25 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:leoui/leoui_state.dart';
+import 'package:leoui/widget/leoui_state.dart';
 
 class LeoBadge extends StatefulWidget {
   final Offset? offset;
   final num? count;
   final bool? hideWhenZero;
   final Color? textColor;
+  final double? textFontSize;
   final Color? backgroundColor;
   final Color? indicatorColor;
   final Widget child;
-  final Future<num> Function()? service;
+  final Future<int> Function()? service;
   const LeoBadge(
       {super.key,
       required this.child,
       this.offset = Offset.zero,
       this.count = 0,
       this.textColor,
+      this.textFontSize,
       this.backgroundColor,
       this.indicatorColor,
       this.hideWhenZero = true,
@@ -53,9 +55,9 @@ class LeoBadgeState extends State<LeoBadge> {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = LeouiTheme.of(context);
+    LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!)!.theme();
     String countText = count > 99 ? "99+" : '$count';
-    double textPandding = theme.size!().tertiary / 3;
+    double textPandding = (widget.textFontSize ?? theme.size!().tertiary) / 3;
     Color backgroudColor = widget.backgroundColor ?? theme.userAccentColor;
     bool textHidden = countText == "0" && widget.hideWhenZero == true;
 
@@ -69,7 +71,7 @@ class LeoBadgeState extends State<LeoBadge> {
               style: TextStyle(
                   color: widget.textColor ?? Colors.white,
                   height: 1,
-                  fontSize: theme.size!().tertiary)),
+                  fontSize: widget.textFontSize ?? theme.size!().tertiary)),
           textDirection: TextDirection.ltr);
       textPainter.layout();
       textWidth = textPainter.width + textPandding;
@@ -93,7 +95,8 @@ class LeoBadgeState extends State<LeoBadge> {
                 color: (loading || textHidden)
                     ? Colors.transparent
                     : backgroudColor,
-                borderRadius: BorderRadius.circular(theme.size!().tertiary)),
+                borderRadius: BorderRadius.circular(
+                    widget.textFontSize ?? theme.size!().tertiary)),
             child: loading
                 ? SizedBox(
                     width: textHeight,
@@ -110,7 +113,8 @@ class LeoBadgeState extends State<LeoBadge> {
                         style: TextStyle(
                             color: widget.textColor ?? Colors.white,
                             height: 1,
-                            fontSize: theme.size!().tertiary),
+                            fontSize:
+                                widget.textFontSize ?? theme.size!().tertiary),
                       ),
           ),
         )

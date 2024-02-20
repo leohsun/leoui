@@ -1,61 +1,143 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
+import 'package:leoui/widget/FriendlyTapContainer.dart';
 
-typedef InputItemOnTapCallBack = void Function(
-    {required String label, required String value});
+class MapValue {
+  final String label;
+  final String value;
+
+  const MapValue({required this.label, required this.value});
+
+  factory MapValue.fromJson(Map json) {
+    return MapValue(label: json['label'], value: json['value']);
+  }
+
+  factory MapValue.empty() {
+    return MapValue(label: "", value: "");
+  }
+
+  static MapValue? mybeNull({String? label, String? value}) {
+    if (label != null &&
+        label.isNotEmpty &&
+        value != null &&
+        value.isNotEmpty) {
+      return MapValue(label: label, value: value);
+    } else
+      return null;
+  }
+
+  @override
+  String toString() {
+    return "{label: $label, value: $value}";
+  }
+}
+
+typedef InputItemOnTapCallBack = void Function(MapValue data);
 
 class InputItem extends StatefulWidget implements ListItem {
-  final Widget? title; //标题
-  final Icon? icon; //leading icon
-  final Widget? leading; //leading 与tile和icon互斥
-  final String? defaultValue; //默认值
-  final int? maxLength; //最大输入字数长度
-  final Widget? content; //描述内容
-  final TextInputType? inputType; // 输入类型
-  final TextInputAction? inputAction; //键盘类型
-  final Widget? addon; //附加文案
-  final String? placeholder; //提示文本
+  ///标题
+  final Widget? title;
+
+  ///leading icon
+  final Icon? icon;
+
+  ///leading 与tile和icon互斥
+  final Widget? leading;
+
+  ///默认值
+  final String? defaultValue;
+
+  /// 默认值，read-only时
+  final MapValue? defaultMapValue;
+
+  /// 双向绑定
+  final bool? bindValue;
+
+  ///最大输入字数长度
+  final int? maxLength;
+
+  /// 输入类型
+  final TextInputType? inputType;
+
+  ///键盘类型
+  final TextInputAction? inputAction;
+
+  ///附加文案
+  final Widget? addon;
+
+  ///附加文案构造函数，可通过函数回参来控制[InputItemState]
+  final Widget Function(InputItemState)? addonBuilder;
+
+  ///提示文本
+  final String? placeholder;
+
+  ///提示文本颜色
+  final Color? placeholderColor;
   final bool disabled; // 是否禁用项目
-  final double? verticalPadding; // 内容竖直间距
-  final double? horizontalPadding; //內容水平间距
-  final bool solid; //是否固定标题宽度，超出会自动换行
-  final bool clearable; //表单是否使用清除控件
-  final Widget? clearIconPlaceHolder; // clearable == true时，表单未输入是，占位
-  final bool readonly; // 只读
-  final TextAlign textAlign; // 文字对齐方式
+  ///内边距
+  final EdgeInsets? padding;
+
+  ///是否固定标题宽度，超出会自动换行
+  final bool solid;
+
+  ///表单是否使用清除控件
+  final bool clearable;
+
+  /// clearable == true时，表单未输入时，占位
+  final Widget? clearIconPlaceHolder;
+
+  /// 只读
+  final bool readonly;
+
+  /// 文字对齐方式
+  final TextAlign textAlign;
   final bool obscureText; // 加密文字
   final ValueChanged<String>? onChanged; // 输入框change时回调
   final ValueChanged<String>? onFocus; //输入框聚焦时回调
   final ValueChanged<String>? onBlur; //输入框聚失焦时回调
   final ValueChanged<String>? onSubmit; //输入框聚失焦时回调
-  final void Function(InputItemOnTapCallBack, TextEditingController)?
+  ///只读时，点击回调事件，可用通过函数回参[InputItemOnTapCallBack], [TextEditingController], [MapValue]来做相应的逻辑操作
+  final void Function(InputItemOnTapCallBack, TextEditingController, MapValue)?
       onTap; //read-only
   final Color? splashColor;
-  final RegExp? validatePattern; // 表单校验码规则 --> RegExp(r'^[a-z][a-z\d]{3,}$')
-  final String? patternDescript; // 表单正确格式描述 --> 小写字母开头，包含数字，不小于3位
-  final String? fieldKey; // 用于Field导出数据的key --> {'username':'kim'}
-  final String? fieldLabel; // 用于校验输入提示 -->'(用户名)不能为空'
-  final LeouiBrightness? brightness; // 主题 dark 、light
+
+  /// 表单校验码规则 --> RegExp(r'^[a-z][a-z\d]{3,}$')
+  final RegExp? validatePattern;
+
+  /// 表单正确格式描述 --> 小写字母开头，包含数字，不小于3位
+  final String? patternDescript;
+
+  /// 用于Field导出数据的key --> {'username':'kim'}
+  final String? fieldKey;
+
+  /// 用于校验输入提示 -->'(用户名)不能为空'
+  final String? fieldLabel;
+
+  /// 主题 dark 、light
+  final LeouiBrightness? brightness;
   final double? fontSize;
   final FontWeight? fontWeight;
   final bool focus; //获取焦点
   final bool? hideCounter;
   final int? maxLines;
   final VoidCallback? onDispose;
+  final bool? arrow;
+  final bool? hideTextField;
 
   const InputItem(
       {Key? key,
       this.title,
       this.icon,
       this.leading,
-      this.content,
       this.defaultValue,
+      this.bindValue,
       this.addon,
+      this.addonBuilder,
       this.placeholder,
+      this.placeholderColor,
       this.disabled = false,
-      this.verticalPadding,
-      this.horizontalPadding,
+      this.padding,
       this.solid = true,
       this.hideCounter,
       this.inputType = TextInputType.text,
@@ -81,12 +163,19 @@ class InputItem extends StatefulWidget implements ListItem {
       this.focus = false,
       this.onTap,
       this.splashColor,
-      this.onDispose})
+      this.onDispose,
+      this.arrow,
+      this.defaultMapValue,
+      this.hideTextField = false})
       : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
             'when validatePattern is not null then fieldKey and fieldLable must be provided'),
         assert(leading == null || (title == null && icon == null),
             'can not provide both leading and (title or icon)'),
+        assert(defaultValue == null || defaultMapValue == null,
+            'can not provide both defaultValue and defaultMapValue'),
+        assert(addon == null || addonBuilder == null,
+            'can not provide both addon and addonBuilder'),
         super(key: key);
 
   @override
@@ -107,10 +196,12 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   bool showCloseButton = false;
 
+  Size leadingSize = Size.zero;
+
   TextEditingController _controller = TextEditingController();
 
   String get value {
-    if (widget.onTap == null) {
+    if (widget.onTap == null || widget.hideTextField == true) {
       return _controller.value.text;
     }
     return _label;
@@ -122,9 +213,13 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   String _label = "";
 
-  void _setMapValue({required String label, required String value}) {
-    _label = value;
-    _controller.value = TextEditingValue(text: label);
+  void _setMapValue(MapValue data) {
+    _label = data.value;
+    _controller.value = TextEditingValue(text: data.label);
+  }
+
+  MapValue get _mapValue {
+    return MapValue(label: value, value: _label);
   }
 
   bool valid = true;
@@ -152,13 +247,27 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
   @override
   void didUpdateWidget(covariant InputItem oldWidget) {
-    // only change the focus status now;
-    if (widget.focus == oldWidget.focus) return;
-    if (widget.focus) {
-      focus();
-    } else {
-      blur();
+    if (widget.focus != oldWidget.focus) {
+      if (widget.focus) {
+        focus();
+      } else {
+        blur();
+      }
     }
+
+    if (widget.bindValue != true) return;
+
+    if (widget.defaultMapValue != null &&
+        '$_mapValue' != '${widget.defaultMapValue}') {
+      _setMapValue(widget.defaultMapValue != null
+          ? widget.defaultMapValue!
+          : MapValue.empty());
+    }
+
+    if (widget.defaultValue != null && value != widget.defaultValue) {
+      value = widget.defaultValue ?? "";
+    }
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -168,6 +277,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
     if (widget.defaultValue != null) {
       _controller.value = TextEditingValue(text: widget.defaultValue!);
       showCloseButton = value.isNotEmpty;
+    } else if (widget.defaultMapValue != null) {
+      _setMapValue(widget.defaultMapValue!);
     }
 
     if (widget.focus) {
@@ -184,6 +295,10 @@ class InputItemState extends State<InputItem> implements ListItemState {
           widget.onBlur!(value);
         }
       }
+    });
+
+    Future.microtask(() {
+      Field.of(context)?.add(this);
     });
   }
 
@@ -209,7 +324,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
         children: children,
       );
     }
-    return Container(
+
+    final leading = Container(
       margin: EdgeInsets.only(right: 5),
       width: widget.solid ? theme.size!().title * 5 : null,
       child: DefaultTextIconStyle(
@@ -218,13 +334,16 @@ class InputItemState extends State<InputItem> implements ListItemState {
         size: widget.fontSize ?? theme.size!().title,
       ),
     );
+
+    leadingSize = measureWidget(leading);
+
+    return leading;
   }
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiThemeData(brightness: widget.brightness);
+    LeouiThemeData theme =
+        LeouiTheme.of(context)!.theme(brightness: widget.brightness);
 
     List<Widget> rowChildren = [];
 
@@ -237,16 +356,18 @@ class InputItemState extends State<InputItem> implements ListItemState {
         border: InputBorder.none,
         hintText: widget.placeholder,
         hintStyle: TextStyle(
-            color: theme.labelSecondaryColor,
+            color: widget.placeholderColor ?? theme.labelSecondaryColor,
+            height: 1,
             fontSize: widget.fontSize != null
                 ? widget.fontSize!
                 : theme.size!().title),
-        isDense: true,
-        contentPadding:
-            EdgeInsets.symmetric(vertical: widget.verticalPadding ?? 0));
+        isDense: true);
 
     TextField textField = TextField(
       enabled: !widget.disabled,
+      onTapOutside: (event) {
+        blur();
+      },
       controller: _controller,
       readOnly: widget.readonly || widget.onTap != null,
       maxLength: widget.maxLength,
@@ -268,50 +389,51 @@ class InputItemState extends State<InputItem> implements ListItemState {
           widget.onChanged!(input);
         }
       },
+      strutStyle: StrutStyle(leading: 0, height: 1),
       decoration: inputStyle,
+      cursorColor: theme.userAccentColor,
+      cursorHeight: theme.size!().content,
       style: TextStyle(
-        color: widget.disabled == true
-            ? theme.labelSecondaryColor
-            : theme.labelPrimaryColor,
-        fontWeight: widget.fontWeight,
-        height: 1,
-        fontSize:
-            widget.fontSize != null ? widget.fontSize! : theme.size!().title,
-      ),
-      strutStyle: StrutStyle(leading: 0),
+          color: theme.labelPrimaryColor,
+          fontSize: widget.fontSize ?? theme.size!().content,
+          height: 1),
     );
 
-    rowChildren.add(Expanded(child: textField));
+    rowChildren.add(Expanded(
+      child: widget.hideTextField == true
+          ? Offstage(
+              child: textField,
+              offstage: true,
+            )
+          : textField,
+    ));
 
     if (widget.clearable) {
-      if (showCloseButton) {
-        rowChildren.add(GestureDetector(
-          onTap: clear,
-          child: Padding(
-            padding: EdgeInsets.only(
-                left: widget.fontSize != null
-                    ? widget.fontSize! / 4
-                    : theme.size!().title / 4),
-            child: Icon(
-              Icons.cancel,
-              size: widget.fontSize != null
-                  ? widget.fontSize!
-                  : theme.size!().title,
-              color: theme.userAccentColor,
-            ),
-          ),
-        ));
+      if (showCloseButton && widget.hideTextField != true) {
+        rowChildren.add(FriendlyTapContainer(
+            onTap: clear,
+            child: SizedBox(
+              width: friendlyTapSize.width,
+              child: Icon(
+                Icons.cancel,
+                size: widget.fontSize != null
+                    ? widget.fontSize! * 1.2
+                    : theme.size!().title * 1.2,
+                color: theme.userAccentColor,
+              ),
+            )));
       } else if (widget.clearIconPlaceHolder != null) {
         rowChildren.add(widget.clearIconPlaceHolder!);
       }
     }
 
-    if (widget.addon != null) {
+    if (widget.addon != null || widget.addonBuilder != null) {
       rowChildren.add(Padding(
         padding: EdgeInsets.only(left: 5),
         child: DefaultTextIconStyle(
           color: theme.labelSecondaryColor,
-          child: widget.addon,
+          child:
+              widget.addon != null ? widget.addon : widget.addonBuilder!(this),
           size: widget.fontSize != null
               ? widget.fontSize! - 2
               : theme.size!().title,
@@ -319,33 +441,48 @@ class InputItemState extends State<InputItem> implements ListItemState {
       ));
     }
 
-    Field.of(context)?.add(this);
+    if (widget.arrow == true) {
+      rowChildren.add(Padding(
+        padding: EdgeInsets.only(left: widget.addon != null ? 0 : 5),
+        child: Icon(Icons.keyboard_arrow_right_rounded,
+            color: theme.labelSecondaryColor, size: theme.size!().title * 1.5),
+      ));
+    }
+
+    final itemPadding = widget.padding ?? theme.size!().listItemPadding;
 
     final child = Container(
-      padding: widget.horizontalPadding != null
-          ? EdgeInsets.symmetric(horizontal: widget.horizontalPadding!)
-          : null,
+      padding: itemPadding,
       child: Row(
         children: rowChildren,
       ),
     );
 
     if (widget.onTap != null) {
-      return buildButtonWidget(
-          splashColor: widget.splashColor,
-          onTap: () {
-            widget.onTap!(_setMapValue, _controller);
-          },
-          child: Stack(
-            children: [
-              child,
-              Positioned.fill(
-                child: Container(
-                  color: Colors.transparent,
-                ),
-              )
-            ],
-          ));
+      return Stack(
+        children: [
+          child,
+          Positioned(
+            left: leadingSize.width + itemPadding.left,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            child: buildButtonWidget(
+              splashColor: widget.splashColor,
+              onTap: () {
+                widget.onTap!(
+                    _setMapValue,
+                    _controller,
+                    MapValue.fromJson(
+                        {"label": _controller.text, "value": _label}));
+              },
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
+          )
+        ],
+      );
     }
 
     return child;

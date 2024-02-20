@@ -75,9 +75,6 @@ class _DrawingBoardPageState extends State<ColorPickerPage> {
                     children: [
                       Text('背景色'),
                       Popover.customize(
-                          arrowColor:
-                              LeouiThemeData(brightness: LeouiBrightness.dark)
-                                  .backgroundSecondaryColor,
                           child: Container(
                             width: 80,
                             height: 20,

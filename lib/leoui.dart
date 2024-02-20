@@ -1,7 +1,7 @@
 library leoui;
 
 import 'package:flutter/material.dart';
-import 'package:leoui/leoui_state.dart';
+import 'package:leoui/widget/leoui_state.dart';
 
 export './feedback/index.dart';
 export './model/index.dart';

@@ -97,7 +97,6 @@ class _DialogState extends State<Dialog> {
         borderRadius: BorderRadius.circular(theme.size!().fieldBorderRadius),
         color: theme.backgroundSecondaryColor,
         child: Container(
-          height: theme.size!().tertiary * 2,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(color: theme.nonOpaqueSeparatorColor),
@@ -109,7 +108,8 @@ class _DialogState extends State<Dialog> {
                 BorderRadius.circular(theme.size!().fieldBorderRadius),
             child: InputItem(
               key: widget.promoptItemKey,
-              horizontalPadding: 4,
+              padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              maxLines: 1,
               brightness: widget.brightness,
               validatePattern: widget.validatePattern,
               patternDescript: widget.patternDescript,
@@ -248,9 +248,7 @@ class _DialogState extends State<Dialog> {
 
   @override
   Widget build(BuildContext context) {
-    theme = widget.brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
+    theme = LeouiTheme.of(context)!.theme(brightness: widget.brightness);
 
     double _width = widget.width ?? theme.size!().dialogWidth;
     List<Widget> _children = [];

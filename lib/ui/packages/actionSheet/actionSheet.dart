@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:leoui/leoui_state.dart';
+import 'package:leoui/widget/leoui_state.dart';
 
 class ActionSheetAction {
   final String text;
@@ -23,9 +23,8 @@ class ActionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiTheme.of(context).copyWith(brightness: brightness);
+    LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme(brightness: brightness);
 
     List<Widget> _children = [];
 

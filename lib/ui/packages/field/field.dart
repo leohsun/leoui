@@ -5,20 +5,42 @@ import 'package:leoui/ui/packages/common/common.dart';
 enum FieldValidateErrorMessageType { warningMessage, warningToast, toast, none }
 
 class Field extends StatefulWidget {
-  final Widget? title; //标题
-  final Widget? brief; //描述内容
-  final Widget? footer; //页脚内容
-  final bool? disabled; //是否禁用区域
-  final bool? plain; //镂空样式
-  final Widget? trailing; //标题尾部内容
-  final Color? color; //背景颜色
-  final Color? dividerColor; //分割线颜色
-  final double? dividerHorizontalMargin; // 分割线左右边距
-  final LeouiBrightness? brightness; // 主题色
-  final FieldValidateErrorMessageType? messageType; // 表单校验失败后提示类型
+  ///标题
+  final Widget? title;
+
+  ///描述内容
+  final Widget? brief;
+
+  ///页脚内容
+  final Widget? footer;
+
+  ///是否禁用区域
+  final bool? disabled;
+
+  ///镂空样式
+  final bool? plain;
+
+  ///标题尾部内容
+  final Widget? trailing;
+
+  ///背景颜色
+  final Color? color;
+
+  ///分割线颜色
+  final Color? dividerColor;
+
+  /// 分割线左右边距
+  final double? dividerHorizontalMargin;
+
+  /// 主题色
+  final LeouiBrightness? brightness;
+
+  /// 表单校验失败后提示类型
+  final FieldValidateErrorMessageType? messageType;
   final EdgeInsets? margin;
 
-  final List<Widget>? children; //  FieldItem
+  ///  FieldItem
+  final List<Widget>? children;
   const Field({
     Key? key,
     this.title,
@@ -171,6 +193,7 @@ class FieldState extends State<Field> {
       }
     }
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: _children,
     );
   }
@@ -185,9 +208,8 @@ class FieldState extends State<Field> {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiThemeData(brightness: widget.brightness);
+    LeouiThemeData theme =
+        LeouiTheme.of(context)!.theme(brightness: widget.brightness);
 
     List<Widget> _children = [];
     if (widget.title != null ||
@@ -264,15 +286,29 @@ abstract class ListItemState {
 }
 
 class FieldItem extends StatefulWidget implements ListItem {
-  final Widget? title; //标题
-  final Widget? content; //描述内容
-  final Widget? addon; //附加文案
-  final Widget? placeholder; //提示文本
-  final bool? disabled; // 是否禁用项目
-  final bool? arrow; //动作箭头标识
-  final double? verticalPadding; // 内容竖直间距
-  final double? horizontalPadding; //内容横向间距
-  final bool solid; //是否固定标题宽度，超出会自动换行
+  //标题
+  final Widget? title;
+
+  //描述内容
+  final Widget? content;
+
+  ///附加文案
+  final Widget? addon;
+
+  ///提示文本
+  final Widget? placeholder;
+
+  /// 是否禁用项目
+  final bool? disabled;
+
+  ///动作箭头标识
+  final bool? arrow;
+
+  ///内容内边距
+  final EdgeInsets? padding;
+
+  ///是否固定标题宽度，超出会自动换行
+  final bool solid;
   final ValueChanged<BuildContext>? onTap; // 点击回调
   final Widget? child; // 子组件
   final LeouiBrightness? brightness;
@@ -287,8 +323,7 @@ class FieldItem extends StatefulWidget implements ListItem {
       this.addon,
       this.disabled,
       this.arrow,
-      this.verticalPadding,
-      this.horizontalPadding,
+      this.padding,
       this.solid = true,
       this.onTap,
       this.child,
@@ -326,9 +361,8 @@ class _FieldItemState extends State<FieldItem> {
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData theme = widget.brightness != null
-        ? LeouiThemeData(brightness: widget.brightness)
-        : LeouiTheme.of(context);
+    LeouiThemeData theme =
+        LeouiTheme.of(context)!.theme(brightness: widget.brightness);
 
     List<Widget> _children = [];
     if (widget.title != null) {
@@ -389,9 +423,14 @@ class _FieldItemState extends State<FieldItem> {
                   widget.onTap!(context);
                 },
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: widget.verticalPadding ?? theme.size!().title,
-                horizontal: widget.horizontalPadding ?? 0),
+            padding: EdgeInsets.only(
+              left: widget.padding?.left ?? theme.size!().listItemPadding.left,
+              right:
+                  widget.padding?.right ?? theme.size!().listItemPadding.right,
+              top: widget.padding?.top ?? theme.size!().listItemPadding.top,
+              bottom: widget.padding?.bottom ??
+                  theme.size!().listItemPadding.bottom,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -411,9 +450,13 @@ class _FieldItemState extends State<FieldItem> {
       _colChildren.add(widget.child!);
 
       return Container(
-        padding: EdgeInsets.symmetric(
-            vertical: widget.verticalPadding ?? 0,
-            horizontal: widget.horizontalPadding ?? 0),
+        padding: EdgeInsets.only(
+          left: widget.padding?.left ?? theme.size!().listItemPadding.left,
+          right: widget.padding?.right ?? theme.size!().listItemPadding.right,
+          top: widget.padding?.top ?? theme.size!().listItemPadding.top,
+          bottom:
+              widget.padding?.bottom ?? theme.size!().listItemPadding.bottom,
+        ),
         constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -429,9 +472,13 @@ class _FieldItemState extends State<FieldItem> {
                 widget.onTap?.call(context);
               },
         child: Container(
-          padding: EdgeInsets.symmetric(
-              vertical: widget.verticalPadding ?? 0,
-              horizontal: widget.horizontalPadding ?? 0),
+          padding: EdgeInsets.only(
+            left: widget.padding?.left ?? theme.size!().listItemPadding.left,
+            right: widget.padding?.right ?? theme.size!().listItemPadding.right,
+            top: widget.padding?.top ?? theme.size!().listItemPadding.top,
+            bottom:
+                widget.padding?.bottom ?? theme.size!().listItemPadding.bottom,
+          ),
           decoration: widget.border == true
               ? BoxDecoration(
                   border: Border(

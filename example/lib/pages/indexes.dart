@@ -12,7 +12,7 @@ class _IndexesPageState extends State<IndexesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: LeouiTheme.of(context).backgroundPrimaryColor,
+        backgroundColor: LeouiTheme.of(context)!.theme().backgroundPrimaryColor,
         appBar: AppBar(
           leading: IconButton(
               onPressed: () {

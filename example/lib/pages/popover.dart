@@ -381,12 +381,17 @@ class _PopoverPageState extends State<PopoverPage> {
                               ]),
                         ),
                       ),
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Popover.customize(
-                            placement: PopoverPlacement.bottom,
-                            child: Button(
-                              'hello bottom',
+                            placement: PopoverPlacement.right,
+                            child: buildButtonWidget(
+                              child: Container(
+                                  width: 50,
+                                  color: Colors.amber,
+                                  child:
+                                      Icon(Icons.add_circle_outline_outlined)),
                               onTap: () {
                                 setState(() {
                                   _show = !_show;
@@ -394,10 +399,13 @@ class _PopoverPageState extends State<PopoverPage> {
                               },
                             ),
                             show: _show,
+                            inSafeArea: true,
                             arrowColor: Colors.orange,
+                            backgroundColor: Colors.orange,
                             // showArrow: false,
                             customPopoverWidgetBuilder: (context) => Container(
                               color: Colors.orange,
+                              height: 300,
                               child: Row(
                                 children: [
                                   IconButton(
@@ -410,26 +418,6 @@ class _PopoverPageState extends State<PopoverPage> {
                                         PopoverScope.of(context)!.close();
                                       },
                                       icon: Icon(Icons.edit)),
-                                  IconButton(
-                                      onPressed: () {
-                                        PopoverScope.of(context)!.close();
-                                      },
-                                      icon: Icon(Icons.delete)),
-                                  IconButton(
-                                      onPressed: () {
-                                        PopoverScope.of(context)!.close();
-                                      },
-                                      icon: Icon(Icons.update)),
-                                  IconButton(
-                                      onPressed: () {
-                                        PopoverScope.of(context)!.close();
-                                      },
-                                      icon: Icon(Icons.mail)),
-                                  IconButton(
-                                      onPressed: () {
-                                        PopoverScope.of(context)!.close();
-                                      },
-                                      icon: Icon(Icons.podcasts))
                                 ],
                               ),
                             ),

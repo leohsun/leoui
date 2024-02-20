@@ -24,6 +24,7 @@ class SizeTool {
   static double get deviceWidth => _mediaQueryData().size.width;
   static double get deviceHeight => _mediaQueryData().size.height;
   static EdgeInsets get devicePadding => _mediaQueryData().padding;
+  static double get deviceRatio => _mediaQueryData().devicePixelRatio;
 
   double sizeWidth(double size) {
     double expceptWidth = (size * widthRatio).floorToDouble();

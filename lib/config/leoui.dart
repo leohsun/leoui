@@ -1,9 +1,10 @@
 import 'package:leoui/config/theme.dart';
 
 class LeouiConfig {
-  final LeouiThemeData? theme;
+  final LeouiThemeData? lightTheme;
+  final LeouiThemeData? darkTheme;
 
-  const LeouiConfig({this.theme});
+  const LeouiConfig({this.lightTheme, this.darkTheme});
 
   Map toJson() {
     Map json = {};

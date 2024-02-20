@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' show max;
 
-import 'package:leoui/config/index.dart';
-import 'package:leoui/utils/index.dart';
+import 'package:leoui/leoui.dart';
 
 // best thanks to https://github.com/mdbassit/Coloris
 class ColorPicker extends StatefulWidget {
@@ -462,9 +461,8 @@ class _ColorPickerState extends State<ColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    theme = widget.brightness == null
-        ? LeouiTheme.of(context)
-        : LeouiTheme.of(context).copyWith(brightness: widget.brightness);
+    theme = LeouiTheme.of(LeoFeedback.currentContext!)!
+        .theme(brightness: widget.brightness);
 
     _indicatorBoxShadow =
         BoxShadow(color: theme.nonOpaqueSeparatorColor, spreadRadius: 1);
@@ -484,6 +482,7 @@ class _ColorPickerState extends State<ColorPicker> {
             color: theme.backgroundSecondaryColor,
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Slider(
                     value: val,
