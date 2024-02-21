@@ -20,7 +20,7 @@ import 'package:leoui_example/pages/tabPikcer.dart';
 import 'package:leoui_example/pages/toast.dart';
 import 'package:leoui_example/pages/utils.dart';
 import 'package:leoui_example/pages/home.dart';
-import 'package:leoui_example/pages/swiperActions.dart';
+import 'package:leoui_example/pages/swipeActions.dart';
 
 Map<String, WidgetBuilder> routes = {
   'home': (BuildContext context) => MyHomePage(),

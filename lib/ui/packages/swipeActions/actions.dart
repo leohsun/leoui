@@ -13,35 +13,40 @@ class SwipeAction {
             (text == null && child != null) || (text != null && child == null));
 }
 
-enum SwipeDirection { ltr, rtl }
+enum SwipeActionType { leading, trailing }
 
 abstract class SwipeActionRenderBox extends RenderProxyBoxWithHitTestBehavior {
-  SwipeDirection get direction;
+  SwipeActionType get type;
 }
 
 class ClipAction extends SingleChildRenderObjectWidget {
-  final VoidCallback? onTap;
-  final SwipeDirection direction;
+  final FutureOr<void> Function()? onTap;
+  final SwipeActionType type;
 
-  ClipAction({super.key, required this.direction, this.onTap, super.child});
+  ClipAction({super.key, required this.type, this.onTap, super.child});
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderClipAcion(direction: direction, onTap: onTap);
+    return RenderClipAcion(type: type, onTap: onTap);
   }
 }
 
 class RenderClipAcion extends SwipeActionRenderBox {
-  final VoidCallback? onTap;
-  final SwipeDirection direction;
+  final FutureOr<void> Function()? onTap;
+  final SwipeActionType type;
 
   late TapGestureRecognizer _tapGesture;
 
-  RenderClipAcion({required this.direction, this.onTap});
+  RenderClipAcion({required this.type, this.onTap});
 
   @override
   void attach(PipelineOwner owner) {
-    _tapGesture = TapGestureRecognizer()..onTap = onTap;
+    if (onTap != null) {
+      _tapGesture = TapGestureRecognizer()
+        ..onTap = () {
+          onTap!();
+        };
+    }
     super.attach(owner);
   }
 

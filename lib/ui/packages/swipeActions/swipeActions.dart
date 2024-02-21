@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/utils/tickerCallback.dart';
+import 'package:leoui/utils/animationCallback.dart';
 import 'package:leoui/widget/FriendlyTapContainer.dart';
 
 part './actions.dart';
@@ -18,6 +20,30 @@ enum SwiperAnimationDestination {
   trailingDefaultExpand
 }
 
+double kFullSwipeGap = friendlyTapSize.width * 4;
+
+class SwipeActionConfig {
+  final RenderBox first;
+  final List<RenderBox> children = [];
+  double childrenDryWidth = 0;
+
+  SwipeActionConfig({required this.first});
+
+  void addChild(RenderBox child) {
+    final parentData = child.parentData as SwipeActionParentData;
+    children.add(child);
+    childrenDryWidth += parentData.dryWidthRaw;
+  }
+
+  @override
+  String toString() {
+    return '''
+  first: $first;
+  childrenDryWidth: $childrenDryWidth;
+''';
+  }
+}
+
 class SwipeActions extends MultiChildRenderObjectWidget {
   final Widget child;
 
@@ -27,7 +53,7 @@ class SwipeActions extends MultiChildRenderObjectWidget {
   ///后置动作，排序为:右->左
   final List<SwipeAction>? trailingActions;
 
-  ///允许第一个动作在长距离滑动中被调用，默认[true]
+  ///允许动作菜单中的[第一项]的onTap在长距离滑动中被调用，默认[true]
   final bool? allowsFullSwipe;
 
   SwipeActions(
@@ -53,7 +79,7 @@ class SwipeActions extends MultiChildRenderObjectWidget {
   ];
 
   static Widget _buidActionWidget(
-      SwipeAction action, int idx, SwipeDirection direction) {
+      SwipeAction action, int idx, SwipeActionType type) {
     LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!)!.theme();
     TextStyle style = action.textStyle ??
         TextStyle(
@@ -69,16 +95,16 @@ class SwipeActions extends MultiChildRenderObjectWidget {
         );
     return ClipAction(
       onTap: action.onTap,
-      direction: direction,
+      type: type,
       child: Container(
           color: action.backgroudColor ??
               defaultColors[idx % defaultColors.length],
           constraints: BoxConstraints(
               minHeight: friendlyTapSize.height,
               minWidth: friendlyTapSize.width),
-          alignment: direction == SwipeDirection.ltr
-              ? Alignment.centerLeft
-              : Alignment.centerRight,
+          alignment: type == SwipeActionType.leading
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
           child: child),
     );
   }
@@ -96,7 +122,7 @@ class SwipeActions extends MultiChildRenderObjectWidget {
 
     List<Widget>? leadingActionWidgets =
         leadingActions?.mapWithIndex((action, index) {
-      return _buidActionWidget(action, index, SwipeDirection.ltr);
+      return _buidActionWidget(action, index, SwipeActionType.leading);
     });
 
     if (leadingActionWidgets != null) {
@@ -109,7 +135,7 @@ class SwipeActions extends MultiChildRenderObjectWidget {
     if (reversedTrailingAction != null) {
       List<Widget>? trailingActionWidgets =
           reversedTrailingAction.mapWithIndex((action, index) {
-        return _buidActionWidget(action, index, SwipeDirection.rtl);
+        return _buidActionWidget(action, index, SwipeActionType.trailing);
       });
       children.addAll(trailingActionWidgets);
     }
@@ -119,7 +145,11 @@ class SwipeActions extends MultiChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderSwipeActions();
+    return RenderSwipeActions(
+      allowsFullSwipe: allowsFullSwipe!,
+      leadingDefaultCallback: leadingActions?.first.onTap,
+      trailingDefaultCallback: trailingActions?.first.onTap,
+    );
   }
 }
 
@@ -127,12 +157,22 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
     with
         ContainerRenderObjectMixin<RenderBox, SwipeActionParentData>,
         RenderBoxContainerDefaultsMixin<RenderBox, SwipeActionParentData> {
+  final bool allowsFullSwipe;
+  final VoidCallback? leadingDefaultCallback;
+  final VoidCallback? trailingDefaultCallback;
+
+  RenderSwipeActions({
+    super.behavior,
+    super.child,
+    required this.allowsFullSwipe,
+    this.leadingDefaultCallback,
+    this.trailingDefaultCallback,
+  });
+
   bool isMoving = false;
-  bool isAnimation = false;
+  bool isOnFullSwipePending = false;
 
   late HorizontalDragGestureRecognizer horizontalDragGestureRecognizer;
-
-  Offset origin = Offset.zero;
 
   SwiperAnimationDestination destination =
       SwiperAnimationDestination.leadingClose;
@@ -154,6 +194,12 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
 
   ParentData swipeActionParentData = SwipeActionParentData();
 
+  SwipeActionConfig? leadingConfig;
+  SwipeActionConfig? trailingConfig;
+
+  bool leadingExpanded = false;
+  bool trailingExpanded = false;
+
   bool get movingToLeft => movingDx < 0;
   bool get movingToRight => movingDx > 0;
   bool get hasLeading => leadingActionsTotalCount > 0;
@@ -174,7 +220,7 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
   }
 
   Future<void> animateSwiperTo(SwiperAnimationDestination destination) async {
-    isAnimation = true;
+    isMoving = true;
     late double end;
 
     switch (destination) {
@@ -191,7 +237,7 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
         end = -constraints.maxWidth;
     }
 
-    isAnimation = true;
+    isMoving = true;
     await animationCallback(
       start: currentDx,
       end: end,
@@ -201,29 +247,37 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
         markNeedsLayout();
       },
     );
-    isAnimation = false;
+    isMoving = false;
 
     currentDx = prevStartDx = end;
   }
 
   void calcActionsConfig() {
-    if (trailingActionsTotalWidth != 0 || leadingActionsTotalWidth != 0) {
+    if (hasLeading || hasTrailing) {
       return;
     }
     RenderBox? child = firstChild;
+
+    final trailingRenderBoxList = [];
+
     while (child != null) {
       final parentData = child.parentData as SwipeActionParentData;
-
       double dryHeight = 0;
       if (child is SwipeActionRenderBox) {
         final drySize = child.getDryLayout(BoxConstraints());
-        parentData.dryWidth = drySize.width;
-        if (child.direction == SwipeDirection.rtl) {
+        parentData.dryWidth = parentData.dryWidthRaw = drySize.width;
+        if (child.type == SwipeActionType.trailing) {
           trailingActionsTotalWidth += drySize.width;
           trailingActionsTotalCount += 1;
+          trailingRenderBoxList.add(child);
         } else {
           leadingActionsTotalWidth += drySize.width;
           leadingActionsTotalCount += 1;
+          if (leadingConfig == null) {
+            leadingConfig = SwipeActionConfig(first: child);
+          } else {
+            leadingConfig!.addChild(child);
+          }
         }
       } else {
         child.layout(constraints, parentUsesSize: true);
@@ -235,10 +289,110 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
       child = parentData.nextSibling;
     }
 
+    if (trailingConfig == null && hasTrailing) {
+      trailingConfig = SwipeActionConfig(first: trailingRenderBoxList.last);
+      trailingRenderBoxList.removeLast();
+      trailingRenderBoxList.forEach(
+        (child) {
+          trailingConfig!.addChild(child);
+        },
+      );
+    }
+
     assert(leadingActionsTotalWidth <= constraints.maxWidth,
-        "前置动作的视图渲染总宽度不能大于:${constraints.maxWidth}");
+        "前置动作菜单的视图渲染总宽度不能大于:${constraints.maxWidth}");
     assert(trailingActionsTotalWidth <= constraints.maxWidth,
-        "后置动作的视图渲染总宽度不能大于:${constraints.maxWidth}");
+        "后置动作菜单的视图渲染总宽度不能大于:${constraints.maxWidth}");
+  }
+
+  Future<void> animateActionDryWidth() async {
+    if (!allowsFullSwipe) return;
+    double expanedWidth = constraints.maxWidth - kFullSwipeGap;
+
+    ValueChanged? callBack;
+
+    if (currentDx > 0) {
+      if (currentDx > expanedWidth) {
+        if (!leadingExpanded) {
+          leadingExpanded = true;
+          callBack = (value) {
+            final firstParentData =
+                leadingConfig!.first.parentData as SwipeActionParentData;
+            firstParentData.dryWidth = firstParentData.dryWidthRaw +
+                leadingConfig!.childrenDryWidth * value;
+            leadingConfig?.children.forEach((child) {
+              final parentData = child.parentData as SwipeActionParentData;
+              parentData.dryWidth =
+                  parentData.dryWidthRaw - parentData.dryWidthRaw * value;
+            });
+
+            markNeedsLayout();
+          };
+        }
+      } else if (leadingExpanded) {
+        leadingExpanded = false;
+        callBack = (value) {
+          final firstParentData =
+              leadingConfig!.first.parentData as SwipeActionParentData;
+          firstParentData.dryWidth = firstParentData.dryWidthRaw +
+              leadingConfig!.childrenDryWidth -
+              leadingConfig!.childrenDryWidth * value;
+          leadingConfig?.children.forEach((child) {
+            final parentData = child.parentData as SwipeActionParentData;
+            parentData.dryWidth = parentData.dryWidthRaw * value;
+          });
+
+          markNeedsLayout();
+        };
+      }
+    } else {
+      if (currentDx < -expanedWidth) {
+        if (!trailingExpanded) {
+          trailingExpanded = true;
+          callBack = (value) {
+            final firstParentData =
+                trailingConfig!.first.parentData as SwipeActionParentData;
+            firstParentData.dryWidth = firstParentData.dryWidthRaw +
+                trailingConfig!.childrenDryWidth * value;
+            trailingConfig?.children.forEach((child) {
+              final parentData = child.parentData as SwipeActionParentData;
+              parentData.dryWidth =
+                  parentData.dryWidthRaw - parentData.dryWidthRaw * value;
+            });
+
+            markNeedsLayout();
+          };
+        }
+      } else if (trailingExpanded) {
+        trailingExpanded = false;
+        callBack = (value) {
+          final firstParentData =
+              trailingConfig!.first.parentData as SwipeActionParentData;
+          firstParentData.dryWidth = firstParentData.dryWidthRaw +
+              trailingConfig!.childrenDryWidth -
+              trailingConfig!.childrenDryWidth * value;
+          trailingConfig?.children.forEach((child) {
+            final parentData = child.parentData as SwipeActionParentData;
+            parentData.dryWidth = parentData.dryWidthRaw * value;
+          });
+
+          markNeedsLayout();
+        };
+      }
+    }
+
+    if (callBack == null) {
+      return;
+    }
+    if (isMoving) {
+      HapticFeedback.heavyImpact();
+    }
+    return animationCallback(
+        callback: callBack,
+        start: 0,
+        end: 1,
+        duration: Duration(milliseconds: 180),
+        curve: Curves.easeOut);
   }
 
   @override
@@ -249,18 +403,16 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
 
     double prevDx = currentDx > 0 ? 0 : currentDx;
 
-    double trailingMoveDxFactor = trailingActionsTotalWidth == 0
-        ? 0
-        : currentDx / trailingActionsTotalWidth;
-    double leadingMoveDxFactor = leadingActionsTotalCount == 0
-        ? 0
-        : currentDx / leadingActionsTotalWidth;
+    double trailingMoveDxFactor =
+        hasTrailing ? currentDx / trailingActionsTotalWidth : 0;
+    double leadingMoveDxFactor =
+        hasLeading ? currentDx / leadingActionsTotalWidth : 0;
 
     while (child != null) {
       final parentData = child.parentData as SwipeActionParentData;
       parentData.offset = Offset(prevDx, 0);
       if (child is SwipeActionRenderBox) {
-        final factor = child.direction == SwipeDirection.rtl
+        final factor = child.type == SwipeActionType.trailing
             ? -trailingMoveDxFactor
             : leadingMoveDxFactor;
         double clipWidth =
@@ -270,7 +422,7 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
 
         child.layout(
             BoxConstraints(
-                maxWidth: max(parentData.dryWidth, clipWidth),
+                maxWidth: max(parentData.dryWidthRaw, clipWidth),
                 maxHeight: intrinsicHeight),
             parentUsesSize: true);
         prevDx += clipWidth;
@@ -287,7 +439,9 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
 
   @override
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
-    return defaultHitTestChildren(result, position: position);
+    return !isMoving &&
+        !isOnFullSwipePending &&
+        defaultHitTestChildren(result, position: position);
   }
 
   @override
@@ -299,10 +453,8 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
     startDx = details.localPosition.dx;
   }
 
-  void _handlePointerMove(DragUpdateDetails details) {
-    if (isAnimation) {
-      return;
-    }
+  void _handlePointerMove(DragUpdateDetails details) async {
+    isMoving = true;
 
     movingDx = details.localPosition.dx - startDx;
     currentDx = movingDx + prevStartDx;
@@ -316,34 +468,48 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
       return;
     }
 
-    isMoving = true;
+    await animateActionDryWidth();
+
     markNeedsLayout();
   }
 
   void _handlePointerUp(DragEndDetails details) async {
-    if (!isMoving || isAnimation) return;
+    if (!isMoving) return;
+    isMoving = false;
 
-    SwiperAnimationDestination? destination =
-        SwiperAnimationDestination.trailingClose;
+    double expanedWidth = constraints.maxWidth - kFullSwipeGap;
 
-    if (movingToLeft && currentDx < -trailingActionsTotalWidth / 2) {
-      //handle trailing actions
-      if (currentDx < -constraints.maxWidth / 2) {
-        destination = SwiperAnimationDestination.trailingDefaultExpand;
+    FutureOr<void> Function()? onFullSwipe;
+    if (currentDx > 0) {
+      if (currentDx > expanedWidth && allowsFullSwipe == true) {
+        destination = SwiperAnimationDestination.leadingDefaultExpand;
+        onFullSwipe = leadingDefaultCallback;
+      } else if (currentDx > leadingActionsTotalWidth / 2) {
+        destination = SwiperAnimationDestination.leadingOpen;
       } else {
-        destination = SwiperAnimationDestination.trailingOpen;
+        destination = SwiperAnimationDestination.leadingClose;
       }
     } else {
-      /// handle leading acitons
-      if (currentDx > leadingActionsTotalWidth / 2) {
-        if (currentDx > constraints.maxWidth / 2) {
-          destination = SwiperAnimationDestination.leadingDefaultExpand;
-        } else {
-          destination = SwiperAnimationDestination.leadingOpen;
-        }
+      if (currentDx < -expanedWidth && allowsFullSwipe == true) {
+        destination = SwiperAnimationDestination.trailingDefaultExpand;
+        onFullSwipe = trailingDefaultCallback;
+      } else if (currentDx < -trailingActionsTotalWidth / 2) {
+        destination = SwiperAnimationDestination.trailingOpen;
+      } else {
+        destination = SwiperAnimationDestination.trailingClose;
       }
     }
+
     await animateSwiperTo(destination);
+
+    if (onFullSwipe != null) {
+      isOnFullSwipePending = true;
+      await onFullSwipe();
+      isOnFullSwipePending = false;
+      destination = SwiperAnimationDestination.leadingClose;
+      await animateSwiperTo(destination);
+    }
+
     resetChildConfig();
   }
 
@@ -371,11 +537,19 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
     }
     super.handleEvent(event, entry);
   }
+
+  @override
+  void detach() {
+    horizontalDragGestureRecognizer.dispose();
+    super.detach();
+  }
 }
 
 class SwipeActionParentData extends MultiChildLayoutParentData {
   Offset offset = Offset.zero;
-  Offset origin = Offset.zero;
+
+  ///acion实际宽度备份,便于[allowsFullSwipe=true]时，展开菜单第一个项的宽度，缩小其项的宽度
+  double dryWidthRaw = 0;
 
   ///acion实际宽度
   double dryWidth = 0;

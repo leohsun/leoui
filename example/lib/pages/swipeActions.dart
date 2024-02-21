@@ -17,19 +17,18 @@ class _SwipeActionSPagetate extends State<SwipeActionsPage> {
       body: SingleChildScrollView(
           child: Column(
         children: [
-          Divider(),
           SwipeActions(
             leadingActions: [
-              SwipeAction(
-                  child: Icon(
-                Icons.delete,
-                color: Colors.white,
-              )),
               SwipeAction(
                   text: "置顶",
                   onTap: () {
                     showToast('置顶');
                   }),
+              SwipeAction(
+                  child: Icon(
+                Icons.delete,
+                color: Colors.white,
+              )),
             ],
             child: Container(
               width: double.infinity,
@@ -61,11 +60,6 @@ class _SwipeActionSPagetate extends State<SwipeActionsPage> {
           SwipeActions(
             leadingActions: [
               SwipeAction(
-                  child: Icon(
-                Icons.delete,
-                color: Colors.white,
-              )),
-              SwipeAction(
                   text: "置顶",
                   onTap: () {
                     showToast('置顶');
@@ -73,15 +67,17 @@ class _SwipeActionSPagetate extends State<SwipeActionsPage> {
             ],
             trailingActions: [
               SwipeAction(
+                  text: "删除",
+                  onTap: () async {
+                    showToast('确认删除?');
+                    await Future.delayed(Duration(seconds: 2));
+                    showToast('删除');
+                  }),
+              SwipeAction(
                   child: Icon(
                 Icons.delete,
                 color: Colors.white,
               )),
-              SwipeAction(
-                  text: "置顶",
-                  onTap: () {
-                    showToast('置顶');
-                  }),
             ],
             child: Container(
               width: double.infinity,

@@ -31,6 +31,7 @@ Future<void> animationCallback({
     double factor = ((passtime - tickStartTime!).inMicroseconds /
             calcDurantion.inMicroseconds)
         .clamp(0, 1);
+
     current = start + distance * curve.transform(factor);
 
     callback.call(current);

@@ -134,4 +134,10 @@ extension ListTools<E> on List<E> {
 
     return null;
   }
+
+  void forEachWithIndex(void fn(E element, int index)) {
+    for (int i = 0; i < this.length; i++) {
+      fn(this[i], i);
+    }
+  }
 }
