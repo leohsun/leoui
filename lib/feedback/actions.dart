@@ -21,6 +21,7 @@ Future showLoading({
   Timer? counter;
 
   modal = Modal(
+      noMask: true,
       childBuilder: (context) => ClipRRect(
             borderRadius: BorderRadius.circular(theme.size!().cardBorderRadius),
             child: Container(
@@ -284,8 +285,8 @@ Future showMessage(String message,
                           fontSize: theme.size!().secondary,
                           fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-//                              softWrap: false,
+                      maxLines: 5,
+                      // softWrap: false,
                     ),
                   )
                 ],

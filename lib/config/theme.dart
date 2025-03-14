@@ -148,6 +148,7 @@ class LeouiThemeData {
       Color? opaqueSeparatorColor,
       Color? nonOpaqueSeparatorColor,
       Color? labelPrimaryColor,
+      TextStyle? labelPrimaryStyle,
       Color? labelSecondaryColor,
       Color? labelTertiaryColor,
       Color? labelQuarternaryColor,
@@ -196,6 +197,7 @@ class LeouiThemeData {
         : Color.fromRGBO(60, 60, 67, 0.36);
 
     labelPrimaryColor ??= isDark ? Colors.white : Colors.black;
+    labelPrimaryStyle ??= TextStyle();
     labelSecondaryColor ??= isDark
         ? Color.fromRGBO(235, 235, 245, 0.6)
         : Color.fromRGBO(60, 60, 67, 0.6);

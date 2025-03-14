@@ -1,6 +1,7 @@
 library leoui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:leoui/widget/leoui_state.dart';
 
 export './feedback/index.dart';
@@ -9,41 +10,83 @@ export './utils/index.dart';
 export './ui/index.dart';
 export './config/index.dart';
 
-class Leoui extends StatelessWidget {
-  final MaterialApp child;
-  final LeouiConfig? config;
-
-  /// executing when setup is completed,
-  /// at this time [LeoFeedback.currentContext] was initialized
-  /// can call feedback functions like: [showModal]
-  final VoidCallback? initState;
-  final VoidCallback? dispose;
-  final Future Function()? setup;
-  final Widget? setupPlaceholder;
-  const Leoui(
-      {Key? key,
-      required this.child,
-      this.setup,
-      this.config,
-      this.initState,
-      this.dispose,
-      this.setupPlaceholder})
-      : super(key: key);
+class Leoui extends MultiChildRenderObjectWidget {
+  Leoui(
+      {super.key,
+      required MaterialApp Function(ValueChanged<VoidCallback> setState)
+          childBuilder,
+      LeouiConfig? config,
+      VoidCallback? initState,
+      VoidCallback? dispose,
+      Future Function()? setup,
+      Widget? setupPlaceholder,
+      ValueChanged<AppLifecycleState>? didChangeAppLifecycleState})
+      : super(children: [
+          LeouiStateWidget(
+            childBuilder: childBuilder,
+            config: config,
+            setup: setup,
+            initState: initState,
+            didChangeAppLifecycleState: didChangeAppLifecycleState,
+            dispose: dispose,
+          ),
+          setupPlaceholder ?? Container(color: Colors.white)
+        ]);
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      if (constraints.maxWidth == 0) {
-        return setupPlaceholder ?? Container(color: Colors.white);
-      }
-      return LeouiState(
-        child: child,
-        config: config,
-        setup: setup,
-        initState: initState,
-        dispose: dispose,
-        setupPlaceholder: setupPlaceholder,
-      );
-    });
+  RenderObject createRenderObject(BuildContext context) => RenderLeoui();
+
+  @override
+  void updateRenderObject(
+      BuildContext context, covariant RenderObject renderObject) {
+    super.updateRenderObject(context, renderObject);
+  }
+}
+
+class RenderLeouiParentData extends MultiChildLayoutParentData {}
+
+class RenderLeoui extends RenderProxyBox
+    with
+        ContainerRenderObjectMixin<RenderBox, RenderLeouiParentData>,
+        RenderBoxContainerDefaultsMixin<RenderBox, RenderLeouiParentData> {
+  @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! RenderLeouiParentData) {
+      child.parentData = RenderLeouiParentData();
+    }
+  }
+
+  @override
+  void performLayout() {
+    if (constraints.maxWidth == 0) return;
+
+    RenderObject? child = firstChild;
+
+    while (child != null) {
+      RenderLeouiParentData parentData =
+          child.parentData! as RenderLeouiParentData;
+      child.layout(constraints, parentUsesSize: true);
+      child = parentData.nextSibling;
+    }
+
+    size = constraints.biggest;
+  }
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    if (size.width == 0) {
+      context.paintChild(lastChild!, offset);
+    } else if (firstChild != null) {
+      context.paintChild(firstChild!, offset);
+    }
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    return firstChild?.hitTest(
+          result,
+          position: position,
+        ) ??
+        false;
   }
 }

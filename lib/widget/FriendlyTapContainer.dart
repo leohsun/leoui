@@ -14,6 +14,9 @@ class FriendlyTapContainer extends SingleChildRenderObjectWidget {
   final VoidCallback? onTap;
   final Widget child;
 
+  /// size width and height to [friendlyTapSize]
+  final bool? useFridendlySize;
+
   /// transparent when tapdown; default is true
   final bool? transparentWhenActive;
   final bool? hideExpandedAreaInDebugMode;
@@ -22,6 +25,7 @@ class FriendlyTapContainer extends SingleChildRenderObjectWidget {
       {super.key,
       this.onTap,
       required this.child,
+      this.useFridendlySize = false,
       this.transparentWhenActive = true,
       this.hideExpandedAreaInDebugMode = false})
       : super(child: child);
@@ -30,26 +34,40 @@ class FriendlyTapContainer extends SingleChildRenderObjectWidget {
   RenderObject createRenderObject(BuildContext context) {
     return FriendlyTapContainerRenderBox(
         onTap: onTap,
+        useFridendlySize: useFridendlySize!,
         transparentWhenActive: transparentWhenActive!,
         hideExpandedAreaInDebugMode: hideExpandedAreaInDebugMode!,
         childWidget: child,
         detector: GlobalTapDetectorRenderBox.of(context));
   }
+
+  @override
+  void updateRenderObject(BuildContext context,
+      covariant FriendlyTapContainerRenderBox renderObject) {
+    renderObject
+      ..onTap = onTap
+      ..useFridendlySize = useFridendlySize!
+      ..transparentWhenActive = transparentWhenActive!
+      ..hideExpandedAreaInDebugMode = hideExpandedAreaInDebugMode!
+      ..childWidget = child;
+  }
 }
 
 class FriendlyTapContainerRenderBox extends RenderProxyBox {
-  final VoidCallback? onTap;
-  final Widget childWidget;
-  final bool transparentWhenActive;
-  final bool hideExpandedAreaInDebugMode;
-  final GlobalTapDetectorRenderBox detector;
+  VoidCallback? onTap;
+  Widget childWidget;
+  bool useFridendlySize;
+  bool transparentWhenActive;
+  bool hideExpandedAreaInDebugMode;
+  GlobalTapDetectorRenderBox detector;
 
   FriendlyTapContainerRenderBox(
       {this.onTap,
       required this.transparentWhenActive,
       required this.hideExpandedAreaInDebugMode,
       required this.childWidget,
-      required this.detector});
+      required this.detector,
+      required this.useFridendlySize});
 
   /// 有效的tap区域
   late final Rect validTapRect;
@@ -63,6 +81,31 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
   @override
   bool get isRepaintBoundary => _active && transparentWhenActive;
+
+  void handleTap() {
+    if (onTap != null) {
+      onTap!();
+    }
+  }
+
+  @override
+  void performLayout() {
+    if (child == null) {
+      return;
+    }
+
+    BoxConstraints _constraints = useFridendlySize
+        ? BoxConstraints(
+            maxHeight: constraints.maxHeight,
+            maxWidth: constraints.maxWidth,
+            minWidth: friendlyTapSize.width,
+            minHeight: friendlyTapSize.height)
+        : constraints;
+
+    child!.layout(_constraints, parentUsesSize: true);
+
+    size = child!.size;
+  }
 
   Rect _getValidTapRect() {
     if (childWidgetSize > friendlyTapSize) {
@@ -122,6 +165,7 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
     return null;
   }
 
+  @override
   void paint(PaintingContext context, Offset offset) {
     if (child == null) return;
     Size childSize = child!.size;
@@ -141,8 +185,8 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
           rect.left + offset.dx, rect.top + offset.dy, rect.width, rect.height);
 
       Paint paint = Paint()
-        ..color = _theme?.userAccentColor.withOpacity(0.2) ??
-            Colors.orange.withOpacity(0.2)
+        ..color = _theme?.userAccentColor.withValues(alpha: 0.2) ??
+            Colors.orange.withValues(alpha: 0.2)
         ..style = PaintingStyle.fill;
 
       canvas.drawRect(_expandeReact, paint);
@@ -164,7 +208,15 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
   @override
   void attach(PipelineOwner owner) {
-    childWidgetSize = measureWidget(childWidget);
+    if (onTap == null) return;
+    childWidgetSize = measureWidget(ConstrainedBox(
+      constraints: BoxConstraints(
+          maxHeight: double.infinity,
+          maxWidth: double.infinity,
+          minWidth: useFridendlySize ? friendlyTapSize.width : 0,
+          minHeight: useFridendlySize ? friendlyTapSize.height : 0),
+      child: childWidget,
+    ));
     validTapRect = _getValidTapRect();
     expandTapRects = _getExpandeRects();
     detector.register(this);
@@ -173,7 +225,9 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
   @override
   void detach() {
-    detector.unregister(this);
+    if (onTap != null) {
+      detector.unregister(this);
+    }
     super.detach();
   }
 }

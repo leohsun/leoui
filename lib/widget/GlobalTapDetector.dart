@@ -11,7 +11,10 @@ class GlobalTapDetector extends SingleChildRenderObjectWidget {
 }
 
 class GlobalTapDetectorRenderBox extends RenderProxyBoxWithHitTestBehavior {
-  Set<FriendlyTapContainerRenderBox> _targets = {};
+  @override
+  HitTestBehavior get behavior => HitTestBehavior.opaque;
+
+  List<FriendlyTapContainerRenderBox> _targets = [];
 
   static GlobalTapDetectorRenderBox of(BuildContext context) {
     GlobalTapDetectorRenderBox? globalTapDetectorRenderBox =
@@ -32,24 +35,29 @@ class GlobalTapDetectorRenderBox extends RenderProxyBoxWithHitTestBehavior {
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    Offset position = entry.localPosition;
     if (_targets.isEmpty) return;
+    Offset globalPosition = entry.target.localToGlobal(entry.localPosition);
 
-    _targets.forEach((target) {
+    for (int i = _targets.length - 1; i >= 0; i--) {
+      FriendlyTapContainerRenderBox target = _targets[i];
+
+      Offset targetGlobalPosition = target.localToGlobal(
+          Offset(target.validTapRect.left, target.validTapRect.top));
+
       bool aimed = Size(target.validTapRect.width, target.validTapRect.height)
-          .contains(target.globalToLocal(Offset(
-              position.dx - target.validTapRect.left,
-              position.dy - target.validTapRect.top)));
+          .contains(globalPosition - targetGlobalPosition);
 
-      if (!aimed) return;
+      if (!aimed) continue;
 
       if (event is PointerDownEvent) {
         target.setActive(active: true);
       }
       if (event is PointerUpEvent) {
         target.setActive(active: false);
-        target.onTap!();
+        target.handleTap();
       }
-    });
+
+      break;
+    }
   }
 }

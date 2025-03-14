@@ -171,7 +171,7 @@ class _NoticeBarState extends State<NoticeBar> {
           child: Container(
               width: constrains.maxWidth,
               decoration: BoxDecoration(
-                  color: color.withOpacity(0.05),
+                  color: color..withValues(alpha: 0.05),
                   borderRadius: widget.round == true
                       ? BorderRadius.circular(300)
                       : BorderRadius.zero),

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart' hide Slider, Dialog;
 import 'package:flutter/services.dart';
 import 'package:leoui/feedback/modalRoute.dart';
 import 'package:leoui/leoui.dart';
-import 'package:leoui/widget/GlobalTapDetector.dart';
 
 part './model.dart';
 part './actions.dart';
@@ -34,15 +33,17 @@ class LeoFeedback {
               child: Localizations(
                   delegates: delegates,
                   locale: locale,
-                  child: DefaultTextEditingShortcuts(child: GlobalTapDetector(
+                  child: DefaultTextEditingShortcuts(
                       child: LayoutBuilder(builder: (root, constraints) {
                     return DefaultTextStyle(
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          color: LeouiTheme.of(root)!.theme().labelPrimaryColor,
-                        ),
+                            color:
+                                LeouiTheme.of(root)!.theme().labelPrimaryColor,
+                            fontSize: 12),
                         child: Directionality(
                             textDirection: TextDirection.ltr, child: child));
-                  }))))));
+                  })))));
     };
   }
 

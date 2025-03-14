@@ -121,7 +121,7 @@ class SwipeActions extends MultiChildRenderObjectWidget {
     ];
 
     List<Widget>? leadingActionWidgets =
-        leadingActions?.mapWithIndex((action, index) {
+        leadingActions?.mapWithIndex((action, index, last) {
       return _buidActionWidget(action, index, SwipeActionType.leading);
     });
 
@@ -134,7 +134,7 @@ class SwipeActions extends MultiChildRenderObjectWidget {
 
     if (reversedTrailingAction != null) {
       List<Widget>? trailingActionWidgets =
-          reversedTrailingAction.mapWithIndex((action, index) {
+          reversedTrailingAction.mapWithIndex((action, index, last) {
         return _buidActionWidget(action, index, SwipeActionType.trailing);
       });
       children.addAll(trailingActionWidgets);
@@ -216,7 +216,9 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
 
   @override
   void setupParentData(covariant RenderObject child) {
-    child.parentData = SwipeActionParentData();
+    if (child.parentData is! SwipeActionParentData) {
+      child.parentData = SwipeActionParentData();
+    }
   }
 
   Future<void> animateSwiperTo(SwiperAnimationDestination destination) async {

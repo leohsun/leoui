@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' show sin, pi;
@@ -72,6 +74,7 @@ Widget buildButtonWidget(
     VoidCallback? onTapCancel,
     ValueChanged<bool>? onFocusChange,
     BorderRadius? borderRadius,
+    bool? disabled,
     Color? splashColor,
     double? elevation,
     Color? shandow,
@@ -95,13 +98,21 @@ Widget buildButtonWidget(
         splashColor: _splashColor,
         highlightColor: Colors.transparent,
         borderRadius: borderRadius,
-        child: child,
-        onTap: onTap,
-        onTapDown: onTapDown,
-        onTapUp: onTapUp,
-        onLongPress: onLongPress,
-        onTapCancel: onTapCancel,
-        onFocusChange: onFocusChange,
+        child: disabled == true
+            ? ShaderMask(
+                shaderCallback: (bounds) {
+                  return LinearGradient(colors: [Color(0xffdfdfdf)], stops: [1])
+                      .createShader(bounds);
+                },
+                blendMode: BlendMode.color,
+                child: child)
+            : child,
+        onTap: disabled == true ? null : onTap,
+        onTapDown: disabled == true ? null : onTapDown,
+        onTapUp: disabled == true ? null : onTapUp,
+        onLongPress: disabled == true ? null : onLongPress,
+        onTapCancel: disabled == true ? null : onTapCancel,
+        onFocusChange: disabled == true ? null : onFocusChange,
       ),
     ),
   );

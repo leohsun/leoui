@@ -8,12 +8,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
-  bool isExpanded = true;
-
-  ScrollController controller = ScrollController();
-
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +17,6 @@ class _MyHomePageState extends State<MyHomePage>
         title: Text('LEOUI'),
       ),
       body: SingleChildScrollView(
-        controller: controller,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(children: [
@@ -56,6 +50,14 @@ class _MyHomePageState extends State<MyHomePage>
                 trailing: Icon(Icons.arrow_forward_ios_rounded),
                 onTap: () {
                   Navigator.of(context).pushNamed('scalableText');
+                },
+              ),
+              Container(height: 1, color: Colors.grey.shade100),
+              ListTile(
+                title: Text('StickyContainer - 粘性定位'),
+                trailing: Icon(Icons.arrow_forward_ios_rounded),
+                onTap: () {
+                  Navigator.of(context).pushNamed('stickyContianer');
                 },
               ),
             ]),
@@ -223,20 +225,25 @@ class _MyHomePageState extends State<MyHomePage>
                       Navigator.of(context).pushNamed('colorPicker');
                     },
                   ),
+                  ListTile(
+                    title: Text('TextEditor - 文本编辑器'),
+                    trailing: Icon(Icons.arrow_forward_ios_rounded),
+                    onTap: () {
+                      Navigator.of(context).pushNamed('textEditor');
+                    },
+                  ),
                 ]),
           ]),
         ),
       ),
+      // body: ListView.builder(
+      //   itemCount: 5,
+      //   itemBuilder: (context, index) => Container(
+      //       height: 30,
+      //       child: ListTile(
+      //         title: Text('$index'),
+      //       )),
+      // ),
     );
   }
-}
-
-class CliperA extends CustomClipper<Rect> {
-  @override
-  getClip(Size size) {
-    return Rect.fromLTWH(0, 0, 80, size.height);
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper oldClipper) => false;
 }

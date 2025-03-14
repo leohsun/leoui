@@ -24,11 +24,8 @@ class _SwipeActionSPagetate extends State<SwipeActionsPage> {
                   onTap: () {
                     showToast('置顶');
                   }),
-              SwipeAction(
-                  child: Icon(
-                Icons.delete,
-                color: Colors.white,
-              )),
+              SwipeAction(text: "删除"),
+              SwipeAction(child: Icon(Icons.abc))
             ],
             child: Container(
               width: double.infinity,

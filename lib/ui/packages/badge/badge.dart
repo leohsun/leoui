@@ -12,6 +12,7 @@ class LeoBadge extends StatefulWidget {
   final Color? backgroundColor;
   final Color? indicatorColor;
   final Widget child;
+  final bool? dotted;
   final Future<int> Function()? service;
   const LeoBadge(
       {super.key,
@@ -23,6 +24,7 @@ class LeoBadge extends StatefulWidget {
       this.backgroundColor,
       this.indicatorColor,
       this.hideWhenZero = true,
+      this.dotted = false,
       this.service});
 
   @override
@@ -54,6 +56,16 @@ class LeoBadgeState extends State<LeoBadge> {
   }
 
   @override
+  void didUpdateWidget(covariant LeoBadge oldWidget) {
+    if (oldWidget.count == widget.count) return;
+
+    setState(() {
+      count = widget.count ?? 0;
+    });
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     LeouiThemeData theme = LeouiTheme.of(LeoFeedback.currentContext!)!.theme();
     String countText = count > 99 ? "99+" : '$count';
@@ -78,6 +90,9 @@ class LeoBadgeState extends State<LeoBadge> {
       textHeight = textPainter.height + textPandding;
     }
 
+    double fontSize = widget.textFontSize ?? theme.size!().tertiary;
+    Color fontColor = widget.textColor ?? Colors.white;
+
     return Stack(
       clipBehavior: Clip.none,
       alignment: AlignmentDirectional.topEnd,
@@ -92,7 +107,7 @@ class LeoBadgeState extends State<LeoBadge> {
                 BoxConstraints(minWidth: textHeight, minHeight: textHeight),
             padding: EdgeInsets.symmetric(horizontal: textPandding / 2),
             decoration: BoxDecoration(
-                color: (loading || textHidden)
+                color: (loading || textHidden || widget.dotted == true)
                     ? Colors.transparent
                     : backgroudColor,
                 borderRadius: BorderRadius.circular(
@@ -108,14 +123,20 @@ class LeoBadgeState extends State<LeoBadge> {
                   )
                 : textHidden
                     ? SizedBox.shrink()
-                    : Text(
-                        countText,
-                        style: TextStyle(
-                            color: widget.textColor ?? Colors.white,
-                            height: 1,
-                            fontSize:
-                                widget.textFontSize ?? theme.size!().tertiary),
-                      ),
+                    : widget.dotted == true
+                        ? Container(
+                            width: fontSize,
+                            height: fontSize,
+                            decoration: BoxDecoration(
+                                color: fontColor, shape: BoxShape.circle),
+                          )
+                        : Text(
+                            countText,
+                            style: TextStyle(
+                                color: fontColor,
+                                height: 1,
+                                fontSize: fontSize),
+                          ),
           ),
         )
       ],

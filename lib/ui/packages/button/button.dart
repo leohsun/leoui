@@ -22,6 +22,7 @@ class Button extends StatefulWidget {
   final VoidCallback? onTap;
   final bool inGroup;
   final double? maxWidth;
+  final double? height;
 
   const Button(this.data,
       {Key? key,
@@ -34,6 +35,7 @@ class Button extends StatefulWidget {
       this.inGroup = false,
       this.border,
       this.maxWidth,
+      this.height,
       this.borderRadius,
       this.color,
       this.textColor,
@@ -91,9 +93,8 @@ class _ButtonState extends State<Button> {
     Color backgroundColor =
         widget.type == ButtonType.primary ? _widgetColor : Colors.white;
 
-    Color fontColor = widget.type == ButtonType.primary
-        ? widget.textColor ?? Colors.white
-        : _widgetColor;
+    Color fontColor = widget.textColor ??
+        (widget.type == ButtonType.primary ? Colors.white : _widgetColor);
 
     Border? _border = widget.border != null
         ? widget.border
@@ -102,7 +103,7 @@ class _ButtonState extends State<Button> {
                 width: 1,
                 color: widget.disabled
                     ? lighten(fontColor, ColorChangeLightneessFactor)
-                    : fontColor)
+                    : widget.color ?? fontColor)
             : null;
     List<Widget> children = [
       Flexible(
@@ -159,7 +160,8 @@ class _ButtonState extends State<Button> {
               border: _border,
             ),
             constraints: BoxConstraints(
-                minHeight: size['height'], maxWidth: _maxWidth - padding),
+                minHeight: widget.height ?? size['height'],
+                maxWidth: _maxWidth - padding),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: padding),
               child: Row(

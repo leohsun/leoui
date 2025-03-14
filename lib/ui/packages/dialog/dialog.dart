@@ -58,7 +58,7 @@ class _DialogState extends State<Dialog> {
     if (widget.title != null) {
       _children.add(Padding(
         padding: EdgeInsets.only(bottom: 14),
-        child: Text(
+        child: SelectableText(
           widget.title!,
           style: TextStyle(
               height: 1.2,
@@ -83,7 +83,7 @@ class _DialogState extends State<Dialog> {
     }
 
     if (widget.content != null) {
-      _children.add(Text(
+      _children.add(SelectableText(
         widget.content!,
         style: TextStyle(
             height: 1.2,
@@ -252,7 +252,10 @@ class _DialogState extends State<Dialog> {
 
     double _width = widget.width ?? theme.size!().dialogWidth;
     List<Widget> _children = [];
-    if (widget.slot != null) _children.add(widget.slot!);
+    if (widget.slot != null)
+      _children.add(ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: SizeTool.deviceHeight * 0.6),
+          child: widget.slot!));
     if (widget.title != null ||
         widget.icon != null ||
         widget.content != null ||

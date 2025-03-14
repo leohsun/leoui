@@ -750,7 +750,8 @@ class _PopoverState extends State<Popover> {
                     sigmaX: 15,
                     sigmaY: 15,
                     child: Container(
-                      color: theme.backgroundPrimaryColor.withOpacity(.4),
+                      color:
+                          theme.backgroundPrimaryColor.withValues(alpha: 0.4),
                     ),
                   )
                 : Container(color: Colors.transparent),

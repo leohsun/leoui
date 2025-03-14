@@ -23,6 +23,7 @@ class Indexes extends StatefulWidget {
   final String itemLabel;
   final LeouiBrightness? brightness;
   final ValueChanged? onItemTap;
+  final Widget? emptyWidget;
   final Widget Function(IndexesItemBuilderCallback)? itemBuilder;
 
   const Indexes(
@@ -30,8 +31,9 @@ class Indexes extends StatefulWidget {
       required this.dataList,
       required this.indexKey,
       required this.itemLabel,
+      this.emptyWidget,
       this.onItemTap,
-      this.brightness,
+      this.brightness = LeouiBrightness.light,
       this.itemBuilder})
       : super(key: key);
 
@@ -67,6 +69,7 @@ class _IndexesState extends State<Indexes> {
 
   List<Map> _assembleListData() {
     Map<String, List> tmp = {};
+    if (widget.dataList.isEmpty) return [];
     widget.dataList.forEach((element) {
       String key = element[widget.indexKey];
       if (tmp[key] != null) {
@@ -131,32 +134,50 @@ class _IndexesState extends State<Indexes> {
     }
   }
 
+  // @override
+  // void didUpdateWidget(covariant Indexes oldWidget) {
+  //   if (widget.dataList != oldWidget.dataList) {
+  //     print('need update');
+  //   }
+  //   super.didUpdateWidget(oldWidget);
+  // }
+
   @override
   void initState() {
     scrollListData = _assembleListData();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      calcSliverPostions();
-      maxScrollExtend = scrollView.position.maxScrollExtent;
-    });
+    if (scrollListData.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        calcSliverPostions();
+        maxScrollExtend = scrollView.position.maxScrollExtent;
+      });
+    }
     super.initState();
   }
 
-  void _handleVerticalDragUpdate(DragUpdateDetails details) {
+  void _handleVerticalDragUpdate(
+      DragUpdateDetails details, LeouiBrightness brightness) {
     int index = (details.localPosition.dy ~/ indexKeyExtend)
         .clamp(0, indexKeyList.length - 1);
 
     if (activeKey != indexKeyList[index]) {
       setState(() {
         activeKey = indexKeyList[index];
-        showToast(activeKey);
+        showToast(activeKey,
+            brightness: brightness == LeouiBrightness.dark
+                ? LeouiBrightness.light
+                : LeouiBrightness.dark);
       });
       _handleScroll(index);
     }
   }
 
-  void _handleVerticalDragEnd(DragEndDetails details) {
+  void _handleVerticalDragEnd(
+      DragEndDetails details, LeouiBrightness brightness) {
     calcActivekey(scrollView.offset);
-    showToast(activeKey);
+    showToast(activeKey,
+        brightness: brightness == LeouiBrightness.dark
+            ? LeouiBrightness.light
+            : LeouiBrightness.dark);
   }
 
   void _handleTapDown(TapDownDetails details) {
@@ -193,11 +214,17 @@ class _IndexesState extends State<Indexes> {
   Widget build(BuildContext context) {
     LeouiThemeData theme =
         LeouiTheme.of(context)!.theme(brightness: widget.brightness);
-    indexKeyExtend = theme.size!().tertiary * 1.5;
+    indexKeyExtend = theme.size!().tertiary * 2;
+    bool isDark = widget.brightness == LeouiBrightness.dark;
     return LayoutBuilder(builder: (context, constrains) {
       double contentHeight = constrains.maxHeight == double.infinity
           ? SizeTool.deviceHeight / 2
           : constrains.maxHeight;
+      if (scrollListData.isEmpty)
+        return widget.emptyWidget ??
+            Center(
+              child: Text("No Data"),
+            );
       return Stack(
         children: [
           SizedBox(
@@ -210,13 +237,27 @@ class _IndexesState extends State<Indexes> {
                       children: [
                         ...mapWithIndex<Widget, Map>(scrollListData,
                             (item, filedIndex) {
-                          return Field(
+                          return StickyColumn(
                             key: sliverKeys[filedIndex],
-                            brightness: widget.brightness,
-                            title: Text('${item["key"]}'),
-                            margin: EdgeInsets.only(bottom: 20),
                             children: [
-                              ...mapWithIndex<ListItem, Map>(item['data'],
+                              StickyContainer(
+                                top: 0,
+                                child: Container(
+                                    width: double.infinity,
+                                    color: isDark
+                                        ? theme.backgroundPrimaryColor
+                                        : theme.backgroundSecondaryColor,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 4, vertical: 2),
+                                    child: Text(
+                                      '${item["key"]}',
+                                      style: TextStyle(
+                                          color: isDark
+                                              ? theme.labelSecondaryColor
+                                              : theme.labelPrimaryColor),
+                                    )),
+                              ),
+                              ...mapWithIndex<Widget, Map>(item['data'],
                                   (item, index) {
                                 IndexesItemBuilderCallback callback =
                                     IndexesItemBuilderCallback(
@@ -224,14 +265,21 @@ class _IndexesState extends State<Indexes> {
                                 if (widget.itemBuilder != null) {
                                   return widget.itemBuilder!(callback);
                                 }
-                                return FieldItem(
-                                    onTap: widget.onItemTap != null
-                                        ? (ctx) {
-                                            widget.onItemTap!(callback);
-                                          }
-                                        : null,
-                                    brightness: widget.brightness,
-                                    title: Text(item[widget.itemLabel]));
+                                return Container(
+                                  color: isDark
+                                      ? theme.backgroundSecondaryColor
+                                      : theme.backgroundPrimaryColor,
+                                  child: FieldItem(
+                                      onTap: widget.onItemTap != null
+                                          ? (ctx) {
+                                              widget.onItemTap!(callback);
+                                            }
+                                          : null,
+                                      brightness: widget.brightness,
+                                      title: Text(item[widget.itemLabel],
+                                          style: TextStyle(
+                                              color: theme.labelPrimaryColor))),
+                                );
                               })
                             ],
                           );
@@ -246,8 +294,12 @@ class _IndexesState extends State<Indexes> {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
-                  onVerticalDragUpdate: _handleVerticalDragUpdate,
-                  onVerticalDragEnd: _handleVerticalDragEnd,
+                  onVerticalDragUpdate: (detail) {
+                    _handleVerticalDragUpdate(detail, widget.brightness!);
+                  },
+                  onVerticalDragEnd: (detail) {
+                    _handleVerticalDragEnd(detail, widget.brightness!);
+                  },
                   onTapUp: _handleTapUp,
                   onTapDown: _handleTapDown,
                   child: Column(

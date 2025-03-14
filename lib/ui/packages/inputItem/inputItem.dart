@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
 import 'package:leoui/widget/FriendlyTapContainer.dart';
+import 'package:leoui/widget/GlobalTapDetector.dart';
 
 class MapValue {
   final String label;
@@ -412,15 +413,12 @@ class InputItemState extends State<InputItem> implements ListItemState {
       if (showCloseButton && widget.hideTextField != true) {
         rowChildren.add(FriendlyTapContainer(
             onTap: clear,
-            child: SizedBox(
-              width: friendlyTapSize.width,
-              child: Icon(
-                Icons.cancel,
-                size: widget.fontSize != null
-                    ? widget.fontSize! * 1.2
-                    : theme.size!().title * 1.2,
-                color: theme.userAccentColor,
-              ),
+            child: Icon(
+              Icons.cancel,
+              size: widget.fontSize != null
+                  ? widget.fontSize! * 1.2
+                  : theme.size!().title * 1.2,
+              color: theme.userAccentColor,
             )));
       } else if (widget.clearIconPlaceHolder != null) {
         rowChildren.add(widget.clearIconPlaceHolder!);
@@ -451,10 +449,12 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
     final itemPadding = widget.padding ?? theme.size!().listItemPadding;
 
-    final child = Container(
-      padding: itemPadding,
-      child: Row(
-        children: rowChildren,
+    final child = GlobalTapDetector(
+      child: Padding(
+        padding: itemPadding,
+        child: Row(
+          children: rowChildren,
+        ),
       ),
     );
 

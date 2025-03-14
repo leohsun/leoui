@@ -450,13 +450,13 @@ class _FieldItemState extends State<FieldItem> {
       _colChildren.add(widget.child!);
 
       return Container(
-        padding: EdgeInsets.only(
-          left: widget.padding?.left ?? theme.size!().listItemPadding.left,
-          right: widget.padding?.right ?? theme.size!().listItemPadding.right,
-          top: widget.padding?.top ?? theme.size!().listItemPadding.top,
-          bottom:
-              widget.padding?.bottom ?? theme.size!().listItemPadding.bottom,
-        ),
+        // padding: EdgeInsets.only(
+        //   left: widget.padding?.left ?? theme.size!().listItemPadding.left,
+        //   right: widget.padding?.right ?? theme.size!().listItemPadding.right,
+        //   top: widget.padding?.top ?? theme.size!().listItemPadding.top,
+        //   bottom:
+        //       widget.padding?.bottom ?? theme.size!().listItemPadding.bottom,
+        // ),
         constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
         child: Column(
           mainAxisSize: MainAxisSize.min,

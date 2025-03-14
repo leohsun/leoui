@@ -373,7 +373,7 @@ class _ModalWidgetState extends State<_ModalWidget>
             child: GestureDetector(
           onTap: _handleMaskTap,
           child: Container(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black..withValues(alpha: 0.15),
           ),
         )),
       );
@@ -539,8 +539,9 @@ class _ModalWidgetState extends State<_ModalWidget>
         left: _left,
         top: _top,
         right: _right,
-        bottom:
-            _bottom != null ? mqData.viewInsets.bottom + (_bottom ?? 0) : null,
+        bottom: (_bottom != null && widget.fixed != true)
+            ? mqData.viewInsets.bottom + (_bottom ?? 0)
+            : null,
         child: child));
 
     return DefaultTextStyle(

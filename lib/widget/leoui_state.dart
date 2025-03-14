@@ -3,6 +3,7 @@ library leoui;
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:leoui/leoui.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -12,56 +13,38 @@ export '../utils/index.dart';
 export '../ui/index.dart';
 export '../config/index.dart';
 
-class LeouiState extends StatefulWidget {
-  final MaterialApp child;
-  final LeouiConfig config;
+class LeouiStateWidget extends StatefulWidget {
+  final MaterialApp Function(ValueChanged<VoidCallback>) childBuilder;
+  final LeouiConfig? config;
   final VoidCallback? initState;
   final VoidCallback? dispose;
+  final ValueChanged<AppLifecycleState>? didChangeAppLifecycleState;
   final Future Function()? setup;
   final Widget? setupPlaceholder;
-  final Iterable<LocalizationsDelegate<dynamic>> localizationsDelegates;
-  final Locale locale;
 
-  factory LeouiState(
-      {Key? key,
-      required MaterialApp child,
-      LeouiConfig? config,
-      VoidCallback? initState,
-      VoidCallback? dispose,
-      Future Function()? setup,
-      Widget? setupPlaceholder}) {
-    Locale localeRaw;
-    if (child.locale != null) {
-      localeRaw = child.locale!;
-    } else {
-      localeRaw = Platform.localeName.toLocale();
-    }
-
-    List<LocalizationsDelegate<dynamic>> localizationsDelegatesRaw =
-        getChildlocalizationsDelegates(child);
-
-    localizationsDelegatesRaw.add(LeouiLocalizationDelegate());
-
-    return LeouiState.raw(
-        child: child,
-        config: config ?? LeouiConfig(),
-        localizationsDelegates: localizationsDelegatesRaw,
-        initState: initState,
-        setup: setup,
-        setupPlaceholder: setupPlaceholder,
-        dispose: dispose,
-        locale: localeRaw);
-  }
-
-  const LeouiState.raw(
-      {required this.child,
-      required this.config,
-      required this.localizationsDelegates,
+  const LeouiStateWidget(
+      {super.key,
+      required this.childBuilder,
+      this.config,
       this.initState,
       this.dispose,
+      this.didChangeAppLifecycleState,
       this.setup,
-      this.setupPlaceholder,
-      required this.locale});
+      this.setupPlaceholder});
+
+  @override
+  State<LeouiStateWidget> createState() => LeouiState();
+}
+
+typedef notificationCallback = void Function(Notification notification);
+
+enum LeouiTickerStatus { running, pause }
+
+class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
+  Completer setupComplater = Completer();
+
+  List<notificationCallback> _notificationCallbackList = [];
+  List<ValueChanged<double>> _tickerCallbackList = [];
 
   static List<LocalizationsDelegate<dynamic>> getChildlocalizationsDelegates(
       child) {
@@ -93,13 +76,6 @@ class LeouiState extends StatefulWidget {
     }
   }
 
-  @override
-  State<LeouiState> createState() => _LeouiStateState();
-}
-
-class _LeouiStateState extends State<LeouiState> with WidgetsBindingObserver {
-  Completer setupComplater = Completer();
-
   void afterSetup() async {
     if (widget.initState != null) {
       await setupComplater.future;
@@ -107,68 +83,180 @@ class _LeouiStateState extends State<LeouiState> with WidgetsBindingObserver {
     }
   }
 
+  /// ticker
+  int? _tickerId;
+
+  int _startTime = 0;
+
+  int _initTiker({bool? rescheduling}) {
+    return SchedulerBinding.instance.scheduleFrameCallback(_tikercallback,
+        rescheduling: rescheduling ?? false);
+  }
+
+  LeouiTickerStatus _status = LeouiTickerStatus.pause;
+
+  _tikercallback(Duration time) {
+    if (_startTime != 0) {
+      int disTime = time.inMicroseconds - _startTime;
+      final dt = disTime / Duration.microsecondsPerSecond;
+      _tickerCallbackList.forEach((fn) => fn.call(dt));
+    }
+    _startTime = time.inMicroseconds;
+    if (_tickerId != null && _status == LeouiTickerStatus.running) {
+      _tickerId = _initTiker(rescheduling: true);
+    }
+  }
+
+  void _pauseTicker() {
+    if (_tickerId != null && _status == LeouiTickerStatus.running) {
+      SchedulerBinding.instance.cancelFrameCallbackWithId(_tickerId!);
+      _status = LeouiTickerStatus.pause;
+      _tickerId = null;
+      _startTime = 0;
+    }
+  }
+
+  void _resumeTicker() {
+    if (_status == LeouiTickerStatus.running) return;
+    _status = LeouiTickerStatus.running;
+    _tickerId = _initTiker();
+  }
+
   @override
   void initState() {
     afterSetup();
+    WidgetsBinding.instance.addObserver(this);
+    _tickerId = _initTiker();
+
     super.initState();
+  }
+
+  void addTickerCallback(ValueChanged<double> callback) {
+    if (_tickerCallbackList.contains(callback)) return;
+    _tickerCallbackList.add(callback);
+    _resumeTicker();
+    debugPrint("addTickerCallback");
+  }
+
+  void removeTickerCallback(ValueChanged<double> callback) {
+    if (!_tickerCallbackList.contains(callback)) return;
+    _tickerCallbackList.remove(callback);
+    if (_tickerCallbackList.isEmpty) {
+      _pauseTicker();
+    }
+    debugPrint("removeTickerCallback");
+  }
+
+  void addNotificationCallback(notificationCallback callback) {
+    if (_notificationCallbackList.contains(callback)) return;
+    _notificationCallbackList.add(callback);
+    debugPrint("addNotificationCallback");
+  }
+
+  void removoeNotificationCallback(notificationCallback callback) {
+    if (!_notificationCallbackList.contains(callback)) return;
+    _notificationCallbackList.remove(callback);
+    debugPrint("removoeNotificationCallback");
+  }
+
+  bool _onNotification(Notification notification) {
+    if (_notificationCallbackList.isEmpty) return false;
+    _notificationCallbackList.forEach((fn) => fn(notification));
+
+    return false;
+  }
+
+  static LeouiState? of(BuildContext context) {
+    if (!context.mounted) return null;
+    final _LeouiScope? scope =
+        context.dependOnInheritedWidgetOfExactType<_LeouiScope>();
+    return scope?.leouiState;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (widget.didChangeAppLifecycleState != null) {
+      widget.didChangeAppLifecycleState!(state);
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
   Widget build(BuildContext context) {
-    LeouiThemeData lightTheme =
-        widget.config.lightTheme ?? LeouiThemeData.light();
-    LeouiThemeData darkTheme = widget.config.darkTheme ??
+    LeouiConfig config = widget.config ?? LeouiConfig();
+    LeouiThemeData lightTheme = config.lightTheme ?? LeouiThemeData.light();
+    LeouiThemeData darkTheme = config.darkTheme ??
         LeouiThemeData.dark().copyWith(size: lightTheme.size);
 
     // to fix: https://github.com/flutter/flutter/issues/25827#issuecomment-571804641
 
-    return LayoutBuilder(builder: (context, constraints) {
-      BuildContext _content = context;
-      if (constraints.maxWidth == 0) {
-        return widget.setupPlaceholder ??
-            Container(
-              color: lightTheme.userAccentColor,
-            );
-      }
+    // return LayoutBuilder(builder: (context, constraints) {
+    //   BuildContext _content = context;
+    //   if (constraints.maxWidth == 0) {
+    //     return widget.setupPlaceholder ??
+    //         Container(
+    //           color: lightTheme.userAccentColor,
+    //         );
+    //   }
+    BuildContext _content = context;
 
-      LeoFeedback.buildRootWidgetBuilder(
-          mediaQueryData: MediaQueryData.fromView(View.of(_content)),
-          lightTheme: lightTheme,
-          darkTheme: darkTheme,
-          delegates: widget.localizationsDelegates.toList(growable: false),
-          locale: widget.locale);
+    return FutureBuilder(
+        future: widget.setup != null ? widget.setup!() : null,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done ||
+              snapshot.connectionState == ConnectionState.none) {
+            MaterialApp child = widget.childBuilder(setState);
 
-      return LeoFeedback.rootWidget(child: LayoutBuilder(
-        builder: (context, constraints) {
-          final _overlay = Overlay(
-            initialEntries: [
-              OverlayEntry(builder: (BuildContext overlay) {
-                // we need a context to show overlay, then we can call feedback functions without context at anywhere
-                setup(widget.config, overlay);
-                if (!setupComplater.isCompleted) {
-                  setupComplater.complete();
-                }
-                return widget.child;
-              }),
-            ],
-          );
+            Locale locale;
+            if (child.locale != null) {
+              locale = child.locale!;
+            } else {
+              locale = Platform.localeName.toLocale();
+            }
 
-          if (widget.setup == null) return _overlay;
+            final localizationsDelegates =
+                getChildlocalizationsDelegates(child);
 
-          return FutureBuilder(
-              future: widget.setup!(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return _overlay;
-                }
-                return widget.setupPlaceholder ??
-                    Container(
-                      color: lightTheme.userAccentColor,
-                    );
-              });
-        },
-      ));
-    });
+            localizationsDelegates.add(LeouiLocalizationDelegate());
+
+            LeoFeedback.buildRootWidgetBuilder(
+                mediaQueryData: MediaQueryData.fromView(View.of(_content)),
+                lightTheme: lightTheme,
+                darkTheme: darkTheme,
+                delegates: localizationsDelegates,
+                locale: locale);
+            return LeoFeedback.rootWidget(child: LayoutBuilder(
+              builder: (context, constraints) {
+                final _overlay = Overlay(
+                  initialEntries: [
+                    OverlayEntry(builder: (BuildContext overlay) {
+                      // we need a context to show overlay, then we can call feedback functions without context at anywhere
+                      setup(config, overlay);
+                      if (!setupComplater.isCompleted) {
+                        setupComplater.complete();
+                      }
+                      return child;
+                    }),
+                  ],
+                );
+
+                return NotificationListener(
+                  onNotification: _onNotification,
+                  child: _LeouiScope(
+                    leouiState: this,
+                    child: _overlay,
+                  ),
+                );
+              },
+            ));
+          } else {
+            return widget.setupPlaceholder ??
+                Container(
+                  color: lightTheme.userAccentColor,
+                );
+          }
+        });
+    // });
   }
 
   @override
@@ -179,6 +267,16 @@ class _LeouiStateState extends State<LeouiState> with WidgetsBindingObserver {
     if (widget.dispose != null) {
       widget.dispose!();
     }
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+}
+
+class _LeouiScope extends InheritedWidget {
+  final LeouiState leouiState;
+
+  _LeouiScope({required this.leouiState, required super.child});
+
+  @override
+  bool updateShouldNotify(_LeouiScope oldWidget) => false;
 }

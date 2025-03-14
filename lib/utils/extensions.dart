@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui';
 
 extension LocaleTools on Locale {
@@ -99,6 +101,9 @@ extension StringTools on String {
   }
 }
 
+typedef MapWithIndexCallbak<T, E> = T Function(
+    E element, int index, bool isLast);
+
 extension ListTools<E> on List<E> {
   firstWhereOrNull<T>(fn(E element)) {
     for (int i = 0; i < this.length; i++) {
@@ -110,17 +115,47 @@ extension ListTools<E> on List<E> {
     return null;
   }
 
-  List<T> mapWithIndex<T>(T fn(E element, int index)) {
+  List<T> mapWithIndex<T>(MapWithIndexCallbak<T, E> fn) {
     List<T> result = [];
     for (int i = 0; i < this.length; i++) {
-      result.add(fn(this[i], i));
+      bool isLast = i == this.length - 1;
+      result.add(fn(this[i], i, isLast));
     }
     return result;
   }
 
-  reduceWithDefault(fn(value, E element), [defaultValue]) {
+  List<T> slice<T>(int start, [int? end]) {
+    List<T> result = [];
+
+    int startIndex = start;
+    late int endIndex;
+    if (end == null) {
+      endIndex = this.length;
+    } else {
+      if (end >= 0) {
+        endIndex = end > this.length ? this.length : end;
+      } else {
+        endIndex = this.length + end;
+      }
+    }
+
+    int targetsLength = endIndex - startIndex;
+
+    for (int i = 0; i < targetsLength; i++) {
+      result.add(this[i] as T);
+    }
+    return result;
+  }
+
+  T reduceWithDefault<T>(T fn(value, E element), [T? defaultValue]) {
     Iterator<E> iterator = this.iterator;
-    dynamic value = defaultValue ?? iterator.current;
+    late T value;
+    if (defaultValue != null) {
+      value = defaultValue;
+    } else if (iterator.moveNext()) {
+      value = iterator.current as T;
+    }
+
     while (iterator.moveNext()) {
       value = fn(value, iterator.current);
     }
@@ -135,9 +170,30 @@ extension ListTools<E> on List<E> {
     return null;
   }
 
+  int findIndex(bool fn(E element, int index)) {
+    for (int i = 0; i < this.length; i++) {
+      bool amid = fn(this[i], i);
+      if (amid) return i;
+    }
+
+    return -1;
+  }
+
   void forEachWithIndex(void fn(E element, int index)) {
     for (int i = 0; i < this.length; i++) {
       fn(this[i], i);
     }
+  }
+}
+
+extension MapTools on Map {
+  List<T> mapWithIndex<T, K, V>(Function(K key, V value, bool isLast) fn) {
+    List<T> result = [];
+    int current = 0;
+    this.forEach((key, value) {
+      bool isLast = ++current == this.length - 1;
+      result.add(fn(key, value, isLast));
+    });
+    return result;
   }
 }
