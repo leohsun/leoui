@@ -184,6 +184,18 @@ extension ListTools<E> on List<E> {
       fn(this[i], i);
     }
   }
+
+  List<E> filter(bool fn(E element)) {
+    List<E> result = [];
+    for (int i = 0; i < this.length; i++) {
+      final shoudAdd = fn(this[i]);
+      if (shoudAdd) {
+        result.add(this[i]);
+      }
+    }
+
+    return result;
+  }
 }
 
 extension MapTools on Map {
