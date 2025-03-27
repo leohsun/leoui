@@ -10,7 +10,7 @@ final app = Leoui(
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: 'flipView',
+          initialRoute: 'home',
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

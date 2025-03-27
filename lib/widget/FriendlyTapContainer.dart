@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:leoui/config/theme.dart';
 import 'package:leoui/feedback/index.dart';
-import 'package:leoui/utils/measureWidget.dart';
 import 'package:leoui/widget/GlobalTapDetector.dart';
 
 const Size friendlyTapSize = Size(44, 44);
 
 class FriendlyTapContainer extends SingleChildRenderObjectWidget {
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
   final Widget child;
 
   /// size width and height to [friendlyTapSize]
@@ -23,7 +22,7 @@ class FriendlyTapContainer extends SingleChildRenderObjectWidget {
 
   FriendlyTapContainer(
       {super.key,
-      this.onTap,
+      required this.onTap,
       required this.child,
       this.useFridendlySize = false,
       this.transparentWhenActive = true,
@@ -75,8 +74,6 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
   /// 额外的tap区域，用于debug时，画出溢出child的有效的tap区域
   late final List<Rect>? expandTapRects;
 
-  late final Size childWidgetSize;
-
   bool _active = false;
 
   @override
@@ -93,7 +90,6 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
     if (child == null) {
       return;
     }
-
     BoxConstraints _constraints = useFridendlySize
         ? BoxConstraints(
             maxHeight: constraints.maxHeight,
@@ -105,56 +101,57 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
     child!.layout(_constraints, parentUsesSize: true);
 
     size = child!.size;
+
+    validTapRect = _getValidTapRect();
+    expandTapRects = _getExpandeRects();
   }
 
   Rect _getValidTapRect() {
-    if (childWidgetSize > friendlyTapSize) {
-      return Rect.fromLTWH(0, 0, childWidgetSize.width, childWidgetSize.height);
+    if (size > friendlyTapSize) {
+      return Rect.fromLTWH(0, 0, size.width, size.height);
     }
 
-    double left = childWidgetSize.width < friendlyTapSize.width
-        ? (childWidgetSize.width - friendlyTapSize.width) / 2
+    double left = size.width < friendlyTapSize.width
+        ? (size.width - friendlyTapSize.width) / 2
         : 0;
 
-    double top = childWidgetSize.height < friendlyTapSize.height
-        ? (childWidgetSize.height - friendlyTapSize.height) / 2
+    double top = size.height < friendlyTapSize.height
+        ? (size.height - friendlyTapSize.height) / 2
         : 0;
 
-    double width = max(childWidgetSize.width, friendlyTapSize.width);
+    double width = max(size.width, friendlyTapSize.width);
 
-    double height = max(childWidgetSize.height, friendlyTapSize.height);
+    double height = max(size.height, friendlyTapSize.height);
 
     return Rect.fromLTWH(left, top, width, height);
   }
 
   List<Rect>? _getExpandeRects() {
-    if (hideExpandedAreaInDebugMode || childWidgetSize > friendlyTapSize) {
+    if (hideExpandedAreaInDebugMode || size > friendlyTapSize) {
       return null;
     }
 
-    if (friendlyTapSize > childWidgetSize) {
+    if (friendlyTapSize > size) {
       return [validTapRect];
     }
 
-    if (friendlyTapSize.width > childWidgetSize.width) {
-      double leftForLeftRect =
-          (childWidgetSize.width - friendlyTapSize.width) / 2;
-      double leftForRightRect = childWidgetSize.width;
+    if (friendlyTapSize.width > size.width) {
+      double leftForLeftRect = (size.width - friendlyTapSize.width) / 2;
+      double leftForRightRect = size.width;
       double top = 0;
       double width = -leftForLeftRect;
-      double height = childWidgetSize.height;
+      double height = size.height;
 
       return [
         Rect.fromLTWH(leftForLeftRect, top, width, height),
         Rect.fromLTWH(leftForRightRect, top, width, height)
       ];
-    } else if (friendlyTapSize.height > childWidgetSize.height) {
+    } else if (friendlyTapSize.height > size.height) {
       double left = 0;
-      double topOfTopRect =
-          (childWidgetSize.height - friendlyTapSize.height) / 2;
-      double topOfbottomRect = childWidgetSize.height;
-      double width = childWidgetSize.width;
-      double height = (friendlyTapSize.height - childWidgetSize.height) / 2;
+      double topOfTopRect = (size.height - friendlyTapSize.height) / 2;
+      double topOfbottomRect = size.height;
+      double width = size.width;
+      double height = (friendlyTapSize.height - size.height) / 2;
 
       return [
         Rect.fromLTWH(left, topOfTopRect, width, height),
@@ -208,17 +205,6 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
   @override
   void attach(PipelineOwner owner) {
-    if (onTap == null) return;
-    childWidgetSize = measureWidget(ConstrainedBox(
-      constraints: BoxConstraints(
-          maxHeight: double.infinity,
-          maxWidth: double.infinity,
-          minWidth: useFridendlySize ? friendlyTapSize.width : 0,
-          minHeight: useFridendlySize ? friendlyTapSize.height : 0),
-      child: childWidget,
-    ));
-    validTapRect = _getValidTapRect();
-    expandTapRects = _getExpandeRects();
     detector.register(this);
     super.attach(owner);
   }

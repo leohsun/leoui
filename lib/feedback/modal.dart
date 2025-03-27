@@ -373,7 +373,7 @@ class _ModalWidgetState extends State<_ModalWidget>
             child: GestureDetector(
           onTap: _handleMaskTap,
           child: Container(
-            color: Colors.black..withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: 0.15),
           ),
         )),
       );
