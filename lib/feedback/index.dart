@@ -37,10 +37,7 @@ class LeoFeedback {
                       child: LayoutBuilder(builder: (root, constraints) {
                     return DefaultTextStyle(
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color:
-                                LeouiTheme.of(root)!.theme().labelPrimaryColor,
-                            fontSize: 12),
+                        style: LeouiTheme.of(root)!.theme().defaultTextStyle,
                         child: Directionality(
                             textDirection: TextDirection.ltr, child: child));
                   })))));

@@ -13,8 +13,7 @@ export './config/index.dart';
 class Leoui extends MultiChildRenderObjectWidget {
   Leoui(
       {super.key,
-      required MaterialApp Function(ValueChanged<VoidCallback> setState)
-          childBuilder,
+      required MaterialApp Function(LeouiState leouiState) childBuilder,
       LeouiConfig? config,
       VoidCallback? initState,
       VoidCallback? dispose,
@@ -59,7 +58,6 @@ class RenderLeoui extends RenderProxyBox
   @override
   void performLayout() {
     if (constraints.maxWidth == 0) return;
-
     RenderObject? child = firstChild;
 
     while (child != null) {

@@ -19,6 +19,20 @@ class ScalableText extends StatelessWidget {
       this.textAlign = TextAlign.left})
       : super(key: key);
 
+  static double getTextWidth(String text, {TextStyle? style}) {
+    TextPainter _painter = TextPainter(
+        text: TextSpan(
+          text: text,
+          style: style,
+        ),
+        textScaler: TextScaler.noScaling,
+        textDirection: TextDirection.ltr);
+
+    _painter.layout();
+
+    return _painter.width;
+  }
+
   static double? getTextScaleFactor(String text,
       {required BoxConstraints constraints,
       double? minFontSize,

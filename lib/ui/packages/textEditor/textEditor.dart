@@ -84,6 +84,7 @@ class SpecialWidgetSpan extends WidgetSpan {
   @override
   InlineSpan? getSpanForPositionVisitor(
       TextPosition position, Accumulator offset) {
+    print("getSpanForPositionVisitor: ${position.offset} :${offset.value}");
     if (position.offset == offset.value) {
       return this;
     }
@@ -93,6 +94,7 @@ class SpecialWidgetSpan extends WidgetSpan {
 
   @override
   int? codeUnitAtVisitor(int index, Accumulator offset) {
+    print("codeUnitAtVisitor: $index :${offset.value}");
     final int localOffset = index - offset.value;
     assert(localOffset >= 0);
     offset.increment(1);
@@ -196,7 +198,7 @@ class RichTextEditingController extends TextEditingController {
       {required List<SpecialTextSpan> specialTextSpanList})
       : specialTextSpanMap = RichTextEditingController.buildSpecialTextSpanMap(
             specialTextSpanList),
-        super(text: "123[aa]456[bb]789[cc]");
+        super(text: "123[aa]456[bb]789[cc]{dfg}");
   Map<String, SpecialTextSpan> specialTextSpanMap = {};
 
   static Map<String, SpecialTextSpan> buildSpecialTextSpanMap(

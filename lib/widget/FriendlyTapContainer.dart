@@ -58,7 +58,7 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
   bool useFridendlySize;
   bool transparentWhenActive;
   bool hideExpandedAreaInDebugMode;
-  GlobalTapDetectorRenderBox detector;
+  GlobalTapDetectorRenderBox? detector;
 
   FriendlyTapContainerRenderBox(
       {this.onTap,
@@ -73,6 +73,8 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
   /// 额外的tap区域，用于debug时，画出溢出child的有效的tap区域
   late final List<Rect>? expandTapRects;
+
+  bool _initialized = false;
 
   bool _active = false;
 
@@ -102,8 +104,14 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
     size = child!.size;
 
+    _initVariables();
+  }
+
+  _initVariables() {
+    if (_initialized) return;
     validTapRect = _getValidTapRect();
     expandTapRects = _getExpandeRects();
+    _initialized = true;
   }
 
   Rect _getValidTapRect() {
@@ -205,14 +213,14 @@ class FriendlyTapContainerRenderBox extends RenderProxyBox {
 
   @override
   void attach(PipelineOwner owner) {
-    detector.register(this);
+    detector?.register(this);
     super.attach(owner);
   }
 
   @override
   void detach() {
     if (onTap != null) {
-      detector.unregister(this);
+      detector?.unregister(this);
     }
     super.detach();
   }

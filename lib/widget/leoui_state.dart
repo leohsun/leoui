@@ -14,7 +14,7 @@ export '../ui/index.dart';
 export '../config/index.dart';
 
 class LeouiStateWidget extends StatefulWidget {
-  final MaterialApp Function(ValueChanged<VoidCallback>) childBuilder;
+  final MaterialApp Function(LeouiState leouiState) childBuilder;
   final LeouiConfig? config;
   final VoidCallback? initState;
   final VoidCallback? dispose;
@@ -95,6 +95,10 @@ class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
 
   LeouiTickerStatus _status = LeouiTickerStatus.pause;
 
+  LeouiConfig? config;
+
+  GlobalKey overlay = GlobalKey();
+
   _tikercallback(Duration time) {
     if (_startTime != 0) {
       int disTime = time.inMicroseconds - _startTime;
@@ -122,11 +126,28 @@ class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
     _tickerId = _initTiker();
   }
 
+  void changeConfig(LeouiConfig config) {
+    this.config = config;
+
+    if (this.mounted) {
+      setState(() {});
+    }
+  }
+
+  void rebuild() {
+    if (this.mounted) {
+      setState(() {
+        overlay = GlobalKey(debugLabel: DateTime.now().toString());
+      });
+    }
+  }
+
   @override
   void initState() {
     afterSetup();
     WidgetsBinding.instance.addObserver(this);
     _tickerId = _initTiker();
+    config = widget.config;
 
     super.initState();
   }
@@ -183,9 +204,9 @@ class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    LeouiConfig config = widget.config ?? LeouiConfig();
-    LeouiThemeData lightTheme = config.lightTheme ?? LeouiThemeData.light();
-    LeouiThemeData darkTheme = config.darkTheme ??
+    LeouiConfig _config = config ?? LeouiConfig();
+    LeouiThemeData lightTheme = _config.lightTheme ?? LeouiThemeData.light();
+    LeouiThemeData darkTheme = _config.darkTheme ??
         LeouiThemeData.dark().copyWith(size: lightTheme.size);
 
     // to fix: https://github.com/flutter/flutter/issues/25827#issuecomment-571804641
@@ -205,15 +226,13 @@ class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done ||
               snapshot.connectionState == ConnectionState.none) {
-            MaterialApp child = widget.childBuilder(setState);
-
+            MaterialApp child = widget.childBuilder(this);
             Locale locale;
             if (child.locale != null) {
               locale = child.locale!;
             } else {
               locale = Platform.localeName.toLocale();
             }
-
             final localizationsDelegates =
                 getChildlocalizationsDelegates(child);
 
@@ -225,13 +244,15 @@ class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
                 darkTheme: darkTheme,
                 delegates: localizationsDelegates,
                 locale: locale);
+
             return LeoFeedback.rootWidget(child: LayoutBuilder(
               builder: (context, constraints) {
                 final _overlay = Overlay(
+                  key: overlay, // put a key to rebuild ,not the cache
                   initialEntries: [
                     OverlayEntry(builder: (BuildContext overlay) {
                       // we need a context to show overlay, then we can call feedback functions without context at anywhere
-                      setup(config, overlay);
+                      setup(_config, overlay);
                       if (!setupComplater.isCompleted) {
                         setupComplater.complete();
                       }
@@ -274,9 +295,11 @@ class LeouiState extends State<LeouiStateWidget> with WidgetsBindingObserver {
 
 class _LeouiScope extends InheritedWidget {
   final LeouiState leouiState;
+  final Widget child;
 
-  _LeouiScope({required this.leouiState, required super.child});
+  _LeouiScope({required this.leouiState, required this.child})
+      : super(child: child);
 
   @override
-  bool updateShouldNotify(_LeouiScope oldWidget) => false;
+  bool updateShouldNotify(_LeouiScope oldWidget) => child != oldWidget.child;
 }

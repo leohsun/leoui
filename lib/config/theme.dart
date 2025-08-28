@@ -141,6 +141,8 @@ class LeouiThemeData {
   /// size meybe use SizeTool to scale
   final LeouiSize Function()? size;
 
+  final TextStyle defaultTextStyle;
+
   factory LeouiThemeData(
       {Color? backgroundPrimaryColor,
       Color? backgroundSecondaryColor,
@@ -177,6 +179,7 @@ class LeouiThemeData {
       Color? dialogBackgroundColor,
       List<BoxShadow>? boxShadow,
       LeouiBrightness? brightness,
+      TextStyle? defaultTextStyle,
 
       /// size meybe use SizeTool to scale
       LeouiSize Function()? size}) {
@@ -293,6 +296,7 @@ class LeouiThemeData {
                 spreadRadius: 0),
           ];
     size ??= () => LeouiSize();
+    defaultTextStyle ??= TextStyle();
     return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,
@@ -327,6 +331,7 @@ class LeouiThemeData {
         dialogBackgroundColor: dialogBackgroundColor,
         boxShadow: boxShadow,
         brightness: brightness,
+        defaultTextStyle: defaultTextStyle,
         size: size);
   }
 
@@ -364,7 +369,8 @@ class LeouiThemeData {
       required this.dialogBackgroundColor,
       required this.boxShadow,
       required this.brightness,
-      required this.size});
+      required this.size,
+      required this.defaultTextStyle});
 
   factory LeouiThemeData.dark() =>
       LeouiThemeData(brightness: LeouiBrightness.dark);
@@ -406,6 +412,7 @@ class LeouiThemeData {
       Color? dialogBackgroundColor,
       List<BoxShadow>? boxShadow,
       LeouiBrightness? brightness,
+      TextStyle? defaultTextStyle,
       LeouiSize Function()? size}) {
     brightness ??= this.brightness;
     backgroundPrimaryColor ??= this.backgroundPrimaryColor;
@@ -448,6 +455,8 @@ class LeouiThemeData {
     userAccentColor ??= this.userAccentColor;
     boxShadow ??= this.boxShadow;
     size ??= this.size;
+    defaultTextStyle ??= this.defaultTextStyle;
+
     return LeouiThemeData.raw(
         backgroundPrimaryColor: backgroundPrimaryColor,
         backgroundSecondaryColor: backgroundSecondaryColor,
@@ -482,7 +491,8 @@ class LeouiThemeData {
         dialogBackgroundColor: dialogBackgroundColor,
         boxShadow: boxShadow,
         brightness: brightness,
-        size: size);
+        size: size,
+        defaultTextStyle: defaultTextStyle);
   }
 }
 
@@ -502,6 +512,11 @@ class LeouiTheme extends InheritedWidget {
   final LeouiThemeData darkTheme;
   final LeouiBrightness brightness;
   final LeouiSize size;
+  final TextStyle defaultTextStyle;
+
+  set lightTheme(LeouiThemeData theme) {
+    lightTheme = theme;
+  }
 
   factory LeouiTheme({
     Key? key,
@@ -509,15 +524,19 @@ class LeouiTheme extends InheritedWidget {
     LeouiBrightness? brightness,
     LeouiThemeData? lightTheme,
     LeouiThemeData? darkTheme,
+    TextStyle? defaultTextStyle,
     LeouiSize? size,
   }) {
+    LeouiSize sizeParam = size ?? LeouiSize();
     return LeouiTheme.raw(
       key: key,
       child: child,
       brightness: brightness ?? LeouiBrightness.light,
       lightTheme: lightTheme ?? LeouiThemeData.light(),
       darkTheme: darkTheme ?? LeouiThemeData.dark(),
-      size: size ?? LeouiSize(),
+      defaultTextStyle:
+          defaultTextStyle ?? TextStyle(fontSize: sizeParam.content),
+      size: sizeParam,
     );
   }
 
@@ -527,6 +546,7 @@ class LeouiTheme extends InheritedWidget {
       required this.lightTheme,
       required this.darkTheme,
       required this.brightness,
+      required this.defaultTextStyle,
       required this.size})
       : super(child: child);
 

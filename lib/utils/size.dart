@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'dart:math';
 
 enum RatioType { width, height }
 
@@ -15,6 +16,15 @@ class SizeTool {
         heightRatio: double.parse(heightRatio.toStringAsFixed(6)));
   }
 
+  factory SizeTool.portrait(
+      {required double designWidth, required double designHeight}) {
+    double widthRatio = min(deviceWidth, deviceHeight) / designWidth;
+    double heightRatio = max(deviceWidth, deviceHeight) / designHeight;
+    return SizeTool.raw(
+        widthRatio: double.parse(widthRatio.toStringAsFixed(6)),
+        heightRatio: double.parse(heightRatio.toStringAsFixed(6)));
+  }
+
   const SizeTool.raw({required this.widthRatio, required this.heightRatio});
 
   static MediaQueryData _mediaQueryData() => MediaQueryData.fromView(
@@ -25,10 +35,12 @@ class SizeTool {
   static double get deviceHeight => _mediaQueryData().size.height;
   static EdgeInsets get devicePadding => _mediaQueryData().padding;
   static double get deviceRatio => _mediaQueryData().devicePixelRatio;
+  static double get portraitDeviceWidth => min(deviceWidth, deviceHeight);
+  static double get portraitDeviceHeight => max(deviceWidth, deviceHeight);
 
   double sizeWidth(double size) {
     double expceptWidth = (size * widthRatio).floorToDouble();
-    return expceptWidth > deviceHeight ? deviceHeight : expceptWidth;
+    return expceptWidth > deviceWidth ? deviceWidth : expceptWidth;
   }
 
   double sizeHeight(double size) {

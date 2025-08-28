@@ -252,6 +252,7 @@ class _IndexesState extends State<Indexes> {
                                     child: Text(
                                       '${item["key"]}',
                                       style: TextStyle(
+                                          fontSize: theme.size!().tertiary,
                                           color: isDark
                                               ? theme.labelSecondaryColor
                                               : theme.labelPrimaryColor),

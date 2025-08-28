@@ -133,10 +133,12 @@ class FieldState extends State<Field> {
 
     List<Widget> preffix = [];
     if (widget.title != null) {
-      preffix.add(DefaultTextIconStyle(
-        color: theme.labelPrimaryColor,
-        child: widget.title!,
-        size: theme.size!().title,
+      preffix.add(Flexible(
+        child: DefaultTextIconStyle(
+          color: theme.labelPrimaryColor,
+          child: widget.title!,
+          size: theme.size!().title,
+        ),
       ));
     }
 
@@ -149,16 +151,21 @@ class FieldState extends State<Field> {
     }
 
     if (preffix.length > 0) {
-      children.add(Expanded(
-        child: Column(
+      children.add(
+        Flexible(
+            child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: preffix,
-        ),
-      ));
+        )),
+      );
     }
 
     if (widget.trailing != null) {
-      children.add(widget.trailing!);
+      children.add(DefaultTextIconStyle(
+          color: theme.labelTertiaryColor,
+          child: widget.trailing!,
+          size: theme.size!().tertiary));
     }
 
     return Row(
@@ -304,6 +311,8 @@ class FieldItem extends StatefulWidget implements ListItem {
   ///动作箭头标识
   final bool? arrow;
 
+  final double? arrowSize;
+
   ///内容内边距
   final EdgeInsets? padding;
 
@@ -323,6 +332,7 @@ class FieldItem extends StatefulWidget implements ListItem {
       this.addon,
       this.disabled,
       this.arrow,
+      this.arrowSize,
       this.padding,
       this.solid = true,
       this.onTap,
@@ -407,7 +417,8 @@ class _FieldItemState extends State<FieldItem> {
       _children.add(Padding(
         padding: EdgeInsets.only(left: widget.addon != null ? 0 : 5),
         child: Icon(Icons.keyboard_arrow_right_rounded,
-            color: theme.labelSecondaryColor, size: theme.size!().title * 1.5),
+            color: theme.labelSecondaryColor,
+            size: widget.arrowSize ?? theme.size!().title * 1.5),
       ));
     }
 

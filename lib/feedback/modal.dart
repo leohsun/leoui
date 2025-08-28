@@ -43,6 +43,7 @@ class Modal {
       double? dragToCloseVelocity,
       bool? reverseAnimationWhenClose,
       bool? animateWhenOpen,
+      double? maskAlpha = 0.7,
       ValueChanged<bool>? onClose,
 
       /// 位置不响应键盘的开启或关闭
@@ -73,6 +74,7 @@ class Modal {
         duration: duration ?? Duration(milliseconds: 3000),
         closeOnClickMask: closeOnClickMask,
         noMask: noMask ?? false,
+        maskAlpha: maskAlpha ?? 0.7,
         curve: curve ?? Curves.easeIn,
         autoClose: autoClose ?? false,
         dragToClose: dragToClose,
@@ -180,6 +182,7 @@ class _ModalWidget extends StatefulWidget {
   final double dragToCloseGap;
   final double dragToCloseVelocity;
   final bool noMask;
+  final double maskAlpha;
   final Curve curve;
   final bool fixed;
 
@@ -197,6 +200,7 @@ class _ModalWidget extends StatefulWidget {
       required this.dragToCloseVelocity,
       required this.closeOnClickMask,
       required this.noMask,
+      required this.maskAlpha,
       this.fixed = false})
       : super(key: key);
   @override
@@ -373,7 +377,7 @@ class _ModalWidgetState extends State<_ModalWidget>
             child: GestureDetector(
           onTap: _handleMaskTap,
           child: Container(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: widget.maskAlpha),
           ),
         )),
       );

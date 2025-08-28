@@ -117,7 +117,10 @@ class ActionSheet extends StatelessWidget {
               theme.size!().buttonNormalHeight + SizeTool.devicePadding.bottom,
           padding: EdgeInsets.only(bottom: SizeTool.devicePadding.bottom),
           alignment: Alignment.center,
-          child: Text(LeouiLocalization.of(LeoFeedback.currentContext!).cancel),
+          child: Text(
+            LeouiLocalization.of(LeoFeedback.currentContext!).cancel,
+            style: TextStyle(fontSize: theme.size!().title),
+          ),
         )));
 
     return ClipRRect(

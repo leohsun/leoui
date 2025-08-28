@@ -16,5 +16,4 @@ export 'packages/actionSheet/actionSheet.dart';
 export 'packages/dottedDivider/dottedDivider.dart';
 export 'packages/swipeActions/swipeActions.dart';
 export 'packages/stickyColumn/stickyColumn.dart';
-export 'packages/stickyColumn/stickyContainer.dart';
 export 'packages/scratcher/scratcher.dart';

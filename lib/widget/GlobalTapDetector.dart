@@ -16,11 +16,10 @@ class GlobalTapDetectorRenderBox extends RenderProxyBoxWithHitTestBehavior {
 
   List<FriendlyTapContainerRenderBox> _targets = [];
 
-  static GlobalTapDetectorRenderBox of(BuildContext context) {
+  static GlobalTapDetectorRenderBox? of(BuildContext context) {
     GlobalTapDetectorRenderBox? globalTapDetectorRenderBox =
         context.findAncestorRenderObjectOfType<GlobalTapDetectorRenderBox>();
-    assert(globalTapDetectorRenderBox != null);
-    return globalTapDetectorRenderBox!;
+    return globalTapDetectorRenderBox;
   }
 
   void register(FriendlyTapContainerRenderBox target) {

@@ -78,44 +78,62 @@ Widget buildButtonWidget(
     Color? splashColor,
     double? elevation,
     Color? shandow,
+    bool? expanded,
     Color? color}) {
   Color _color = color ?? Colors.transparent;
   Color _splashColor = splashColor ?? lighten(_color, 80);
-  return PhysicalModel(
-    borderRadius: borderRadius,
-    elevation: elevation ?? 0,
-    color: elevation == null
-        ? Colors.transparent
-        : shandow ??
-            LeouiTheme.of(LeoFeedback.currentContext!)!
-                .theme()
-                .nonOpaqueSeparatorColor,
-    child: Material(
-      color: color ?? Colors.transparent,
+
+  return LayoutBuilder(builder: (context, constraints) {
+    if (expanded == true) {
+      double minHeight =
+          constraints.maxHeight.isInfinite ? 0 : constraints.maxHeight;
+      double minWidth =
+          constraints.maxWidth.isInfinite ? 0 : constraints.maxWidth;
+
+      child = Container(
+        alignment: Alignment.center,
+        constraints: BoxConstraints(minWidth: minWidth, minHeight: minHeight),
+        child: child,
+      );
+    }
+
+    return PhysicalModel(
       borderRadius: borderRadius,
-      type: MaterialType.button,
-      child: InkWell(
-        splashColor: _splashColor,
-        highlightColor: Colors.transparent,
+      elevation: elevation ?? 0,
+      color: elevation == null
+          ? Colors.transparent
+          : shandow ??
+              LeouiTheme.of(LeoFeedback.currentContext!)!
+                  .theme()
+                  .nonOpaqueSeparatorColor,
+      child: Material(
+        color: color ?? Colors.transparent,
         borderRadius: borderRadius,
-        child: disabled == true
-            ? ShaderMask(
-                shaderCallback: (bounds) {
-                  return LinearGradient(colors: [Color(0xffdfdfdf)], stops: [1])
-                      .createShader(bounds);
-                },
-                blendMode: BlendMode.color,
-                child: child)
-            : child,
-        onTap: disabled == true ? null : onTap,
-        onTapDown: disabled == true ? null : onTapDown,
-        onTapUp: disabled == true ? null : onTapUp,
-        onLongPress: disabled == true ? null : onLongPress,
-        onTapCancel: disabled == true ? null : onTapCancel,
-        onFocusChange: disabled == true ? null : onFocusChange,
+        type: MaterialType.button,
+        child: InkWell(
+          splashColor: _splashColor,
+          highlightColor: Colors.transparent,
+          borderRadius: borderRadius,
+          child: disabled == true
+              ? ShaderMask(
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                        colors: [Color(0xffdfdfdf)],
+                        stops: [1]).createShader(bounds);
+                  },
+                  blendMode: BlendMode.color,
+                  child: child)
+              : child,
+          onTap: disabled == true ? null : onTap,
+          onTapDown: disabled == true ? null : onTapDown,
+          onTapUp: disabled == true ? null : onTapUp,
+          onLongPress: disabled == true ? null : onLongPress,
+          onTapCancel: disabled == true ? null : onTapCancel,
+          onFocusChange: disabled == true ? null : onFocusChange,
+        ),
       ),
-    ),
-  );
+    );
+  });
 }
 
 Widget buildBlurWidget({

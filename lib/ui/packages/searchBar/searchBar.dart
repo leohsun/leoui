@@ -61,6 +61,13 @@ class SearchBarState extends State<SearchBar>
     super.initState();
   }
 
+  void setDefaultValue(String value) {
+    setState(() {
+      keywords = value;
+      input.currentState?.value = value;
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();

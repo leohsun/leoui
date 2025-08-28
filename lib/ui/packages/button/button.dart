@@ -16,6 +16,7 @@ class Button extends StatefulWidget {
   final Color? color;
   final Color? textColor;
   final FontWeight? textWeight;
+  final double? textSize;
   final Border? border;
   final BorderRadius? borderRadius;
   final String data;
@@ -40,6 +41,7 @@ class Button extends StatefulWidget {
       this.color,
       this.textColor,
       this.textWeight,
+      this.textSize,
       this.loading = false,
       this.onTap})
       : assert(
@@ -114,7 +116,7 @@ class _ButtonState extends State<Button> {
                   ? lighten(fontColor, ColorChangeLightneessFactor)
                   : fontColor,
               fontWeight: widget.textWeight,
-              fontSize: size['fontSize'],
+              fontSize: widget.textSize ?? size['fontSize'],
             ),
             textAlign: TextAlign.center),
       ),

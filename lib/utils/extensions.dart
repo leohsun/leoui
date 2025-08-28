@@ -105,8 +105,18 @@ typedef MapWithIndexCallbak<T, E> = T Function(
     E element, int index, bool isLast);
 
 extension ListTools<E> on List<E> {
-  firstWhereOrNull<T>(fn(E element)) {
+  firstWhereOrNull(fn(E element)) {
     for (int i = 0; i < this.length; i++) {
+      if (fn(this[i])) {
+        return this[i];
+      }
+    }
+
+    return null;
+  }
+
+  lastWhereOrNull(fn(E element)) {
+    for (int i = this.length - 1; i > -1; i--) {
       if (fn(this[i])) {
         return this[i];
       }
@@ -185,12 +195,12 @@ extension ListTools<E> on List<E> {
     }
   }
 
-  List<E> filter(bool fn(E element)) {
-    List<E> result = [];
+  List<T> filter<T>(bool fn(E element)) {
+    List<T> result = [];
     for (int i = 0; i < this.length; i++) {
       final shoudAdd = fn(this[i]);
       if (shoudAdd) {
-        result.add(this[i]);
+        result.add(this[i] as T);
       }
     }
 

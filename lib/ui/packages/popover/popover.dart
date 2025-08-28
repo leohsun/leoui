@@ -87,43 +87,48 @@ class PopoverWidget extends StatelessWidget {
 
     return buildButtonWidget(
       onTap: _onPress,
+      expanded: false,
       child: Opacity(
         opacity: action.disabled ? 0.4 : 1,
-        child: Container(
-          constraints: BoxConstraints(
-              minHeight: theme.size!().itemExtent,
-              maxWidth: SizeTool.deviceWidth,
-              minWidth: theme.size!().buttonSmallMinWidth),
-          decoration: BoxDecoration(
-              border: border
-                  ? Border(
-                      bottom: BorderSide(
-                          width: 1, color: theme.nonOpaqueSeparatorColor))
-                  : null),
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: sz(theme.size!().title / 2)),
-            child: DefaultTextIconStyle(
-              color: action.color ?? theme.labelPrimaryColor,
-              size: theme.size!().title,
-              child: Row(
-                children: [
-                  ...(action.icon != null
-                      ? [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                right: sz(theme.size!().title / 2)),
-                            child: Icon(action.icon),
-                          ),
-                          Text(
-                            action.text,
-                          )
-                        ]
-                      : [Text(action.text)])
-                ],
+        child: Row(
+          children: [
+            Container(
+              constraints: BoxConstraints(
+                  minHeight: theme.size!().itemExtent,
+                  // maxWidth: SizeTool.deviceWidth,
+                  minWidth: theme.size!().buttonSmallMinWidth),
+              decoration: BoxDecoration(
+                  border: border
+                      ? Border(
+                          bottom: BorderSide(
+                              width: 1, color: theme.nonOpaqueSeparatorColor))
+                      : null),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: sz(theme.size!().title / 2)),
+                child: DefaultTextIconStyle(
+                  color: action.color ?? theme.labelPrimaryColor,
+                  size: theme.size!().title,
+                  child: Row(
+                    children: [
+                      ...(action.icon != null
+                          ? [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    right: sz(theme.size!().title / 2)),
+                                child: Icon(action.icon),
+                              ),
+                              Text(
+                                action.text,
+                              )
+                            ]
+                          : [Text(action.text)])
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -140,10 +145,9 @@ class PopoverWidget extends StatelessWidget {
     return ClipRRect(
       borderRadius:
           BorderRadius.circular(sz(theme.size!().cardBorderRadius / 2)),
-      child: IntrinsicWidth(
-        child: Column(
-          children: _children,
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: _children,
       ),
     );
   }
@@ -851,6 +855,10 @@ class _PopoverState extends State<Popover> {
           _remove();
         });
       }
+    }
+
+    if (widget.actions != oldWidget.actions) {
+      _initPopoverWidgetConfig();
     }
     super.didUpdateWidget(oldWidget);
   }
