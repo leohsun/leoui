@@ -38,14 +38,14 @@ class SizeTool {
   static double get portraitDeviceWidth => min(deviceWidth, deviceHeight);
   static double get portraitDeviceHeight => max(deviceWidth, deviceHeight);
 
-  double sizeWidth(double size) {
+  double sizeWidth(double size, {bool clamp = false}) {
     double expceptWidth = (size * widthRatio).floorToDouble();
-    return expceptWidth > deviceWidth ? deviceWidth : expceptWidth;
+    return clamp ? expceptWidth.clamp(0, deviceWidth) : expceptWidth;
   }
 
-  double sizeHeight(double size) {
+  double sizeHeight(double size, {bool clamp = false}) {
     double expceptHeight = (size * heightRatio).floorToDouble();
-    return expceptHeight > deviceHeight ? deviceHeight : expceptHeight;
+    return clamp ? expceptHeight.clamp(0, deviceHeight) : expceptHeight;
   }
 }
 
