@@ -12,7 +12,7 @@ class LeouiSize {
   final double cardBorderRadius;
   final double fieldBorderRadius;
   final double tab;
-  final double itemExtent;
+  final double itemExtend;
   final double itemElevation;
   final double dialogWidth;
   final double buttonNormalMinWidth;
@@ -34,7 +34,7 @@ class LeouiSize {
     double? cardBorderRadius,
     double? fieldBorderRadius,
     double? tab,
-    double? itemExtent,
+    double? itemExtend,
     double? dialogWidth,
     double? itemElevation,
     double? buttonNormalMinWidth,
@@ -56,7 +56,7 @@ class LeouiSize {
       cardBorderRadius: cardBorderRadius ?? sz(14),
       fieldBorderRadius: fieldBorderRadius ?? sz(4),
       tab: tab ?? sz(10),
-      itemExtent: itemExtent ?? sz(40),
+      itemExtend: itemExtend ?? sz(40),
       dialogWidth: dialogWidth ?? sz(270),
       itemElevation: itemElevation ?? sz(4),
       buttonNormalMinWidth: buttonNormalMinWidth ?? sz(120),
@@ -81,7 +81,7 @@ class LeouiSize {
     required this.cardBorderRadius,
     required this.fieldBorderRadius,
     required this.tab,
-    required this.itemExtent,
+    required this.itemExtend,
     required this.dialogWidth,
     required this.itemElevation,
     required this.buttonNormalMinWidth,

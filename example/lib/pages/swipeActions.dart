@@ -25,7 +25,7 @@ class _SwipeActionSPagetate extends State<SwipeActionsPage> {
                     showToast('置顶');
                   }),
               SwipeAction(text: "删除"),
-              SwipeAction(child: Icon(Icons.abc))
+              // SwipeAction(child: Icon(Icons.abc))
             ],
             child: Container(
               width: double.infinity,
@@ -60,6 +60,11 @@ class _SwipeActionSPagetate extends State<SwipeActionsPage> {
                   text: "置顶",
                   onTap: () {
                     showToast('置顶');
+                  }),
+              SwipeAction(
+                  text: "🍌",
+                  onTap: () {
+                    showToast('🍌');
                   }),
             ],
             trailingActions: [

@@ -106,7 +106,7 @@ class _TabPickerState extends State<TabPicker>
 
     if (isInModal) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        ModalScope.of(context)?.closeModal(submitList);
+        ModalScope.of(context)?.closeModal(data: submitList);
       });
     }
   }
@@ -135,7 +135,7 @@ class _TabPickerState extends State<TabPicker>
                   decoration: BoxDecoration(
                       border: Border(
                           top: BorderSide(color: theme.fillPrimaryColor))),
-                  height: theme.size!().itemExtent,
+                  height: theme.size!().itemExtend,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Align(
@@ -193,7 +193,7 @@ class _TabPickerState extends State<TabPicker>
                               ...mapWithIndex<Widget, Map>(selectedDataList,
                                   (data, idx) {
                                 return Container(
-                                  height: theme.size!().itemExtent,
+                                  height: theme.size!().itemExtend,
                                   child: Center(
                                     child: Text(
                                       data[widget.columnKey] ?? hintText,
@@ -207,7 +207,7 @@ class _TabPickerState extends State<TabPicker>
                       ),
                       Container(
                         height: widget.selectorHeight ??
-                            theme.size!().itemExtent * 4,
+                            theme.size!().itemExtend * 4,
                         child: TabBarView(
                           children: [
                             ...mapWithIndex<Widget, dynamic>(columnDataList,

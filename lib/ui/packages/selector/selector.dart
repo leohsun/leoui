@@ -1,6 +1,7 @@
 library leo_ui.selector;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:leoui/config/index.dart';
 import 'package:leoui/feedback/index.dart';
@@ -91,6 +92,8 @@ import 'package:leoui/utils/index.dart';
 //   },
 // ),
 
+enum DateTimeSelectorType { dateTime, date, time }
+
 class Selector extends StatefulWidget {
   final bool? linkage;
   final List<List> dataList;
@@ -107,6 +110,30 @@ class Selector extends StatefulWidget {
   final double? selectorHeight;
   final bool hideHeader;
   final LeouiBrightness? brightness;
+
+  factory Selector.dateTime({DateTime? firstDate, DateTime? lastDate}) {
+    firstDate ??= DateTime(1);
+    lastDate ??= DateTime(9999);
+
+    List<Map> time = [];
+
+    for (int i = 0; i < 24; i++) {}
+
+    return Selector(
+      dataList: [
+        [
+          {
+            "label": "2025",
+            'children': [
+              {"label": "1月"}
+            ]
+          }
+        ]
+      ],
+      linkage: true,
+      count: 6,
+    );
+  }
 
   Selector(
       {Key? key,
@@ -212,7 +239,7 @@ class _SelectorState extends State<Selector> {
 
     if (isInModal) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        ModalScope.of(context)?.closeModal(filterData);
+        ModalScope.of(context)?.closeModal(data: filterData);
       });
     }
   }
@@ -268,7 +295,7 @@ class _SelectorState extends State<Selector> {
     String label,
   ) {
     return Container(
-      height: theme.size!().itemExtent,
+      height: theme.size!().itemExtend,
       child: Center(
         child: ScalableText(
           label,
@@ -329,7 +356,7 @@ class _SelectorState extends State<Selector> {
             capEndEdge: columnIndex == _dataList.length - 1,
             background: theme.fillSecondaryColor,
           ),
-          itemExtent: theme.size!().itemExtent,
+          itemExtent: theme.size!().itemExtend,
           onSelectedItemChanged: (int cellIndex) {
             _handleSelectChange(columnIndex, cellIndex);
           },
@@ -344,7 +371,7 @@ class _SelectorState extends State<Selector> {
     }
 
     return Container(
-      height: widget.selectorHeight ?? theme.size!().itemExtent * 5,
+      height: widget.selectorHeight ?? theme.size!().itemExtend * 5,
       key: selectorContainer,
       color: theme.backgroundPrimaryColor,
       child: Row(

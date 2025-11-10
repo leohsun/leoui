@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'dart:ui';
 
 extension LocaleTools on Locale {
@@ -18,20 +16,20 @@ extension ColorTools on Color {
     double factor = 1 - amount / 100;
 
     return Color.fromARGB(
-        this.alpha,
-        (this.red * factor).round().clamp(0, 255),
-        (this.green * factor).round().clamp(0, 255),
-        (this.blue * factor).round().clamp(0, 255));
+        (this.a * 255.0).round() & 0xff,
+        (((this.r * 255.0).round() & 0xff) * factor).round().clamp(0, 255),
+        (((this.g * 255.0).round() & 0xff) * factor).round().clamp(0, 255),
+        (((this.b * 255.0).round() & 0xff) * factor).round().clamp(0, 255));
   }
 
   Color lighten(double amount) {
     assert(amount >= 0 && amount <= 100);
     double factor = 1 + amount / 100;
     return Color.fromARGB(
-        this.alpha,
-        (this.red * factor).round().clamp(0, 255),
-        (this.green * factor).round().clamp(0, 255),
-        (this.blue * factor).round().clamp(0, 255));
+        (this.a * 255.0).round() & 0xff,
+        (((this.r * 255.0).round() & 0xff) * factor).round().clamp(0, 255),
+        (((this.g * 255.0).round() & 0xff) * factor).round().clamp(0, 255),
+        (((this.b * 255.0).round() & 0xff) * factor).round().clamp(0, 255));
   }
 
   bool isDark() {
@@ -140,18 +138,16 @@ extension ListTools<E> on List<E> {
     int startIndex = start;
     late int endIndex;
     if (end == null) {
-      endIndex = this.length;
+      endIndex = this.length - 1;
     } else {
       if (end >= 0) {
-        endIndex = end > this.length ? this.length : end;
+        endIndex = end > this.length - 1 ? this.length - 1 : end;
       } else {
-        endIndex = this.length + end;
+        endIndex = this.length - 1 + end;
       }
     }
 
-    int targetsLength = endIndex - startIndex;
-
-    for (int i = 0; i < targetsLength; i++) {
+    for (int i = startIndex; i <= endIndex; i++) {
       result.add(this[i] as T);
     }
     return result;
@@ -205,6 +201,46 @@ extension ListTools<E> on List<E> {
     }
 
     return result;
+  }
+
+  /// reference: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/splice
+  ///
+  /// [不会]改变原数据！！！！！！！！！！！
+  List<T> splice<T>(int start, int deleteCount, List Function()? addFunction) {
+    List<T> left = start > 0 ? this.slice(0, start - 1) : [];
+    List<T> right = this.slice(start + deleteCount);
+
+    List added = [];
+
+    if (addFunction != null) {
+      added = addFunction();
+    }
+
+    return [...left, ...added, ...right];
+  }
+
+  /// reference: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/flat
+  ///
+  /// reference: https://github.com/lodash/lodash/blob/main/lodash.js
+  List<T> flat<T>({int? depth = 1}) {
+    assert(depth! >= 1);
+    List<T> result = [];
+
+    List<T> baseFlat(List array, int depth, List<T> result) {
+      for (int i = 0; i < array.length; i++) {
+        var item = array[i];
+
+        if (item is List && depth > 0) {
+          baseFlat(item, depth - 1, result);
+        } else {
+          result.add(item as T);
+        }
+      }
+
+      return result;
+    }
+
+    return baseFlat(this, depth!, result);
   }
 }
 

@@ -21,12 +21,14 @@ Future showLoading({
   Timer? counter;
 
   modal = Modal(
-      noMask: true,
+      noMask: !cover,
+      animateWhenOpen: false,
+      maskAlpha: 0,
       childBuilder: (context) => ClipRRect(
             borderRadius: BorderRadius.circular(theme.size!().cardBorderRadius),
             child: Container(
-              width: theme.size!().title * 5,
-              height: theme.size!().title * 5,
+              width: theme.size!().title * 6,
+              height: theme.size!().title * 6,
               child: Stack(
                 children: <Widget>[
                   buildBlurWidget(
@@ -72,7 +74,8 @@ Future showLoading({
                   )),
                   closable
                       ? Positioned(
-                          right: 0,
+                          top: theme.size!().cardBorderRadius / 3,
+                          right: theme.size!().cardBorderRadius / 3,
                           child: buildButtonWidget(
                             borderRadius: BorderRadius.circular(
                                 theme.size!().cardBorderRadius),
@@ -267,7 +270,7 @@ Future showMessage(String message,
                 horizontal: theme.size!().title,
                 vertical: theme.size!().title / 2),
             child: Container(
-              constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
+              constraints: BoxConstraints(minHeight: theme.size!().itemExtend),
               child: Row(
                 children: <Widget>[
                   Padding(
@@ -282,7 +285,7 @@ Future showMessage(String message,
                       _msg,
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: theme.size!().secondary,
+                          fontSize: theme.size!().title,
                           fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 5,
@@ -545,8 +548,20 @@ Future showPrompt(
   return showModal(modal: modal);
 }
 
-Future showActionSheet(List<ActionSheetAction> actions,
-    {String? title, LeouiBrightness? brightness, BuildContext? context}) {
+Future showActionSheet(
+  List<ActionSheetAction> actions, {
+  String? title,
+
+  /// 支持多选
+  bool? multi = false,
+  LeouiBrightness? brightness,
+  BuildContext? context,
+  final String? cancelText,
+  String? confirmText,
+  Color? cancelTextColor,
+  Color? confirmTextColor,
+  double? height,
+}) {
   Modal modal = Modal(
       direction: ModalDirection.bottom,
       reverseAnimationWhenClose: true,
@@ -554,6 +569,12 @@ Future showActionSheet(List<ActionSheetAction> actions,
             actions: actions,
             title: title,
             brightness: brightness,
+            multi: multi,
+            height: height,
+            cancelText: cancelText,
+            cancelTextColor: cancelTextColor,
+            confirmText: confirmText,
+            confirmTextColor: confirmTextColor,
             onCancel: () {
               ModalScope.of(ctx)?.closeModal();
             },

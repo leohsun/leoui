@@ -319,6 +319,7 @@ class StickyColumnRenderer extends RenderProxyBox
   @override
   void performLayout() {
     _calcSize = _perfomLayout(constraints);
+    print("constraints: $constraints");
     if (_calcSize.height > constraints.maxHeight) {
       size = constraints.constrain(_calcSize);
       _overflow = true;

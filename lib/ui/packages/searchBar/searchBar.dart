@@ -79,14 +79,14 @@ class SearchBarState extends State<SearchBar>
     LeouiThemeData theme =
         LeouiTheme.of(context)!.theme(brightness: widget.brightness);
     return Container(
-      height: theme.size!().itemExtent,
+      height: theme.size!().itemExtend,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
             child: Container(
               padding: EdgeInsets.only(left: theme.size!().cardBorderRadius),
-              height: theme.size!().itemExtent,
+              height: theme.size!().itemExtend,
               decoration: BoxDecoration(
                   color: theme.fillTertiaryColor,
                   borderRadius:

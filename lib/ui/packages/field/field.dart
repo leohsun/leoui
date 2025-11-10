@@ -23,7 +23,7 @@ class Field extends StatefulWidget {
   ///标题尾部内容
   final Widget? trailing;
 
-  ///背景颜色
+  ///背景颜色 [plain:true]
   final Color? color;
 
   ///分割线颜色
@@ -109,12 +109,22 @@ class FieldState extends State<Field> {
     return validateCallBack;
   }
 
-  Map<String, String> obtainDataMap() {
+  Map<String, dynamic> obtainDataMap() {
     if (listItemSet.length == 0) return {};
-    var param = <String, String>{};
+    var param = <String, dynamic>{};
 
     for (var item in listItemSet) {
-      param.addAll(item.obtainData()!);
+      String? parentKey = item.parentKey;
+      Map<String, String> itemData = item.obtainData()!;
+      if (parentKey != null) {
+        if (param.containsKey(parentKey)) {
+          (param[parentKey] as Map).addAll(itemData);
+        } else {
+          param[parentKey] = itemData;
+        }
+      } else {
+        param.addAll(itemData);
+      }
     }
 
     return param;
@@ -290,6 +300,7 @@ abstract class ListItemState {
   void blur();
   void focus();
   void reset();
+  String? get parentKey;
 }
 
 class FieldItem extends StatefulWidget implements ListItem {
@@ -468,7 +479,7 @@ class _FieldItemState extends State<FieldItem> {
         //   bottom:
         //       widget.padding?.bottom ?? theme.size!().listItemPadding.bottom,
         // ),
-        constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
+        constraints: BoxConstraints(minHeight: theme.size!().itemExtend),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: _colChildren,
@@ -498,7 +509,7 @@ class _FieldItemState extends State<FieldItem> {
                           color: widget.borderColor ??
                               theme.nonOpaqueSeparatorColor)))
               : null,
-          constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
+          constraints: BoxConstraints(minHeight: theme.size!().itemExtend),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,

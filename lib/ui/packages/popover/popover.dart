@@ -94,7 +94,7 @@ class PopoverWidget extends StatelessWidget {
           children: [
             Container(
               constraints: BoxConstraints(
-                  minHeight: theme.size!().itemExtent,
+                  minHeight: theme.size!().itemExtend,
                   // maxWidth: SizeTool.deviceWidth,
                   minWidth: theme.size!().buttonSmallMinWidth),
               decoration: BoxDecoration(
@@ -185,7 +185,7 @@ class PopoverWidget extends StatelessWidget {
           borderRadius:
               BorderRadius.circular(sz(theme.size!().cardBorderRadius / 2)),
         ),
-        constraints: BoxConstraints(minHeight: theme.size!().itemExtent),
+        constraints: BoxConstraints(minHeight: theme.size!().itemExtend),
         child: _child,
       ),
     );

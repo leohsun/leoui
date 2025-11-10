@@ -36,6 +36,8 @@ class MapValue {
 
 typedef InputItemOnTapCallBack = void Function(MapValue data);
 
+enum InputCustomLabelPlacement { original, newLine }
+
 class InputItem extends StatefulWidget implements ListItem {
   ///标题
   final Widget? title;
@@ -99,8 +101,10 @@ class InputItem extends StatefulWidget implements ListItem {
   final ValueChanged<String>? onBlur; //输入框聚失焦时回调
   final ValueChanged<String>? onSubmit; //输入框聚失焦时回调
   ///只读时，点击回调事件，可用通过函数回参[InputItemOnTapCallBack], [TextEditingController], [MapValue]来做相应的逻辑操作
-  final void Function(InputItemOnTapCallBack, TextEditingController, MapValue)?
-      onTap; //read-only
+  final void Function(
+      InputItemOnTapCallBack inputItemOnTapCallBack,
+      TextEditingController textEditingController,
+      MapValue mapValue)? onTap; //read-only
   final Color? splashColor;
 
   /// 表单校验码规则 --> RegExp(r'^[a-z][a-z\d]{3,}$')
@@ -115,6 +119,15 @@ class InputItem extends StatefulWidget implements ListItem {
   /// 用于校验输入提示 -->'(用户名)不能为空'
   final String? fieldLabel;
 
+  /// 用于Field导出数据时合并的key
+  ///
+  ///  InputItem(fieldKey: 'color',parentKey: "apple",),
+  ///
+  /// InputItem(fieldKey: 'size',parentKey: "apple",)
+  ///
+  /// ---> {'apple':{'color','red','size':'middle'}}
+  final String? parentKey;
+
   /// 主题 dark 、light
   final LeouiBrightness? brightness;
   final double? fontSize;
@@ -125,6 +138,12 @@ class InputItem extends StatefulWidget implements ListItem {
   final VoidCallback? onDispose;
   final bool? arrow;
   final bool? hideTextField;
+
+  /// 客制化Value的显示 [readonly] = true
+  final Widget Function(String value, String? label)? labelBuilder;
+
+  /// 客制化Value显示位置
+  final InputCustomLabelPlacement? customLabelPlacement;
 
   const InputItem(
       {Key? key,
@@ -155,6 +174,7 @@ class InputItem extends StatefulWidget implements ListItem {
       this.validatePattern,
       this.maxLength,
       this.fieldKey,
+      this.parentKey,
       this.fieldLabel,
       this.patternDescript,
       this.brightness,
@@ -167,16 +187,22 @@ class InputItem extends StatefulWidget implements ListItem {
       this.onDispose,
       this.arrow,
       this.defaultMapValue,
+      this.labelBuilder,
+      this.customLabelPlacement = InputCustomLabelPlacement.original,
       this.hideTextField = false})
       : assert(
             validatePattern == null || (fieldKey != null && fieldLabel != null),
-            'when validatePattern is not null then fieldKey and fieldLable must be provided'),
+            'when [validatePattern] is not null then [fieldKey] and [fieldLable] must be provided'),
         assert(leading == null || (title == null && icon == null),
-            'can not provide both leading and (title or icon)'),
+            'can not provide both [leading] and (title or icon)'),
         assert(defaultValue == null || defaultMapValue == null,
-            'can not provide both defaultValue and defaultMapValue'),
+            'can not provide both [defaultValue] and [defaultMapValue]'),
         assert(addon == null || addonBuilder == null,
-            'can not provide both addon and addonBuilder'),
+            'can not provide both [addon] and [addonBuilder]'),
+        assert(labelBuilder == null || readonly == true,
+            "[labelBuilder] only work when [readonly] is [true]"),
+        assert(parentKey == null || fieldKey != null,
+            "when [parentKey] is not null, the [fieldKey] must be provided"),
         super(key: key);
 
   @override
@@ -202,10 +228,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
   TextEditingController _controller = TextEditingController();
 
   String get value {
-    if (widget.onTap == null || widget.hideTextField == true) {
-      return _controller.value.text;
-    }
-    return _label;
+    return _label.isNotEmpty ? _label : _controller.value.text;
   }
 
   set value(String input) {
@@ -246,6 +269,8 @@ class InputItemState extends State<InputItem> implements ListItemState {
     }
   }
 
+  Widget? customLabel;
+
   @override
   void didUpdateWidget(covariant InputItem oldWidget) {
     if (widget.focus != oldWidget.focus) {
@@ -275,6 +300,15 @@ class InputItemState extends State<InputItem> implements ListItemState {
   @override
   void initState() {
     super.initState();
+    if (widget.labelBuilder != null) {
+      _controller.addListener(() {
+        setState(() {
+          customLabel = widget.labelBuilder!(
+              value, _label.isNotEmpty ? _controller.text : null);
+        });
+      });
+    }
+
     if (widget.defaultValue != null) {
       _controller.value = TextEditingValue(text: widget.defaultValue!);
       showCloseButton = value.isNotEmpty;
@@ -328,7 +362,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
     final leading = Container(
       margin: EdgeInsets.only(right: 5),
-      width: widget.solid ? theme.size!().title * 5 : null,
+      width: widget.solid ? (widget.fontSize ?? theme.size!().title) * 5 : null,
       child: DefaultTextIconStyle(
         color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
         child: child,
@@ -364,7 +398,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
                 : theme.size!().title),
         isDense: true);
 
-    TextField textField = TextField(
+    Widget textField = TextField(
       enabled: !widget.disabled,
       onTapOutside: (event) {
         blur();
@@ -400,14 +434,20 @@ class InputItemState extends State<InputItem> implements ListItemState {
           height: 1),
     );
 
-    rowChildren.add(Expanded(
-      child: widget.hideTextField == true
-          ? Offstage(
-              child: textField,
-              offstage: true,
-            )
-          : textField,
-    ));
+    if (widget.labelBuilder != null &&
+        customLabel != null &&
+        widget.customLabelPlacement == InputCustomLabelPlacement.original) {
+      textField = Column(children: [
+        customLabel!,
+        Offstage(
+          child: textField,
+        )
+      ]);
+    } else if (widget.hideTextField == true) {
+      textField = Offstage(child: textField);
+    }
+
+    rowChildren.add(Expanded(child: textField));
 
     if (widget.clearable) {
       if (showCloseButton && widget.hideTextField != true) {
@@ -449,12 +489,22 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
     final itemPadding = widget.padding ?? theme.size!().listItemPadding;
 
-    final child = GlobalTapDetector(
+    Widget child = Row(
+      children: rowChildren,
+    );
+
+    if (widget.labelBuilder != null &&
+        customLabel != null &&
+        widget.customLabelPlacement == InputCustomLabelPlacement.newLine) {
+      child = Column(
+        children: [child, customLabel!],
+      );
+    }
+
+    child = GlobalTapDetector(
       child: Padding(
         padding: itemPadding,
-        child: Row(
-          children: rowChildren,
-        ),
+        child: child,
       ),
     );
 
@@ -540,4 +590,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
   void reset() {
     clear();
   }
+
+  @override
+  String? get parentKey => widget.parentKey;
 }

@@ -131,8 +131,9 @@ class ModalScope extends InheritedWidget {
   final ValueChanged<bool>? onClose;
   final BuildContext? routeContext;
   final LeoModalRoute? route;
-  void closeModal([data, autoColse = false]) async {
-    if (reverseAnimationWhenClose == true) {
+  void closeModal(
+      {dynamic data, bool autoColse = false, bool animation = true}) async {
+    if (reverseAnimationWhenClose == true && animation) {
       await childKey.currentState!.reverseAnimation();
     }
 
@@ -243,7 +244,7 @@ class _ModalWidgetState extends State<_ModalWidget>
 
     if (widget.autoClose) {
       autoCloseCounter = Timer(widget.duration, () {
-        ModalScope.of(context)?.closeModal(null, true);
+        ModalScope.of(context)?.closeModal(animation: true);
       });
     }
 

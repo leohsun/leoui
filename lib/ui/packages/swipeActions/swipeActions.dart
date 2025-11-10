@@ -440,6 +440,9 @@ class RenderSwipeActions extends RenderProxyBoxWithHitTestBehavior
   }
 
   @override
+  HitTestBehavior get behavior => HitTestBehavior.opaque;
+
+  @override
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
     return !isMoving &&
         !isOnFullSwipePending &&

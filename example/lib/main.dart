@@ -10,7 +10,7 @@ final app = Leoui(
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: 'popover',
+          initialRoute: 'selector',
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
