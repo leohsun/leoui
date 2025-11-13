@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:leoui/widget/FriendlyTapContainer.dart';
+import 'package:leoui/widget/friendly_tap_container.dart';
 
 class GlobalTapDetector extends SingleChildRenderObjectWidget {
   GlobalTapDetector({super.child});

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:leoui/config/theme.dart';
 import 'package:leoui/feedback/index.dart';
-import 'package:leoui/widget/GlobalTapDetector.dart';
+import 'package:leoui/widget/global_tap_detector.dart';
 
 const Size friendlyTapSize = Size(44, 44);
 

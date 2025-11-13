@@ -429,6 +429,7 @@ class _ModalWidgetState extends State<_ModalWidget>
 
                       if (isBottom) {
                         double dragBottom = _bottom! - details.delta.dy;
+
                         if (dragBottom < windowPadddingBottom) {
                           setState(() {
                             _bottom = dragBottom;
@@ -540,13 +541,21 @@ class _ModalWidgetState extends State<_ModalWidget>
 
     MediaQueryData mqData = MediaQueryData.fromView(View.of(context));
 
+    double? calcBottom = (_bottom != null && widget.fixed != true)
+        ? mqData.viewInsets.bottom + (_bottom ?? 0)
+        : null;
+
+    double? calcTop = _top;
+
+    if (widget.dragToClose && isBottom && calcBottom != null) {
+      calcTop = calcBottom * -1;
+    }
+
     _children.add(Positioned(
         left: _left,
-        top: _top,
+        top: calcTop,
         right: _right,
-        bottom: (_bottom != null && widget.fixed != true)
-            ? mqData.viewInsets.bottom + (_bottom ?? 0)
-            : null,
+        bottom: calcBottom,
         child: child));
 
     return DefaultTextStyle(

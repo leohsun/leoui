@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/ui/packages/common/common.dart';
-import 'package:leoui/widget/FriendlyTapContainer.dart';
-import 'package:leoui/widget/GlobalTapDetector.dart';
+import 'package:leoui/widget/friendly_tap_container.dart';
+import 'package:leoui/widget/global_tap_detector.dart';
 
 class MapValue {
   final String label;

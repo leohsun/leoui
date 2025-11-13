@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:leoui/leoui.dart';
 import 'package:leoui/utils/animationCallback.dart';
-import 'package:leoui/widget/FriendlyTapContainer.dart';
+import 'package:leoui/widget/friendly_tap_container.dart';
 
 part './actions.dart';
 
