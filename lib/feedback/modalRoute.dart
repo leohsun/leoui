@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class LeoModalRoute extends OverlayRoute {
   final OverlayEntry overlayEntry;
+  final String? routeName;
 
-  LeoModalRoute(this.overlayEntry)
-      : super(settings: RouteSettings(name: 'LeoModalRoute'));
+  LeoModalRoute(this.overlayEntry, {this.routeName = 'LeoModalRoute'})
+      : super(settings: RouteSettings(name: routeName));
 
   @override
   Iterable<OverlayEntry> createOverlayEntries() {

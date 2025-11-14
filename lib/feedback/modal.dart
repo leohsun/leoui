@@ -45,6 +45,7 @@ class Modal {
       bool? animateWhenOpen,
       double? maskAlpha = 0.7,
       ValueChanged<bool>? onClose,
+      String? routeName,
 
       /// 位置不响应键盘的开启或关闭
       bool? fixed,
@@ -101,7 +102,7 @@ class Modal {
         },
         maintainState: true);
 
-    route = LeoModalRoute(entry);
+    route = LeoModalRoute(entry, routeName: routeName);
 
     return Modal.raw(
         childBuilder: childBuilder,
