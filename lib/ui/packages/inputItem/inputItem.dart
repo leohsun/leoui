@@ -449,7 +449,7 @@ class InputItemState extends State<InputItem> implements ListItemState {
 
     rowChildren.add(Expanded(child: textField));
 
-    if (widget.clearable) {
+    if (widget.clearable && !widget.disabled) {
       if (showCloseButton && widget.hideTextField != true) {
         rowChildren.add(FriendlyTapContainer(
             onTap: clear,

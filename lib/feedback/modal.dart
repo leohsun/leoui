@@ -47,6 +47,9 @@ class Modal {
       ValueChanged<bool>? onClose,
       String? routeName,
 
+      /// masted pass [BuildContext] to [showModal] action
+      bool? popViaSystemBackButton,
+
       /// 位置不响应键盘的开启或关闭
       bool? fixed,
       Curve? curve}) {
@@ -102,7 +105,8 @@ class Modal {
         },
         maintainState: true);
 
-    route = LeoModalRoute(entry, routeName: routeName);
+    route = LeoModalRoute(entry,
+        routeName: routeName, popViaSystemBackButton: popViaSystemBackButton);
 
     return Modal.raw(
         childBuilder: childBuilder,
@@ -377,6 +381,7 @@ class _ModalWidgetState extends State<_ModalWidget>
       _children.add(
         Positioned.fill(
             child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: _handleMaskTap,
           child: Container(
             color: Colors.black.withValues(alpha: widget.maskAlpha),
