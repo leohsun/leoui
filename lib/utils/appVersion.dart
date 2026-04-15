@@ -16,6 +16,10 @@ class AppVersionPayload {
       {required this.hasLatest,
       required this.localVersion,
       required this.remoteVersion});
+  @override
+  String toString() {
+    return 'hasLatest: $hasLatest,localVersion: $localVersion, remoteVersion: $remoteVersion.';
+  }
 }
 
 class AppVersion {
