@@ -122,15 +122,15 @@ class _ActionSheetState extends State<ActionSheet> {
     }));
 
     _children.add(ConstrainedBox(
-      constraints: BoxConstraints(
-          maxHeight: theme.size!().buttonNormalHeight * 5 + dividerHeight * 4),
-      child: SingleChildScrollView(
-        child: _ActionsheetScope(
-          state: this,
-          child: actionWidget,
-        ),
-      ),
-    ));
+        constraints: BoxConstraints(
+            maxHeight:
+                theme.size!().buttonNormalHeight * 5 + dividerHeight * 4),
+        child: SingleChildScrollView(
+          child: _ActionsheetScope(
+            state: this,
+            child: actionWidget,
+          ),
+        )));
 
     _children.add(Container(
       height: dividerHeight * 6,

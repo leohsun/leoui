@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 extension LocaleTools on Locale {
   String languageName() {
     String _languageName = this.languageCode;
@@ -103,6 +105,26 @@ typedef MapWithIndexCallbak<T, E> = T Function(
     E element, int index, bool isLast);
 
 extension ListTools<E> on List<E> {
+  /// [不会]改变原数据！！！！！！！！！！！
+  swapItem(int start, int end) {
+    if (start < 0 ||
+        start > this.length - 1 ||
+        end < 0 ||
+        end > this.length - 1) {
+      throw FlutterError("start or end ,both range are 0 - ${this.length - 1}");
+    }
+    if (start == end) {
+      throw FlutterError("start must not equal end");
+    }
+
+    if (this.length == 1) return;
+
+    var startItem = this[start];
+    var endItem = this[end];
+    this[end] = startItem;
+    this[start] = endItem;
+  }
+
   firstWhereOrNull(fn(E element)) {
     for (int i = 0; i < this.length; i++) {
       if (fn(this[i])) {
@@ -134,6 +156,7 @@ extension ListTools<E> on List<E> {
 
   List<T> slice<T>(int start, [int? end]) {
     List<T> result = [];
+    assert(start > -1);
 
     int startIndex = start;
     late int endIndex;
@@ -168,9 +191,9 @@ extension ListTools<E> on List<E> {
     return value;
   }
 
-  E? index(int index) {
-    if (this.length > index) {
-      return this[index];
+  E? index<E>(int index) {
+    if (this.length > index && index > -1) {
+      return this[index] as E;
     }
 
     return null;
@@ -244,14 +267,29 @@ extension ListTools<E> on List<E> {
   }
 }
 
+class MapIndexPayload<K, V> {
+  final K key;
+  final V value;
+
+  MapIndexPayload({required this.key, required this.value});
+}
+
 extension MapTools on Map {
-  List<T> mapWithIndex<T, K, V>(Function(K key, V value, bool isLast) fn) {
+  List<T> mapWithIndex<T, K, V>(
+      Function(K key, V value, int index, bool isLast) fn) {
     List<T> result = [];
     int current = 0;
     this.forEach((key, value) {
-      bool isLast = ++current == this.length - 1;
-      result.add(fn(key, value, isLast));
+      bool isLast = current == this.length - 1;
+      result.add(fn(key, value, current++, isLast));
     });
     return result;
+  }
+
+  MapIndexPayload? index<K, V>(int index) {
+    if (index < 0 || index > this.length - 1) return null;
+    List keys = this.keys.toList(growable: false);
+    List values = this.values.toList(growable: false);
+    return MapIndexPayload<K, V>(key: keys[index], value: values[index]);
   }
 }

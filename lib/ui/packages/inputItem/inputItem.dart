@@ -84,6 +84,8 @@ class InputItem extends StatefulWidget implements ListItem {
   ///是否固定标题宽度，超出会自动换行
   final bool solid;
 
+  final double? solidWith;
+
   ///表单是否使用清除控件
   final bool clearable;
 
@@ -159,6 +161,7 @@ class InputItem extends StatefulWidget implements ListItem {
       this.disabled = false,
       this.padding,
       this.solid = true,
+      this.solidWith,
       this.hideCounter,
       this.inputType = TextInputType.text,
       this.inputAction,
@@ -360,17 +363,25 @@ class InputItemState extends State<InputItem> implements ListItemState {
       );
     }
 
-    final leading = Container(
-      margin: EdgeInsets.only(right: 5),
-      width: widget.solid ? (widget.fontSize ?? theme.size!().title) * 5 : null,
-      child: DefaultTextIconStyle(
-        color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
-        child: child,
-        size: widget.fontSize ?? theme.size!().title,
-      ),
+    child = DefaultTextIconStyle(
+      color: valid ? theme.labelPrimaryColor : theme.baseRedColor,
+      child: child,
+      size: widget.fontSize ?? theme.size!().title,
     );
 
-    leadingSize = measureWidget(leading);
+    late final leading;
+
+    if (widget.solid || widget.solidWith != null) {
+      leading = Container(
+        margin: EdgeInsets.only(right: 5),
+        width: widget.solidWith ?? (widget.fontSize ?? theme.size!().title) * 5,
+        child: child,
+      );
+      leadingSize = measureWidget(leading);
+    } else {
+      leading = widget.hideTextField == true ? Expanded(child: child) : child;
+      leadingSize = measureWidget(child);
+    }
 
     return leading;
   }
@@ -447,7 +458,9 @@ class InputItemState extends State<InputItem> implements ListItemState {
       textField = Offstage(child: textField);
     }
 
-    rowChildren.add(Expanded(child: textField));
+    rowChildren.add(widget.hideTextField == true
+        ? SizedBox(width: 1, child: textField) //need a width
+        : Expanded(child: textField));
 
     if (widget.clearable && !widget.disabled) {
       if (showCloseButton && widget.hideTextField != true) {

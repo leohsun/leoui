@@ -17,14 +17,33 @@ class RenderPaintingReport extends RenderProxyBoxWithHitTestBehavior {
   RenderPaintingReport(
     this.onPainting, {
     super.behavior,
-    super.child,
   });
+
+  late Size loosenSize;
+
+  Size? cbSize;
+
+  bool get trigger => cbSize != loosenSize;
+
+  @override
+  bool get sizedByParent => false;
+
+  @override
+  void performLayout() {
+    if (child == null) return;
+    child!.layout(BoxConstraints(maxWidth: constraints.maxWidth),
+        parentUsesSize: true);
+    loosenSize = child!.size;
+
+    super.performLayout();
+  }
 
   @override
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
-    if (onPainting != null) {
-      onPainting!(offset, size);
+    if (onPainting != null && trigger) {
+      onPainting!(offset, loosenSize);
+      cbSize = loosenSize;
     }
   }
 }

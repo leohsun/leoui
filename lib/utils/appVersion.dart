@@ -7,6 +7,17 @@ import 'package:flutter/foundation.dart';
 import 'package:leoui/widget/leoui_state.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+class AppVersionPayload {
+  final bool hasLatest;
+  final String localVersion;
+  final String remoteVersion;
+
+  AppVersionPayload(
+      {required this.hasLatest,
+      required this.localVersion,
+      required this.remoteVersion});
+}
+
 class AppVersion {
   static final AppVersion _instance = AppVersion._();
   factory AppVersion() => _instance;
@@ -104,7 +115,7 @@ class AppVersion {
     }
   }
 
-  Future<bool> get hasLatestVersion async {
+  Future<AppVersionPayload> get hasLatestVersion async {
     final [current, online] = await Future.wait([
       local.then(
         (value) => value.version,
@@ -115,6 +126,9 @@ class AppVersion {
     debugPrint(
         "current Version is: $current, remote Version is: $online (appVersion.dart)");
 
-    return compare(online, current) == 1;
+    bool hasLatest = compare(online, current) == 1;
+
+    return AppVersionPayload(
+        hasLatest: hasLatest, localVersion: current, remoteVersion: online);
   }
 }

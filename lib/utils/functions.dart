@@ -122,8 +122,12 @@ Widget buildButtonWidget(
                         stops: [1]).createShader(bounds);
                   },
                   blendMode: BlendMode.color,
-                  child: child)
-              : child,
+                  child: ClipRRect(
+                      borderRadius: borderRadius ?? BorderRadius.zero,
+                      child: child))
+              : ClipRRect(
+                  borderRadius: borderRadius ?? BorderRadius.zero,
+                  child: child),
           onTap: disabled == true ? null : onTap,
           onTapDown: disabled == true ? null : onTapDown,
           onTapUp: disabled == true ? null : onTapUp,

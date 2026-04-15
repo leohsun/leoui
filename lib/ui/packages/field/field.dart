@@ -329,6 +329,7 @@ class FieldItem extends StatefulWidget implements ListItem {
 
   ///是否固定标题宽度，超出会自动换行
   final bool solid;
+  final double? solidWith;
   final ValueChanged<BuildContext>? onTap; // 点击回调
   final Widget? child; // 子组件
   final LeouiBrightness? brightness;
@@ -346,6 +347,7 @@ class FieldItem extends StatefulWidget implements ListItem {
       this.arrowSize,
       this.padding,
       this.solid = true,
+      this.solidWith,
       this.onTap,
       this.child,
       this.brightness,
@@ -369,15 +371,21 @@ class FieldItem extends StatefulWidget implements ListItem {
 
 class _FieldItemState extends State<FieldItem> {
   Widget _buildTitle(LeouiThemeData theme) {
-    return Container(
-      margin: EdgeInsets.only(right: 5),
-      width: widget.solid ? theme.size!().title * 5 : null,
-      child: DefaultTextIconStyle(
-        color: theme.labelPrimaryColor,
-        child: widget.title!,
-        size: theme.size!().title,
-      ),
+    final child = DefaultTextIconStyle(
+      color: theme.labelPrimaryColor,
+      child: widget.title!,
+      size: theme.size!().title,
     );
+
+    if (widget.solid || widget.solidWith != null) {
+      return Container(
+        margin: EdgeInsets.only(right: 5),
+        width: widget.solidWith ?? theme.size!().title * 5,
+        child: child,
+      );
+    } else {
+      return child;
+    }
   }
 
   @override
